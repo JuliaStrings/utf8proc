@@ -45,59 +45,6 @@ The documentation for the C library is found in the utf8proc.h header file.
 strings, unless you want to allocate memory yourself.
 
 
-*** RUBY API ***
-
-The ruby library adds the methods "utf8map" and "utf8map!" to the String
-class, and the method "utf8" to the Integer class.
-
-The String#utf8map method does the same as the "utf8proc_map" C function.
-Options for the mapping procedure are passed as symbols, i.e:
-"Hello".utf8map(:casefold) => "hello"
-
-The descriptions of all options are found in the C header file
-"utf8proc.h". Please notice that the according symbols in ruby are all
-lowercase.
-
-String#utf8map! is the destructive function in the meaning that the string
-is replaced by the result.
-
-There are shortcuts for the 4 normalization forms specified by Unicode:
-String#utf8nfd,  String#utf8nfd!,
-String#utf8nfc,  String#utf8nfc!,
-String#utf8nfkd, String#utf8nfkd!,
-String#utf8nfkc, String#utf8nfkc!
-
-The method Integer#utf8 returns a UTF-8 string, which is containing the
-unicode char given by the code point.
-0x000A.utf8 => "\n"
-0x2028.utf8 => "\342\200\250"
-
-
-*** POSTGRESQL API ***
-
-For PostgreSQL there are two SQL functions supplied named "unifold" and
-"unistrip". These functions function can be used to prepare index fields in
-order to be folded in a way where string-comparisons make more sense, e.g.
-where "bathtub" == "bath<soft hyphen>tub"
-or "Hello World" == "hello world".
-
-CREATE TABLE people (
-  id    serial8 primary key,
-  name  text,
-  CHECK (unifold(name) NOTNULL)
-);
-CREATE INDEX name_idx ON people (unifold(name));
-SELECT * FROM people WHERE unifold(name) = unifold('John Doe');
-
-The function "unistrip" removes character marks like accents or diaeresis,
-while "unifold" keeps then.
-
-NOTICE: The outputs of the function can change between releases, as
-        utf8proc does not follow a versioning stability policy. You have to
-        rebuild your database indicies, if you upgrade to a newer version
-        of utf8proc.
-
-
 *** TODO ***
 
 - detect stable code points and process segments independently in order to
