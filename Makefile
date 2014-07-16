@@ -5,6 +5,7 @@
 
 cflags = -O2 -std=c99 -pedantic -Wall -fpic $(CFLAGS)
 cc = $(CC) $(cflags)
+AR = ar
 
 
 # meta targets
@@ -23,7 +24,7 @@ utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
 
 libutf8proc.a: utf8proc.o
 	rm -f libutf8proc.a
-	ar rs libutf8proc.a utf8proc.o
+	$(AR) rs libutf8proc.a utf8proc.o
 
 libutf8proc.so: utf8proc.o
 	$(cc) -shared -o libutf8proc.so utf8proc.o
