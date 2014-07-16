@@ -1,4 +1,4 @@
-== libutf8proc ==
+# libutf8proc #
 
 The [libutf8proc package](https://github.com/JuliaLang/libutf8proc) is
 a lightly updated fork of the [utf8proc
@@ -28,11 +28,11 @@ data governed by the similarly permissive [Unicode data
 license](http://www.unicode.org/copyright.html#Exhibit1)); please see
 the included `LICENSE.md` file for more detailed information.
 
-=== Quick Start ===
+## Quick Start ##
 
 For compilation of the C library run `make`.
 
-=== General Information ===
+## General Information ##
 
 The C library is found in this directory after successful compilation
 and is named `libutf8proc.a` (for the static library) and
@@ -49,19 +49,19 @@ For Unicode normalizations, the following options are used:
 * Normalization Form KC: `STABLE`, `COMPOSE`, `COMPAT`
 * Normalization Form KD: `STABLE`, `DECOMPOSE`, `COMPAT`
 
-=== C Library ===
+## C Library ##
 
 The documentation for the C library is found in the `utf8proc.h` header file.
 `utf8proc_map` is function you will most likely be using for mapping UTF-8
 strings, unless you want to allocate memory yourself.
 
-=== To Do ===
+## To Do ##
 
 * detect stable code points and process segments independently in order to save memory
 * do a quick check before normalizing strings to optimize speed
 * support stream processing
 
-=== Contact ===
+## Contact ##
 
 Bug reports, feature requests, and other queries can be filed at
 the [libutf8proc page on Github](https://github.com/JuliaLang/libutf8proc).

@@ -1,4 +1,4 @@
-== libutf8proc license ==
+## libutf8proc license ##
 
 **libutf8proc** is a lightly updated version of the **utf8proc**
 library by Jan Behrens and the rest of the Public Software Group, who
@@ -27,7 +27,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
-== Original utf8proc license ==
+## Original utf8proc license ##
 
 *Copyright (c) 2009, 2013 Public Software Group e. V., Berlin, Germany*
 
@@ -49,7 +49,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
-== Unicode data license ==
+## Unicode data license ##
 
 This software distribution contains derived data from a modified version of
 the Unicode data files. The following license applies to that data:
