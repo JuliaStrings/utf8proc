@@ -67,36 +67,10 @@
 
 
 $ignorable_list = <<END_OF_LIST
-0000..0008    ; Default_Ignorable_Code_Point # Cc   [9] <control-0000>..<control-0008>
-000E..001F    ; Default_Ignorable_Code_Point # Cc  [18] <control-000E>..<control-001F>
-007F..0084    ; Default_Ignorable_Code_Point # Cc   [6] <control-007F>..<control-0084>
-0086..009F    ; Default_Ignorable_Code_Point # Cc  [26] <control-0086>..<control-009F>
-00AD          ; Default_Ignorable_Code_Point # Cf       SOFT HYPHEN
-034F          ; Default_Ignorable_Code_Point # Mn       COMBINING GRAPHEME JOINER
-0600..0603    ; Default_Ignorable_Code_Point # Cf   [4] ARABIC NUMBER SIGN..ARABIC SIGN SAFHA
-06DD          ; Default_Ignorable_Code_Point # Cf       ARABIC END OF AYAH
-070F          ; Default_Ignorable_Code_Point # Cf       SYRIAC ABBREVIATION MARK
-115F..1160    ; Default_Ignorable_Code_Point # Lo   [2] HANGUL CHOSEONG FILLER..HANGUL JUNGSEONG FILLER
-17B4..17B5    ; Default_Ignorable_Code_Point # Cf   [2] KHMER VOWEL INHERENT AQ..KHMER VOWEL INHERENT AA
-180B..180D    ; Default_Ignorable_Code_Point # Mn   [3] MONGOLIAN FREE VARIATION SELECTOR ONE..MONGOLIAN FREE VARIATION SELECTOR THREE
-200B..200F    ; Default_Ignorable_Code_Point # Cf   [5] ZERO WIDTH SPACE..RIGHT-TO-LEFT MARK
-202A..202E    ; Default_Ignorable_Code_Point # Cf   [5] LEFT-TO-RIGHT EMBEDDING..RIGHT-TO-LEFT OVERRIDE
-2060..2063    ; Default_Ignorable_Code_Point # Cf   [4] WORD JOINER..INVISIBLE SEPARATOR
-2064..2069    ; Default_Ignorable_Code_Point # Cn   [6] <reserved-2064>..<reserved-2069>
-206A..206F    ; Default_Ignorable_Code_Point # Cf   [6] INHIBIT SYMMETRIC SWAPPING..NOMINAL DIGIT SHAPES
-3164          ; Default_Ignorable_Code_Point # Lo       HANGUL FILLER
-D800..DFFF    ; Default_Ignorable_Code_Point # Cs [2048] <surrogate-D800>..<surrogate-DFFF>
-FE00..FE0F    ; Default_Ignorable_Code_Point # Mn  [16] VARIATION SELECTOR-1..VARIATION SELECTOR-16
-FEFF          ; Default_Ignorable_Code_Point # Cf       ZERO WIDTH NO-BREAK SPACE
-FFA0          ; Default_Ignorable_Code_Point # Lo       HALFWIDTH HANGUL FILLER
-FFF0..FFF8    ; Default_Ignorable_Code_Point # Cn   [9] <reserved-FFF0>..<reserved-FFF8>
-1D173..1D17A  ; Default_Ignorable_Code_Point # Cf   [8] MUSICAL SYMBOL BEGIN BEAM..MUSICAL SYMBOL END PHRASE
-E0001         ; Default_Ignorable_Code_Point # Cf       LANGUAGE TAG
-E0002..E001F  ; Default_Ignorable_Code_Point # Cn  [30] <reserved-E0002>..<reserved-E001F>
-E0020..E007F  ; Default_Ignorable_Code_Point # Cf  [96] TAG SPACE..CANCEL TAG
-E0080..E00FF  ; Default_Ignorable_Code_Point # Cn [128] <reserved-E0080>..<reserved-E00FF>
-E0100..E01EF  ; Default_Ignorable_Code_Point # Mn [240] VARIATION SELECTOR-17..VARIATION SELECTOR-256
-E01F0..E0FFF  ; Default_Ignorable_Code_Point # Cn [3600] <reserved-E01F0>..<reserved-E0FFF>
+#From:
+#    http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
+#Section:
+#    Derived Property: Default_Ignorable_Code_Point
 END_OF_LIST
 
 $ignorable = []
