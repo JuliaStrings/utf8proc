@@ -65,14 +65,7 @@
 #  authorization of the copyright holder.
 
 
-
-$ignorable_list = <<END_OF_LIST
-#From:
-#    http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
-#Section:
-#    Derived Property: Default_Ignorable_Code_Point
-END_OF_LIST
-
+$ignorable_list = File.read("DerivedCoreProperties.txt")[/# Derived Property: Default_Ignorable_Code_Point.*?# Total code points:/m]
 $ignorable = []
 $ignorable_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
@@ -82,13 +75,7 @@ $ignorable_list.each_line do |entry|
   end
 end
 
-$grapheme_extend_list = <<END_OF_LIST
-#From:
-#    http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
-#Section:
-#    Derived Property: Grapheme_Extend_List
-END_OF_LIST
-
+$grapheme_extend_list = File.read("DerivedCoreProperties.txt")[/# Derived Property: Grapheme_Extend.*?# Total code points:/m]
 $grapheme_extend = []
 $grapheme_extend_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
@@ -98,27 +85,13 @@ $grapheme_extend_list.each_line do |entry|
   end
 end
 
-$exclusions = <<END_OF_LIST
-#From:
-#    http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt
-#Section:
-#    (1) Script Specifics
-END_OF_LIST
+$exclusions = File.read("CompositionExclusions.txt")[/# \(1\) Script Specifics.*?# Total code points:/m]
 $exclusions = $exclusions.chomp.split("\n").collect { |e| e.hex }
 
-$excl_version = <<END_OF_LIST
-#From:
-#    http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt
-#Section:
-#    (2) Post Composition Version precomposed characters
-END_OF_LIST
+$excl_version = File.read("CompositionExclusions.txt")[/# \(2\) Post Composition Version precomposed characters.*?# Total code points:/m]
 $excl_version = $excl_version.chomp.split("\n").collect { |e| e.hex }
 
-$case_folding_string = <<END_OF_LIST
-#XXX THE NONEMPTY, NON-COMMENT LINES OF
-#XXX http://www.unicode.org/Public/UNIDATA/CaseFolding.txt
-#XXX GO HERE
-END_OF_LIST
+$case_folding_string = File.open("CaseFolding.txt").read
 
 $case_folding = {}
 $case_folding_string.chomp.split("\n").each do |line|
