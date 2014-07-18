@@ -60,16 +60,18 @@ typedef unsigned char uint8_t;
 typedef short int16_t;
 typedef unsigned short uint16_t;
 typedef int int32_t;
-#ifdef _WIN64
-#define ssize_t __int64
-#else
-#define ssize_t int
-#endif
+#  ifdef _WIN64
+#    define ssize_t __int64
+#  else
+#    define ssize_t int
+#  endif
+#  ifndef __cplusplus
 typedef unsigned char bool;
 enum {false, true};
+#  endif
 #else
-#include <stdbool.h>
-#include <inttypes.h>
+#  include <stdbool.h>
+#  include <inttypes.h>
 #endif
 #include <limits.h>
 
