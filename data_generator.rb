@@ -1,4 +1,4 @@
-#!/usr/pkg/bin/ruby
+#!/usr/bin/env ruby
 
 #  This file was used to generate the 'unicode_data.c' file by parsing the
 #  Unicode data file 'UnicodeData.txt' of the Unicode Character Database.
@@ -100,7 +100,7 @@ E01F0..E0FFF  ; Default_Ignorable_Code_Point # Cn [3600] <reserved-E01F0>..<rese
 END_OF_LIST
 
 $ignorable = []
-$ignorable_list.each do |entry|
+$ignorable_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
     $1.hex.upto($2.hex) { |e2| $ignorable << e2 }
   elsif entry =~ /^[0-9A-F]+/
@@ -263,7 +263,7 @@ E0100..E01EF  ; Grapheme_Extend # Mn [240] VARIATION SELECTOR-17..VARIATION SELE
 END_OF_LIST
 
 $grapheme_extend = []
-$grapheme_extend_list.each do |entry|
+$grapheme_extend_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
     $1.hex.upto($2.hex) { |e2| $grapheme_extend << e2 }
   elsif entry =~ /^[0-9A-F]+/
@@ -1514,8 +1514,8 @@ comb2nd_indicies = {}
 comb_array = []
 
 chars.each do |char|
-  if char.decomp_type.nil? and char.decomp_mapping and
-      char.decomp_mapping.length == 2 and
+  if !char.nil? and char.decomp_type.nil? and char.decomp_mapping and
+      char.decomp_mapping.length == 2 and !char_hash[char.decomp_mapping[0]].nil? and
       char_hash[char.decomp_mapping[0]].combining_class == 0 and
       not $exclusions.include?(char.code)
     unless comb1st_indicies[char.decomp_mapping[0]]
