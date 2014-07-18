@@ -11,10 +11,10 @@ data in the [UTF-8 encoding](http://en.wikipedia.org/wiki/UTF-8).
 
 The reason for this fork is that `utf8proc` is used for basic Unicode
 support in the [Julia language](http://julialang.org/) and the Julia
-developers wanted Unicode 7 support and other features, but the
-Public Software Group currently does not seem to have the resources
-necessary to update `utf8proc`.  We hope that the fork can be merged
-back into the mainline `utf8proc` package before too long.
+developers wanted Unicode 7 support and other features, but the Public
+Software Group is currently occupied with other projects.  We hope
+that our fork can be merged back into the mainline `utf8proc` package
+before too long.
 
 (The original `utf8proc` package also includes Ruby and PostgreSQL plug-ins.
 We removed those from `libmojibake` in order to focus exclusively on the C
