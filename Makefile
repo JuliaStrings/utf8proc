@@ -38,7 +38,7 @@ CaseFolding.txt:
 	$(CURL) -O http://www.unicode.org/Public/UNIDATA/CaseFolding.txt
 
 
-utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
+utf8proc.o: mojibake.h utf8proc.c utf8proc_data.c
 	$(cc) -c -o utf8proc.o utf8proc.c
 
 libmojibake.a: utf8proc.o

@@ -22,10 +22,10 @@
 
 
 /*
- *  File name:    utf8proc.h
+ *  File name:    mojibake.h (formerly utf8proc.h)
  *
  *  Description:
- *  Header files for libutf8proc, which is a mapping tool for UTF-8 strings
+ *  Header files for libmojibake, which is a mapping tool for UTF-8 strings
  *  with following features:
  *  - decomposing and composing of strings
  *  - replacing compatibility characters with their equivalents
@@ -44,7 +44,7 @@
  *  - rejection of illegal UTF-8 data
  *    (i.e. UTF-8 encoded UTF-16 surrogates)
  *  - support for korean hangul characters
- *  Unicode Version 5.0.0 is supported.
+ *  Unicode Version 7.0.0 is supported.
  */
 
 

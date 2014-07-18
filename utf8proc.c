@@ -39,7 +39,7 @@
  */
 
 
-#include "utf8proc.h"
+#include "mojibake.h"
 #include "utf8proc_data.c"
 
 
