@@ -1,10 +1,10 @@
-## libutf8proc license ##
+## libmojibake license ##
 
-**libutf8proc** is a lightly updated version of the **utf8proc**
+**libmojibake** is a lightly updated version of the **utf8proc**
 library by Jan Behrens and the rest of the Public Software Group, who
 deserve nearly all of the credit for this library.  Like utf8proc,
 whose copyright and license statements are reproduced below, all new
-work on the libutf8proc library is licensed under the [MIT "expat"
+work on the libmojibake library is licensed under the [MIT "expat"
 license](http://opensource.org/licenses/MIT):
 
 *Copyright &copy; 2014 by Steven G. Johnson.*
