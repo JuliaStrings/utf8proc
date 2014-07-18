@@ -1,5 +1,7 @@
 # libmojibake Makefile
 
+CURL=curl
+RUBY=ruby
 
 # settings
 
@@ -16,7 +18,25 @@ c-library: libmojibake.a libmojibake.so
 clean:
 	rm -f utf8proc.o libmojibake.a libmojibake.so
 
+update: utf8proc_data.c.new
+
 # real targets
+
+utf8proc_data.c.new: UnicodeData.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt
+	$(RUBY) data_generator.rb < UnicodeData.txt > utf8proc_data.c.new
+
+UnicodeData.txt:
+	$(CURL) -O http://www.unicode.org/Public/UNIDATA/UnicodeData.txt
+
+DerivedCoreProperties.txt:
+	$(CURL) -O http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
+
+CompositionExclusions.txt:
+	$(CURL) -O http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt
+
+CaseFolding.txt:
+	$(CURL) -O http://www.unicode.org/Public/UNIDATA/CaseFolding.txt
+
 
 utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
 	$(cc) -c -o utf8proc.o utf8proc.c
