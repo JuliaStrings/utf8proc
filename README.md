@@ -44,7 +44,7 @@ version 5.0.0 had not been available at the time of implementation.
 
 For Unicode normalizations, the following options are used:
 
-* Normalization Form C:  `STABLE`, COMPOSE`
+* Normalization Form C:  `STABLE`, `COMPOSE`
 * Normalization Form D:  `STABLE`, `DECOMPOSE`
 * Normalization Form KC: `STABLE`, `COMPOSE`, `COMPAT`
 * Normalization Form KD: `STABLE`, `DECOMPOSE`, `COMPAT`
