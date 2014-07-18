@@ -5,7 +5,7 @@
 
 cflags = -O2 -std=c99 -pedantic -Wall -fpic $(CFLAGS)
 cc = $(CC) $(cflags)
-
+AR = ar
 
 # meta targets
 
@@ -23,7 +23,7 @@ utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
 
 libmojibake.a: utf8proc.o
 	rm -f libmojibake.a
-	ar rs libmojibake.a utf8proc.o
+	$(AR) rs libmojibake.a utf8proc.o
 
 libmojibake.so: utf8proc.o
 	$(cc) -shared -o libmojibake.so utf8proc.o
