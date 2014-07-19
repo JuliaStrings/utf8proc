@@ -7,7 +7,7 @@ all: bench
 
 LIBMOJIBAKE = ../libmojibake.a
 
-bench: bench.o util.o
+bench: bench.o util.o $(LIBMOJIBAKE)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ bench.o util.o $(LIBMOJIBAKE)
 
 DATAURL = https://raw.githubusercontent.com/duerst/eprun/master/benchmark
