@@ -26,8 +26,14 @@ icu: icu.o util.o
 icu.out: $(DATAFILES) icu
 	./icu $(DATAFILES) > $@
 
+unistring: unistring.o util.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ unistring.o util.o -lunistring
+
+unistring.out: $(DATAFILES) unistring
+	./unistring $(DATAFILES) > $@
+
 .c.o:
 	$(CC) $(CPPFLAGS) -I.. $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf *.o *.txt bench *.out icu
+	rm -rf *.o *.txt bench *.out icu unistring

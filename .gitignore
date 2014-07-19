@@ -10,5 +10,8 @@
 *.dSYM
 *.txt
 *.out
-bench
-icu
+bench/bench
+bench/icu
+bench/unistring
+
+
