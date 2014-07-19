@@ -220,6 +220,10 @@ typedef struct utf8proc_property_struct {
 #define UTF8PROC_BIDI_CLASS_S   17
 #define UTF8PROC_BIDI_CLASS_WS  18
 #define UTF8PROC_BIDI_CLASS_ON  19
+#define UTF8PROC_BIDI_CLASS_LRI  20 /* new in Unicode 6.3 */
+#define UTF8PROC_BIDI_CLASS_RLI  21 /* new in Unicode 6.3 */
+#define UTF8PROC_BIDI_CLASS_FSI  22 /* new in Unicode 6.3 */
+#define UTF8PROC_BIDI_CLASS_PDI  23 /* new in Unicode 6.3 */
 #define UTF8PROC_DECOMP_TYPE_FONT      1
 #define UTF8PROC_DECOMP_TYPE_NOBREAK   2
 #define UTF8PROC_DECOMP_TYPE_INITIAL   3
