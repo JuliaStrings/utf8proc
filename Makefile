@@ -9,14 +9,21 @@ cflags = -O2 -std=c99 -pedantic -Wall -fpic $(CFLAGS)
 cc = $(CC) $(cflags)
 AR = ar
 
+OS := $(shell uname)
+ifeq ($(OS),Darwin)
+	SHARED_SUFFIX = dylib
+else #TODO Windows
+	SHARED_SUFFIX = so
+endif
+
 # meta targets
 
 all: c-library
 
-c-library: libmojibake.a libmojibake.so
+c-library: libmojibake.a libmojibake.$(SHARED_SUFFIX)
 
 clean:
-	rm -f utf8proc.o libmojibake.a libmojibake.so
+	rm -f utf8proc.o libmojibake.a libmojibake.$(SHARED_SUFFIX)
 
 update: utf8proc_data.c.new
 
@@ -26,6 +33,7 @@ utf8proc_data.c.new: UnicodeData.txt DerivedCoreProperties.txt CompositionExclus
 	$(RUBY) data_generator.rb < UnicodeData.txt > utf8proc_data.c.new
 
 UnicodeData.txt:
+
 	$(CURL) -O http://www.unicode.org/Public/UNIDATA/UnicodeData.txt
 
 DerivedCoreProperties.txt:
@@ -46,8 +54,8 @@ libmojibake.a: utf8proc.o
 	$(AR) rs libmojibake.a utf8proc.o
 
 libmojibake.so: utf8proc.o
-	$(cc) -shared -o libmojibake.so utf8proc.o
-	chmod a-x libmojibake.so
+	$(cc) -shared -o libmojibake.$(SHARED_SUFFIX) utf8proc.o
+	chmod a-x libmojibake.$(SHARED_SUFFIX)
 
 libmojibake.dylib: utf8proc.o
 	$(cc) -dynamiclib -o $@ $^ -install_name $(libdir)/$@
