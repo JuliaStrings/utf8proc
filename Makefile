@@ -11,19 +11,19 @@ AR = ar
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
-	SHARED_SUFFIX = dylib
+	SHLIB_EXT = dylib
 else #TODO Windows
-	SHARED_SUFFIX = so
+	SHLIB_EXT = so
 endif
 
 # meta targets
 
 all: c-library
 
-c-library: libmojibake.a libmojibake.$(SHARED_SUFFIX)
+c-library: libmojibake.a libmojibake.$(SHLIB_EXT)
 
 clean:
-	rm -f utf8proc.o libmojibake.a libmojibake.$(SHARED_SUFFIX)
+	rm -f utf8proc.o libmojibake.a libmojibake.$(SHLIB_EXT)
 
 update: utf8proc_data.c.new
 
@@ -54,8 +54,8 @@ libmojibake.a: utf8proc.o
 	$(AR) rs libmojibake.a utf8proc.o
 
 libmojibake.so: utf8proc.o
-	$(cc) -shared -o libmojibake.$(SHARED_SUFFIX) utf8proc.o
-	chmod a-x libmojibake.$(SHARED_SUFFIX)
+	$(cc) -shared -o libmojibake.$(SHLIB_EXT) utf8proc.o
+	chmod a-x libmojibake.$(SHLIB_EXT)
 
 libmojibake.dylib: utf8proc.o
 	$(cc) -dynamiclib -o $@ $^ -install_name $(libdir)/$@
