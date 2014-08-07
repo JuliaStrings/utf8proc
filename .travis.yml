@@ -1,0 +1,8 @@
+language: c
+compiler:
+ - gcc
+ - clang
+notifications:
+    email: false
+script:
+    - make && make check
