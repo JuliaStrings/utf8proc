@@ -45,7 +45,6 @@ CompositionExclusions.txt:
 CaseFolding.txt:
 	$(CURL) -O http://www.unicode.org/Public/UNIDATA/CaseFolding.txt
 
-
 utf8proc.o: mojibake.h utf8proc.c utf8proc_data.c
 	$(cc) -c -o utf8proc.o utf8proc.c
 
@@ -59,3 +58,15 @@ libmojibake.so: utf8proc.o
 
 libmojibake.dylib: utf8proc.o
 	$(cc) -dynamiclib -o $@ $^ -install_name $(libdir)/$@
+
+
+# Test programs
+
+NormalizationTest.txt:
+	$(CURL) -O http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
+
+normtest: normtest.c utf8proc.o mojibake.h
+	$(cc) normtest.c utf8proc.o -o normtest
+
+check: normtest NormalizationTest.txt
+	./normtest

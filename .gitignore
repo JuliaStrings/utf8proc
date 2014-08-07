@@ -13,5 +13,4 @@
 bench/bench
 bench/icu
 bench/unistring
-
-
+normtest
