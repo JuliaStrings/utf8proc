@@ -1,4 +1,5 @@
 # libmojibake
+[![Build Status](https://travis-ci.org/JuliaLang/libmojibake.png)](https://travis-ci.org/JuliaLang/libmojibake)
 
 [libmojibake](https://github.com/JuliaLang/libmojibake) is
 a lightly updated fork of the [utf8proc
