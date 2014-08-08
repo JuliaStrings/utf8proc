@@ -2,6 +2,7 @@
 
 CURL=curl
 RUBY=ruby
+MAKE=make
 
 # settings
 
@@ -23,7 +24,8 @@ all: c-library
 c-library: libmojibake.a libmojibake.$(SHLIB_EXT)
 
 clean:
-	rm -f utf8proc.o libmojibake.a libmojibake.$(SHLIB_EXT)
+	rm -f utf8proc.o libmojibake.a libmojibake.$(SHLIB_EXT) normtest UnicodeData.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt
+	$(MAKE) -C bench clean
 
 update: utf8proc_data.c.new
 
