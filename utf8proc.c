@@ -112,7 +112,7 @@ const char *utf8proc_errmsg(ssize_t errcode) {
     case UTF8PROC_ERROR_INVALIDOPTS:
     return "Invalid options for UTF-8 processing chosen.";
     default:
-    return "An unknown error occured while processing UTF-8 data.";
+    return "An unknown error occurred while processing UTF-8 data.";
   }
 }
 
@@ -370,7 +370,7 @@ ssize_t utf8proc_decompose(
     while (1) {
       if (options & UTF8PROC_NULLTERM) {
         rpos += utf8proc_iterate(str + rpos, -1, &uc);
-        /* checking of return value is not neccessary,
+        /* checking of return value is not necessary,
            as 'uc' is < 0 in case of error */
         if (uc < 0) return UTF8PROC_ERROR_INVALIDUTF8;
         if (rpos < 0) return UTF8PROC_ERROR_OVERFLOW;
