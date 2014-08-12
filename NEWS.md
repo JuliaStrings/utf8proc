@@ -122,7 +122,7 @@ Release of version 1.0.1
 - added `NLF2LF` transformation in postgresql `unifold` function
 - added the `DECOMPOSE` option, if you neither use `COMPOSE` or `DECOMPOSE`, no normalization will be performed (different from previous versions)
 - using integer constants rather than C-strings for character properties
-- fixed (hopefully) a problem with the ruby library on Mac OS X, which occured when compiler optimization was switched on
+- fixed (hopefully) a problem with the ruby library on Mac OS X, which occurred when compiler optimization was switched on
 
 ## Version 0.2 ##
 
