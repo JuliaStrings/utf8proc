@@ -75,6 +75,16 @@ enum {false, true};
 #endif
 #include <limits.h>
 
+#ifdef _WIN32
+#  ifdef LIBRARY_EXPORTS
+#    define DLLEXPORT __declspec(dllexport)
+#  else
+#    define DLLEXPORT __declspec(dllimport)
+#  endif
+#else
+#  define DLLEXPORT
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -241,16 +251,16 @@ typedef struct utf8proc_property_struct {
 #define UTF8PROC_DECOMP_TYPE_FRACTION 15
 #define UTF8PROC_DECOMP_TYPE_COMPAT   16
 
-extern const int8_t utf8proc_utf8class[256];
+DLLEXPORT extern const int8_t utf8proc_utf8class[256];
 
-const char *utf8proc_version(void);
+DLLEXPORT const char *utf8proc_version(void);
 
-const char *utf8proc_errmsg(ssize_t errcode);
+DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode);
 /*
  *  Returns a static error string for the given error code.
  */
 
-ssize_t utf8proc_iterate(const uint8_t *str, ssize_t strlen, int32_t *dst);
+DLLEXPORT ssize_t utf8proc_iterate(const uint8_t *str, ssize_t strlen, int32_t *dst);
 /*
  *  Reads a single char from the UTF-8 sequence being pointed to by 'str'.
  *  The maximum number of bytes read is 'strlen', unless 'strlen' is
@@ -261,12 +271,12 @@ ssize_t utf8proc_iterate(const uint8_t *str, ssize_t strlen, int32_t *dst);
  *  negative error code is returned.
  */
 
-bool utf8proc_codepoint_valid(int32_t uc);
+DLLEXPORT bool utf8proc_codepoint_valid(int32_t uc);
 /*
  *  Returns 1, if the given unicode code-point is valid, otherwise 0.
  */
 
-ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst);
+DLLEXPORT ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst);
 /*
  *  Encodes the unicode char with the code point 'uc' as an UTF-8 string in
  *  the byte array being pointed to by 'dst'. This array has to be at least
@@ -276,7 +286,7 @@ ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst);
  *  This function does not check if 'uc' is a valid unicode code point.
  */
 
-const utf8proc_property_t *utf8proc_get_property(int32_t uc);
+DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t uc);
 /*
  *  Returns a pointer to a (constant) struct containing information about
  *  the unicode char with the given code point 'uc'.
@@ -286,7 +296,7 @@ const utf8proc_property_t *utf8proc_get_property(int32_t uc);
  *           0x10FFFF, otherwise the program might crash!
  */
 
-ssize_t utf8proc_decompose_char(
+DLLEXPORT ssize_t utf8proc_decompose_char(
   int32_t uc, int32_t *dst, ssize_t bufsize,
   int options, int *last_boundclass
 );
@@ -314,7 +324,7 @@ ssize_t utf8proc_decompose_char(
  *           0x10FFFF, otherwise the program might crash!
  */
 
-ssize_t utf8proc_decompose(
+DLLEXPORT ssize_t utf8proc_decompose(
   const uint8_t *str, ssize_t strlen,
   int32_t *buffer, ssize_t bufsize, int options
 );
@@ -332,7 +342,7 @@ ssize_t utf8proc_decompose(
  *  buffer size is returned.
  */
 
-ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options);
+DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options);
 /*
  *  Reencodes the sequence of unicode characters given by the pointer
  *  'buffer' and 'length' as UTF-8.
@@ -355,7 +365,7 @@ ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options);
  *           crash!
  */
 
-ssize_t utf8proc_map(
+DLLEXPORT ssize_t utf8proc_map(
   const uint8_t *str, ssize_t strlen, uint8_t **dstptr, int options
 );
 /*
@@ -374,10 +384,10 @@ ssize_t utf8proc_map(
  *          'malloc', and has theirfore to be freed with 'free'.
  */
 
-uint8_t *utf8proc_NFD(const uint8_t *str);
-uint8_t *utf8proc_NFC(const uint8_t *str);
-uint8_t *utf8proc_NFKD(const uint8_t *str);
-uint8_t *utf8proc_NFKC(const uint8_t *str);
+DLLEXPORT uint8_t *utf8proc_NFD(const uint8_t *str);
+DLLEXPORT uint8_t *utf8proc_NFC(const uint8_t *str);
+DLLEXPORT uint8_t *utf8proc_NFKD(const uint8_t *str);
+DLLEXPORT uint8_t *utf8proc_NFKC(const uint8_t *str);
 /*
  *  Returns a pointer to newly allocated memory of a NFD, NFC, NFKD or NFKC
  *  normalized version of the null-terminated string 'str'.

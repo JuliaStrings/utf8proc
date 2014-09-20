@@ -43,7 +43,7 @@
 #include "utf8proc_data.c"
 
 
-const int8_t utf8proc_utf8class[256] = {
+DLLEXPORT const int8_t utf8proc_utf8class[256] = {
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -95,11 +95,11 @@ const int8_t utf8proc_utf8class[256] = {
 #define UTF8PROC_BOUNDCLASS_LVT     10
 
 
-const char *utf8proc_version(void) {
+DLLEXPORT const char *utf8proc_version(void) {
   return "1.1.6";
 }
 
-const char *utf8proc_errmsg(ssize_t errcode) {
+DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode) {
   switch (errcode) {
     case UTF8PROC_ERROR_NOMEM:
     return "Memory for processing UTF-8 data could not be allocated.";
@@ -116,7 +116,7 @@ const char *utf8proc_errmsg(ssize_t errcode) {
   }
 }
 
-ssize_t utf8proc_iterate(
+DLLEXPORT ssize_t utf8proc_iterate(
   const uint8_t *str, ssize_t strlen, int32_t *dst
 ) {
   int length;
@@ -156,14 +156,14 @@ ssize_t utf8proc_iterate(
   return length;
 }
 
-bool utf8proc_codepoint_valid(int32_t uc) {
+DLLEXPORT bool utf8proc_codepoint_valid(int32_t uc) {
   if (uc < 0 || uc >= 0x110000 ||
     ((uc & 0xFFFF) >= 0xFFFE) || (uc >= 0xD800 && uc < 0xE000) ||
     (uc >= 0xFDD0 && uc < 0xFDF0)) return false;
   else return true;
 }
 
-ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst) {
+DLLEXPORT ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst) {
   if (uc < 0x00) {
     return 0;
   } else if (uc < 0x80) {
@@ -193,7 +193,7 @@ ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst) {
   } else return 0;
 }
 
-const utf8proc_property_t *utf8proc_get_property(int32_t uc) {
+DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t uc) {
   /* ASSERT: uc >= 0 && uc < 0x110000 */
   return utf8proc_properties + (
     utf8proc_stage2table[
@@ -206,7 +206,7 @@ const utf8proc_property_t *utf8proc_get_property(int32_t uc) {
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
   options & ~UTF8PROC_LUMP, last_boundclass)
 
-ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufsize,
+DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufsize,
     int options, int *last_boundclass) {
   /* ASSERT: uc >= 0 && uc < 0x110000 */
   const utf8proc_property_t *property;
@@ -351,7 +351,7 @@ ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufsize,
   return 1;
 }
 
-ssize_t utf8proc_decompose(
+DLLEXPORT ssize_t utf8proc_decompose(
   const uint8_t *str, ssize_t strlen,
   int32_t *buffer, ssize_t bufsize, int options
 ) {
@@ -413,7 +413,7 @@ ssize_t utf8proc_decompose(
   return wpos;
 }
 
-ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options) {
+DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options) {
   /* UTF8PROC_NULLTERM option will be ignored, 'length' is never ignored
      ASSERT: 'buffer' has one spare byte of free space at the end! */
   if (options & (UTF8PROC_NLF2LS | UTF8PROC_NLF2PS | UTF8PROC_STRIPCC)) {
@@ -528,7 +528,7 @@ ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options) {
   }
 }
 
-ssize_t utf8proc_map(
+DLLEXPORT ssize_t utf8proc_map(
   const uint8_t *str, ssize_t strlen, uint8_t **dstptr, int options
 ) {
   int32_t *buffer;
@@ -557,28 +557,28 @@ ssize_t utf8proc_map(
   return result;
 }
 
-uint8_t *utf8proc_NFD(const uint8_t *str) {
+DLLEXPORT uint8_t *utf8proc_NFD(const uint8_t *str) {
   uint8_t *retval;
   utf8proc_map(str, 0, &retval, UTF8PROC_NULLTERM | UTF8PROC_STABLE |
     UTF8PROC_DECOMPOSE);
   return retval;
 }
 
-uint8_t *utf8proc_NFC(const uint8_t *str) {
+DLLEXPORT uint8_t *utf8proc_NFC(const uint8_t *str) {
   uint8_t *retval;
   utf8proc_map(str, 0, &retval, UTF8PROC_NULLTERM | UTF8PROC_STABLE |
     UTF8PROC_COMPOSE);
   return retval;
 }
 
-uint8_t *utf8proc_NFKD(const uint8_t *str) {
+DLLEXPORT uint8_t *utf8proc_NFKD(const uint8_t *str) {
   uint8_t *retval;
   utf8proc_map(str, 0, &retval, UTF8PROC_NULLTERM | UTF8PROC_STABLE |
     UTF8PROC_DECOMPOSE | UTF8PROC_COMPAT);
   return retval;
 }
 
-uint8_t *utf8proc_NFKC(const uint8_t *str) {
+DLLEXPORT uint8_t *utf8proc_NFKC(const uint8_t *str) {
   uint8_t *retval;
   utf8proc_map(str, 0, &retval, UTF8PROC_NULLTERM | UTF8PROC_STABLE |
     UTF8PROC_COMPOSE | UTF8PROC_COMPAT);
