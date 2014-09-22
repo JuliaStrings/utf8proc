@@ -81,6 +81,8 @@ enum {false, true};
 #  else
 #    define DLLEXPORT __declspec(dllimport)
 #  endif
+#elif __GNUC__ >= 4
+#  define DLLEXPORT __attribute__ ((visibility("default")))
 #else
 #  define DLLEXPORT
 #endif
