@@ -6,7 +6,7 @@ MAKE=make
 
 # settings
 
-cflags = -O2 -std=c99 -pedantic -Wall -fpic -DLIBRARY_EXPORTS $(CFLAGS)
+cflags = -O2 -std=c99 -pedantic -Wall -fpic -DMOJIBAKE_EXPORTS $(CFLAGS)
 cc = $(CC) $(cflags)
 AR = ar
 

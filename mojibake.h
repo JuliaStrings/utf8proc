@@ -76,7 +76,7 @@ enum {false, true};
 #include <limits.h>
 
 #ifdef _WIN32
-#  ifdef LIBRARY_EXPORTS
+#  ifdef MOJIBAKE_EXPORTS
 #    define DLLEXPORT __declspec(dllexport)
 #  else
 #    define DLLEXPORT __declspec(dllimport)
