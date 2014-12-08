@@ -2,6 +2,7 @@
 
 CURL=curl
 RUBY=ruby
+PERL=perl
 MAKE=make
 
 # settings
@@ -24,7 +25,7 @@ all: c-library
 c-library: libmojibake.a libmojibake.$(SHLIB_EXT)
 
 clean:
-	rm -f utf8proc.o libmojibake.a libmojibake.$(SHLIB_EXT) normtest UnicodeData.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt
+	rm -f utf8proc.o libmojibake.a libmojibake.$(SHLIB_EXT) normtest graphemetest UnicodeData.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt GraphemeBreakTest.txt
 	$(MAKE) -C bench clean
 
 update: utf8proc_data.c.new
@@ -67,8 +68,15 @@ libmojibake.dylib: utf8proc.o
 NormalizationTest.txt:
 	$(CURL) -O http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
 
-normtest: normtest.c utf8proc.o mojibake.h
+GraphemeBreakTest.txt:
+	$(CURL) http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakTest.txt | $(PERL) -pe 's,÷,/,g;s,×,+,g' > $@
+
+normtest: normtest.c utf8proc.o mojibake.h tests.h
 	$(cc) normtest.c utf8proc.o -o normtest
 
-check: normtest NormalizationTest.txt
+graphemetest: graphemetest.c utf8proc.o mojibake.h tests.h
+	$(cc) graphemetest.c utf8proc.o -o graphemetest
+
+check: normtest NormalizationTest.txt graphemetest GraphemeBreakTest.txt
 	./normtest
+	./graphemetest
