@@ -183,6 +183,7 @@ typedef struct utf8proc_property_struct {
   const int32_t *casefold_mapping;
 } utf8proc_property_t;
 
+#define UTF8PROC_CATEGORY_CN  0
 #define UTF8PROC_CATEGORY_LU  1
 #define UTF8PROC_CATEGORY_LL  2
 #define UTF8PROC_CATEGORY_LT  3
@@ -212,7 +213,6 @@ typedef struct utf8proc_property_struct {
 #define UTF8PROC_CATEGORY_CF 27
 #define UTF8PROC_CATEGORY_CS 28
 #define UTF8PROC_CATEGORY_CO 29
-#define UTF8PROC_CATEGORY_CN 30
 #define UTF8PROC_BIDI_CLASS_L    1
 #define UTF8PROC_BIDI_CLASS_LRE  2
 #define UTF8PROC_BIDI_CLASS_LRO  3
@@ -293,7 +293,7 @@ DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t uc);
  *  Returns a pointer to a (constant) struct containing information about
  *  the unicode char with the given code point 'uc'.
  *  If the character is not existent a pointer to a special struct is
- *  returned, where 'category' is a NULL pointer.
+ *  returned, where 'category' is 0 (UTF8PROC_CATEGORY_CN).
  *  WARNING: The parameter 'uc' has to be in the range of 0x0000 to
  *           0x10FFFF, otherwise the program might crash!
  */
