@@ -94,9 +94,13 @@ DLLEXPORT const int8_t utf8proc_utf8class[256] = {
 #define UTF8PROC_BOUNDCLASS_LV       9
 #define UTF8PROC_BOUNDCLASS_LVT     10
 
-
+/* in libmojibake, we append "m" to whatever version of utf8proc
+   we have merged with most recently + whatever increment would
+   correspond to semantic versioning rules.   Currently, we use 1.2m
+   since we started with utf8proc 1.1.6 and added features (Unicode 7
+   support) in a backwards-compatible manner.  */
 DLLEXPORT const char *utf8proc_version(void) {
-  return "1.1.6";
+  return "1.2m";
 }
 
 DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode) {
