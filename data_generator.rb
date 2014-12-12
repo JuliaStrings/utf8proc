@@ -75,13 +75,13 @@ $ignorable_list.each_line do |entry|
   end
 end
 
-$grapheme_extend_list = File.read("DerivedCoreProperties.txt")[/# Derived Property: Grapheme_Extend.*?# Total code points:/m]
-$grapheme_extend = []
-$grapheme_extend_list.each_line do |entry|
-  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
-    $1.hex.upto($2.hex) { |e2| $grapheme_extend << e2 }
-  elsif entry =~ /^[0-9A-F]+/
-    $grapheme_extend << $&.hex
+$grapheme_boundclass_list = File.read("GraphemeBreakProperty.txt")
+$grapheme_boundclass = Hash.new("UTF8PROC_BOUNDCLASS_OTHER")
+$grapheme_boundclass_list.each_line do |entry|
+  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)\s*;\s*([A-Za-z_]+)/
+    $1.hex.upto($2.hex) { |e2| $grapheme_boundclass[e2] = "UTF8PROC_BOUNDCLASS_" + $3.upcase }
+  elsif entry =~ /^([0-9A-F]+)\s*;\s*([A-Za-z_]+)/
+    $grapheme_boundclass[$1.hex] = "UTF8PROC_BOUNDCLASS_" + $2.upcase
   end
 end
 
@@ -161,18 +161,18 @@ class UnicodeChar
     "#{str2c bidi_class, 'BIDI_CLASS'}, " <<
     "#{str2c decomp_type, 'DECOMP_TYPE'}, " <<
     "#{ary2c decomp_mapping}, " <<
-    "#{bidi_mirrored}, " <<
+    "#{ary2c case_folding}, " <<
     "#{uppercase_mapping or -1}, " <<
     "#{lowercase_mapping or -1}, " <<
     "#{titlecase_mapping or -1}, " <<
     "#{comb1_indicies[code] ?
        (comb1_indicies[code]*comb2_indicies.keys.length) : -1
       }, #{comb2_indicies[code] or -1}, " <<
+    "#{bidi_mirrored}, " <<
     "#{$exclusions.include?(code) or $excl_version.include?(code)}, " <<
     "#{$ignorable.include?(code)}, " <<
     "#{%W[Zl Zp Cc Cf].include?(category) and not [0x200C, 0x200D].include?(category)}, " <<
-    "#{$grapheme_extend.include?(code)}, " <<
-    "#{ary2c case_folding}},\n"
+    "#{$grapheme_boundclass[code]}},\n"
   end
 end
 
@@ -295,7 +295,7 @@ end
 $stdout << "};\n\n"
 
 $stdout << "const utf8proc_property_t utf8proc_properties[] = {\n"
-$stdout << "  {0, 0, 0, 0, NULL, false, -1, -1, -1, -1, -1, false},\n"
+$stdout << "  {0, 0, 0, 0, NULL, NULL, -1, -1, -1, -1, -1, false,false,false,false, UTF8PROC_BOUNDCLASS_OTHER},\n"
 properties.each { |line|
   $stdout << line
 }

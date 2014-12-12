@@ -7,7 +7,7 @@ int main(void)
     FILE *f = fopen("GraphemeBreakTest.txt", "r");
     uint8_t src[1024];
     
-    check(f != NULL, "error opening NormalizationTest.txt");
+    check(f != NULL, "error opening GraphemeBreakTest.txt");
     while (getline(&buf, &bufsize, f) > 0) {
         size_t bi = 0, si = 0;
         lineno += 1;
@@ -20,7 +20,7 @@ int main(void)
         while (buf[bi]) {
             bi = skipspaces(buf, bi);
             if (buf[bi] == '/') { /* grapheme break */
-                src[si++] = 0xff;
+                src[si++] = '/';
                 bi++;
             }
             else if (buf[bi] == '+') { /* no break */
@@ -34,8 +34,8 @@ int main(void)
                 while (src[si]) ++si; /* advance to NUL termination */
             }
         }
-        if (si && src[si-1] == 0xff)
-            --si; /* no 0xff after final grapheme */
+        if (si && src[si-1] == '/')
+            --si; /* no break after final grapheme */
         src[si] = 0; /* NUL-terminate */
         
         if (si) {
@@ -44,16 +44,27 @@ int main(void)
             ssize_t glen;
             uint8_t *g; /* utf8proc_map grapheme results */
             while (i < si) {
-                if (src[i] != 0xff)
+                if (src[i] != '/')
                     utf8[j++] = src[i++];
                 else
                     i++;
             }
             glen = utf8proc_map(utf8, j, &g, UTF8PROC_CHARBOUND);
-            check(glen >= 0, "utf8proc_map error = %s",
-                  utf8proc_errmsg(glen));
-            check(!strcmp((char*)g, (char*)src),
-                  "grapheme mismatch: %s vs. %s", (char*)g, (char*)src);
+            if (glen == UTF8PROC_ERROR_INVALIDUTF8) {
+                 /* the test file contains surrogate codepoints, which are only for UTF-16 */
+                 printf("line %zd: ignoring invalid UTF-8 codepoints\n", lineno);
+            }
+            else {
+                 check(glen >= 0, "utf8proc_map error = %s",
+                       utf8proc_errmsg(glen));
+                 for (i = 0; i <= glen; ++i)
+                      if (g[i] == 0xff)
+                           g[i] = '/'; /* easier-to-read output (/ is not in test strings) */
+                 printf("line %zd\n", lineno);
+                 check(!strcmp((char*)g, (char*)src),
+                       "grapheme mismatch: \"%s\" instead of \"%s\"", (char*)g, (char*)src);
+            }
+            free(g);
         }
     }
     fclose(f);

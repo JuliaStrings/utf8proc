@@ -15,3 +15,5 @@ bench/icu
 bench/unistring
 normtest
 graphemetest
+utf8proc_data.c.new
+printproperty

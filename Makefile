@@ -29,15 +29,18 @@ clean:
 	$(MAKE) -C bench clean
 
 update: utf8proc_data.c.new
+	cp -f utf8proc_data.c.new utf8proc_data.c
 
 # real targets
 
-utf8proc_data.c.new: UnicodeData.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt
+utf8proc_data.c.new: data_generator.rb UnicodeData.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt
 	$(RUBY) data_generator.rb < UnicodeData.txt > utf8proc_data.c.new
 
 UnicodeData.txt:
-
 	$(CURL) -O http://www.unicode.org/Public/UNIDATA/UnicodeData.txt
+
+GraphemeBreakProperty.txt:
+	$(CURL) -O http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakProperty.txt
 
 DerivedCoreProperties.txt:
 	$(CURL) -O http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
@@ -72,10 +75,13 @@ GraphemeBreakTest.txt:
 	$(CURL) http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakTest.txt | $(PERL) -pe 's,÷,/,g;s,×,+,g' > $@
 
 normtest: normtest.c utf8proc.o mojibake.h tests.h
-	$(cc) normtest.c utf8proc.o -o normtest
+	$(cc) normtest.c utf8proc.o -o $@
 
 graphemetest: graphemetest.c utf8proc.o mojibake.h tests.h
-	$(cc) graphemetest.c utf8proc.o -o graphemetest
+	$(cc) graphemetest.c utf8proc.o -o $@
+
+printproperty: printproperty.c utf8proc.o mojibake.h tests.h
+	$(cc) printproperty.c utf8proc.o -o $@
 
 check: normtest NormalizationTest.txt graphemetest GraphemeBreakTest.txt
 	./normtest
