@@ -81,19 +81,6 @@ DLLEXPORT const int8_t utf8proc_utf8class[256] = {
 #define UTF8PROC_HANGUL_S_START  0xAC00
 #define UTF8PROC_HANGUL_S_END    0xD7A4
 
-
-#define UTF8PROC_BOUNDCLASS_START    0
-#define UTF8PROC_BOUNDCLASS_OTHER    1
-#define UTF8PROC_BOUNDCLASS_CR       2
-#define UTF8PROC_BOUNDCLASS_LF       3
-#define UTF8PROC_BOUNDCLASS_CONTROL  4
-#define UTF8PROC_BOUNDCLASS_EXTEND   5
-#define UTF8PROC_BOUNDCLASS_L        6
-#define UTF8PROC_BOUNDCLASS_V        7
-#define UTF8PROC_BOUNDCLASS_T        8
-#define UTF8PROC_BOUNDCLASS_LV       9
-#define UTF8PROC_BOUNDCLASS_LVT     10
-
 /* in libmojibake, we append "m" to whatever version of utf8proc
    we have merged with most recently + whatever increment would
    correspond to semantic versioning rules.   Currently, we use 1.2m
@@ -206,6 +193,38 @@ DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t uc) {
   );
 }
 
+/* return whether there is a grapheme break between boundclasses lbc and tbc */
+static bool grapheme_break(int lbc, int tbc) {
+     return 
+          (lbc == UTF8PROC_BOUNDCLASS_START) ? true :
+          (lbc == UTF8PROC_BOUNDCLASS_CR &&
+           tbc == UTF8PROC_BOUNDCLASS_LF) ? false :
+          (lbc >= UTF8PROC_BOUNDCLASS_CR && lbc <= UTF8PROC_BOUNDCLASS_CONTROL) ? true :
+          (tbc >= UTF8PROC_BOUNDCLASS_CR && tbc <= UTF8PROC_BOUNDCLASS_CONTROL) ? true :
+          (tbc == UTF8PROC_BOUNDCLASS_EXTEND) ? false :
+          (lbc == UTF8PROC_BOUNDCLASS_L &&
+           (tbc == UTF8PROC_BOUNDCLASS_L ||
+            tbc == UTF8PROC_BOUNDCLASS_V ||
+            tbc == UTF8PROC_BOUNDCLASS_LV ||
+            tbc == UTF8PROC_BOUNDCLASS_LVT)) ? false :
+          ((lbc == UTF8PROC_BOUNDCLASS_LV ||
+            lbc == UTF8PROC_BOUNDCLASS_V) &&
+           (tbc == UTF8PROC_BOUNDCLASS_V ||
+            tbc == UTF8PROC_BOUNDCLASS_T)) ? false :
+          ((lbc == UTF8PROC_BOUNDCLASS_LVT ||
+            lbc == UTF8PROC_BOUNDCLASS_T) &&
+           tbc == UTF8PROC_BOUNDCLASS_T) ? false :
+          (lbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR &&
+           tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR) ? false :
+          (tbc != UTF8PROC_BOUNDCLASS_SPACINGMARK);
+}
+
+/* return whether there is a grapheme break between codepoints c1 and c2 */
+DLLEXPORT bool utf8proc_grapheme_break(int32_t c1, int32_t c2) {
+     return grapheme_break(utf8proc_get_property(c1)->boundclass,
+                           utf8proc_get_property(c2)->boundclass);
+}
+
 #define utf8proc_decompose_lump(replacement_uc) \
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
   options & ~UTF8PROC_LUMP, last_boundclass)
@@ -302,48 +321,8 @@ DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufs
   }
   if (options & UTF8PROC_CHARBOUND) {
     bool boundary;
-    int tbc, lbc;
-    tbc =
-      (uc == 0x000D) ? UTF8PROC_BOUNDCLASS_CR :
-      (uc == 0x000A) ? UTF8PROC_BOUNDCLASS_LF :
-      ((category == UTF8PROC_CATEGORY_ZL ||
-        category == UTF8PROC_CATEGORY_ZP ||
-        category == UTF8PROC_CATEGORY_CC ||
-        category == UTF8PROC_CATEGORY_CF) &&
-        !(uc == 0x200C || uc == 0x200D)) ? UTF8PROC_BOUNDCLASS_CONTROL :
-      property->extend ? UTF8PROC_BOUNDCLASS_EXTEND :
-      ((uc >= UTF8PROC_HANGUL_L_START && uc < UTF8PROC_HANGUL_L_END) ||
-        uc == UTF8PROC_HANGUL_L_FILLER) ? UTF8PROC_BOUNDCLASS_L :
-      (uc >= UTF8PROC_HANGUL_V_START && uc < UTF8PROC_HANGUL_V_END) ?
-        UTF8PROC_BOUNDCLASS_V :
-      (uc >= UTF8PROC_HANGUL_T_START && uc < UTF8PROC_HANGUL_T_END) ?
-        UTF8PROC_BOUNDCLASS_T :
-      (uc >= UTF8PROC_HANGUL_S_START && uc < UTF8PROC_HANGUL_S_END) ? (
-        ((uc-UTF8PROC_HANGUL_SBASE) % UTF8PROC_HANGUL_TCOUNT == 0) ?
-          UTF8PROC_BOUNDCLASS_LV : UTF8PROC_BOUNDCLASS_LVT
-      ) :
-      UTF8PROC_BOUNDCLASS_OTHER;
-    lbc = *last_boundclass;
-    boundary =
-      (tbc == UTF8PROC_BOUNDCLASS_EXTEND) ? false :
-      (lbc == UTF8PROC_BOUNDCLASS_START) ? true :
-      (lbc == UTF8PROC_BOUNDCLASS_CR &&
-       tbc == UTF8PROC_BOUNDCLASS_LF) ? false :
-      (lbc == UTF8PROC_BOUNDCLASS_CONTROL) ? true :
-      (tbc == UTF8PROC_BOUNDCLASS_CONTROL) ? true :
-      (lbc == UTF8PROC_BOUNDCLASS_L &&
-       (tbc == UTF8PROC_BOUNDCLASS_L ||
-        tbc == UTF8PROC_BOUNDCLASS_V ||
-        tbc == UTF8PROC_BOUNDCLASS_LV ||
-        tbc == UTF8PROC_BOUNDCLASS_LVT)) ? false :
-      ((lbc == UTF8PROC_BOUNDCLASS_LV ||
-        lbc == UTF8PROC_BOUNDCLASS_V) &&
-       (tbc == UTF8PROC_BOUNDCLASS_V ||
-        tbc == UTF8PROC_BOUNDCLASS_T)) ? false :
-      ((lbc == UTF8PROC_BOUNDCLASS_LVT ||
-        lbc == UTF8PROC_BOUNDCLASS_T) &&
-       tbc == UTF8PROC_BOUNDCLASS_T) ? false :
-       true;
+    int tbc = property->boundclass;
+    boundary = grapheme_break(*last_boundclass, tbc);
     *last_boundclass = tbc;
     if (boundary) {
       if (bufsize >= 1) dst[0] = 0xFFFF;

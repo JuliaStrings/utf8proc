@@ -170,17 +170,17 @@ typedef struct utf8proc_property_struct {
   utf8proc_propval_t bidi_class;
   utf8proc_propval_t decomp_type;
   const int32_t *decomp_mapping;
-  unsigned bidi_mirrored:1;
+  const int32_t *casefold_mapping;
   int32_t uppercase_mapping;
   int32_t lowercase_mapping;
   int32_t titlecase_mapping;
   int32_t comb1st_index;
   int32_t comb2nd_index;
+  unsigned bidi_mirrored:1;
   unsigned comp_exclusion:1;
   unsigned ignorable:1;
   unsigned control_boundary:1;
-  unsigned extend:1;
-  const int32_t *casefold_mapping;
+  unsigned boundclass:4;
 } utf8proc_property_t;
 
 #define UTF8PROC_CATEGORY_CN  0
@@ -252,6 +252,21 @@ typedef struct utf8proc_property_struct {
 #define UTF8PROC_DECOMP_TYPE_SQUARE   14
 #define UTF8PROC_DECOMP_TYPE_FRACTION 15
 #define UTF8PROC_DECOMP_TYPE_COMPAT   16
+
+/* values for boundclass property: */
+#define UTF8PROC_BOUNDCLASS_START    0
+#define UTF8PROC_BOUNDCLASS_OTHER    1
+#define UTF8PROC_BOUNDCLASS_CR       2
+#define UTF8PROC_BOUNDCLASS_LF       3
+#define UTF8PROC_BOUNDCLASS_CONTROL  4
+#define UTF8PROC_BOUNDCLASS_EXTEND   5
+#define UTF8PROC_BOUNDCLASS_L        6
+#define UTF8PROC_BOUNDCLASS_V        7
+#define UTF8PROC_BOUNDCLASS_T        8
+#define UTF8PROC_BOUNDCLASS_LV       9
+#define UTF8PROC_BOUNDCLASS_LVT     10
+#define UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR 11
+#define UTF8PROC_BOUNDCLASS_SPACINGMARK 12
 
 DLLEXPORT extern const int8_t utf8proc_utf8class[256];
 
@@ -365,6 +380,12 @@ DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options
  *           entries of the array pointed to by 'str' have to be in the
  *           range of 0x0000 to 0x10FFFF, otherwise the program might
  *           crash!
+ */
+
+DLLEXPORT bool utf8proc_grapheme_break(int32_t c1, int32_t c2);
+/*
+ * Given a pair of consecutive codepoints (c1,c2), return whether a grapheme break is
+ * permitted between them (as defined by the extended grapheme clusters in UAX#29).
  */
 
 DLLEXPORT ssize_t utf8proc_map(
