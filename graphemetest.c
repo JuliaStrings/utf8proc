@@ -60,7 +60,6 @@ int main(void)
                  for (i = 0; i <= glen; ++i)
                       if (g[i] == 0xff)
                            g[i] = '/'; /* easier-to-read output (/ is not in test strings) */
-                 printf("line %zd\n", lineno);
                  check(!strcmp((char*)g, (char*)src),
                        "grapheme mismatch: \"%s\" instead of \"%s\"", (char*)g, (char*)src);
             }

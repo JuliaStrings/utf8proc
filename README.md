@@ -41,9 +41,7 @@ The C library is found in this directory after successful compilation
 and is named `libmojibake.a` (for the static library) and
 `libmojibake.so` (for the dynamic library).
 
-The Unicode version being supported is 7.0.0.  (Grapheme segmentation
-is currently based on version 4.1.0 of Unicode Standard Annex #29, but
-we hope to update this soon.)
+The Unicode version being supported is 7.0.0.
 
 For Unicode normalizations, the following options are used:
 
