@@ -1,10 +1,10 @@
 #include "tests.h"
 
-int main(void)
+int main(int argc, char **argv)
 {
     char *buf = NULL;
     size_t bufsize = 0;
-    FILE *f = fopen("GraphemeBreakTest.txt", "r");
+    FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
     uint8_t src[1024];
     
     check(f != NULL, "error opening GraphemeBreakTest.txt");

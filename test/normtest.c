@@ -7,11 +7,11 @@
     free(src_norm);                                                 \
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
      char *buf = NULL;
      size_t bufsize = 0;
-     FILE *f = fopen("NormalizationTest.txt", "r");
+     FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
      char source[1024], NFC[1024], NFD[1024], NFKC[1024], NFKD[1024];
 
      check(f != NULL, "error opening NormalizationTest.txt");

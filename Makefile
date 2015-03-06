@@ -25,7 +25,7 @@ all: c-library
 c-library: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
 clean:
-	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_EXT) normtest graphemetest UnicodeData.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt GraphemeBreakTest.txt
+	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_EXT) test/normtest test/graphemetest data/UnicodeData.txt data/DerivedCoreProperties.txt data/CompositionExclusions.txt data/CaseFolding.txt data/NormalizationTest.txt data/GraphemeBreakTest.txt
 	$(MAKE) -C bench clean
 
 update: utf8proc_data.c.new
@@ -33,23 +33,23 @@ update: utf8proc_data.c.new
 
 # real targets
 
-utf8proc_data.c.new: data_generator.rb UnicodeData.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt
-	$(RUBY) data_generator.rb < UnicodeData.txt > utf8proc_data.c.new
+utf8proc_data.c.new: data/data_generator.rb data/UnicodeData.txt data/GraphemeBreakProperty.txt data/DerivedCoreProperties.txt data/CompositionExclusions.txt data/CaseFolding.txt
+	(cd data; $(RUBY) data_generator.rb < UnicodeData.txt) > utf8proc_data.c.new
 
-UnicodeData.txt:
-	$(CURL) -O http://www.unicode.org/Public/UNIDATA/UnicodeData.txt
+data/UnicodeData.txt:
+	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/UnicodeData.txt
 
-GraphemeBreakProperty.txt:
-	$(CURL) -O http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakProperty.txt
+data/GraphemeBreakProperty.txt:
+	$(CURL) -o $@ -O http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakProperty.txt
 
-DerivedCoreProperties.txt:
-	$(CURL) -O http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
+data/DerivedCoreProperties.txt:
+	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
 
-CompositionExclusions.txt:
-	$(CURL) -O http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt
+data/CompositionExclusions.txt:
+	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt
 
-CaseFolding.txt:
-	$(CURL) -O http://www.unicode.org/Public/UNIDATA/CaseFolding.txt
+data/CaseFolding.txt:
+	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/CaseFolding.txt
 
 utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
 	$(cc) -c -o utf8proc.o utf8proc.c
@@ -68,21 +68,21 @@ libutf8proc.dylib: utf8proc.o
 
 # Test programs
 
-NormalizationTest.txt:
-	$(CURL) -O http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
+data/NormalizationTest.txt:
+	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
 
-GraphemeBreakTest.txt:
+data/GraphemeBreakTest.txt:
 	$(CURL) http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakTest.txt | $(PERL) -pe 's,÷,/,g;s,×,+,g' > $@
 
-normtest: normtest.c utf8proc.o utf8proc.h tests.h
-	$(cc) normtest.c utf8proc.o -o $@
+test/normtest: test/normtest.c utf8proc.o utf8proc.h test/tests.h
+	$(cc) test/normtest.c utf8proc.o -o $@
 
-graphemetest: graphemetest.c utf8proc.o utf8proc.h tests.h
-	$(cc) graphemetest.c utf8proc.o -o $@
+test/graphemetest: test/graphemetest.c utf8proc.o utf8proc.h test/tests.h
+	$(cc) test/graphemetest.c utf8proc.o -o $@
 
-printproperty: printproperty.c utf8proc.o utf8proc.h tests.h
-	$(cc) printproperty.c utf8proc.o -o $@
+test/printproperty: test/printproperty.c utf8proc.o utf8proc.h test/tests.h
+	$(cc) test/printproperty.c utf8proc.o -o $@
 
-check: normtest NormalizationTest.txt graphemetest GraphemeBreakTest.txt
-	./normtest
-	./graphemetest
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt
+	test/normtest data/NormalizationTest.txt
+	test/graphemetest data/GraphemeBreakTest.txt
