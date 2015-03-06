@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "mojibake.h"
+#include "utf8proc.h"
 
 size_t lineno = 0;
 

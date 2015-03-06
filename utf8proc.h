@@ -22,10 +22,10 @@
 
 
 /*
- *  File name:    mojibake.h (formerly utf8proc.h)
+ *  File name:    utf8proc.h
  *
  *  Description:
- *  Header files for libmojibake, which is a mapping tool for UTF-8 strings
+ *  Header files for utf8proc, which is a mapping tool for UTF-8 strings
  *  with following features:
  *  - decomposing and composing of strings
  *  - replacing compatibility characters with their equivalents
@@ -76,7 +76,7 @@ enum {false, true};
 #include <limits.h>
 
 #ifdef _WIN32
-#  ifdef MOJIBAKE_EXPORTS
+#  ifdef UTF8PROC_EXPORTS
 #    define DLLEXPORT __declspec(dllexport)
 #  else
 #    define DLLEXPORT __declspec(dllimport)

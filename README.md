@@ -1,30 +1,27 @@
-# libmojibake
-[![Build Status](https://travis-ci.org/JuliaLang/libmojibake.png)](https://travis-ci.org/JuliaLang/libmojibake)
+# utf8proc
+[![Build Status](https://travis-ci.org/JuliaLang/utf8proc.png)](https://travis-ci.org/JuliaLang/utf8proc)
 
-[libmojibake](https://github.com/JuliaLang/libmojibake) is a
-development fork of the [utf8proc
-library](http://www.public-software-group.org/utf8proc) from Jan
+[utf8proc](https://github.com/JuliaLang/utf8proc) is a small, clean C
+library that provides Unicode normalization, case-folding, and other
+operations for data in the [UTF-8
+encoding](http://en.wikipedia.org/wiki/UTF-8).  It was [initially
+developed](http://www.public-software-group.org/utf8proc) from Jan
 Behrens and the rest of the [Public Software
 Group](http://www.public-software-group.org/), who deserve *nearly all
-of the credit* for this package: a small, clean C library that
-provides Unicode normalization, case-folding, and other operations for
-data in the [UTF-8 encoding](http://en.wikipedia.org/wiki/UTF-8).  The
-main difference from utf8proc is that the Unicode support in
-libmojibake is more up-to-date (Unicode 7 vs. Unicode 5).
+of the credit* for this package.  With the blessing of the Public
+Software Group, the [Julia developers](http://julialang.org/) have
+taken over development of utf8proc, since the original developers have
+moved to other projects.
 
-The reason for this fork is that utf8proc is used for basic Unicode
-support in the [Julia language](http://julialang.org/) and the Julia
-developers wanted Unicode 7 support and other features, but the Public
-Software Group is currently occupied with other projects.  As we implement
-and test new features in libmojibake, we are contributing patches back
-to utf8proc with the hope that they can be merged upstream.
+(utf8proc is used for basic Unicode
+support in the [Julia language](http://julialang.org/), and the Julia
+developers became involved because they wanted to add Unicode 7 support and other features.)
 
 (The original utf8proc package also includes Ruby and PostgreSQL plug-ins.
-We removed those from libmojibake in order to focus exclusively on the C
-library for the time being.  We will strive to keep API changes to a minimum,
-so libmojibake should still be usable with the old plug-in code.)
+We removed those from utf8proc in order to focus exclusively on the C
+library for the time being, but plan to add them back in or release them as separate packages.)
 
-Like utf8proc, the libmojibake package is licensed under the
+The utf8proc package is licensed under the
 free/open-source [MIT "expat"
 license](http://opensource.org/licenses/MIT) (plus certain Unicode
 data governed by the similarly permissive [Unicode data
@@ -38,8 +35,8 @@ For compilation of the C library run `make`.
 ## General Information ##
 
 The C library is found in this directory after successful compilation
-and is named `libmojibake.a` (for the static library) and
-`libmojibake.so` (for the dynamic library).
+and is named `libutf8proc.a` (for the static library) and
+`libutf8proc.so` (for the dynamic library).
 
 The Unicode version being supported is 7.0.0.
 
@@ -58,10 +55,9 @@ strings, unless you want to allocate memory yourself.
 
 ## To Do ##
 
-See the Github [issues list](https://github.com/JuliaLang/libmojibake/issues).
+See the Github [issues list](https://github.com/JuliaLang/utf8proc/issues).
 
 ## Contact ##
 
 Bug reports, feature requests, and other queries can be filed at
-the [libmojibake issues page on Github](https://github.com/JuliaLang/libmojibake/issues).
-
+the [utf8proc issues page on Github](https://github.com/JuliaLang/utf8proc/issues).

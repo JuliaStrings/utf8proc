@@ -39,7 +39,7 @@
  */
 
 
-#include "mojibake.h"
+#include "utf8proc.h"
 #include "utf8proc_data.c"
 
 
@@ -81,13 +81,11 @@ DLLEXPORT const int8_t utf8proc_utf8class[256] = {
 #define UTF8PROC_HANGUL_S_START  0xAC00
 #define UTF8PROC_HANGUL_S_END    0xD7A4
 
-/* in libmojibake, we append "m" to whatever version of utf8proc
-   we have merged with most recently + whatever increment would
-   correspond to semantic versioning rules.   Currently, we use 1.2m
-   since we started with utf8proc 1.1.6 and added features (Unicode 7
-   support) in a backwards-compatible manner.  */
+/* Should follow semantic-versioning rules (semver.org) based on API
+   compatibility.  (Note that the shared-library version number will
+   be different, being based on ABI compatibility.): */
 DLLEXPORT const char *utf8proc_version(void) {
-  return "1.2m";
+  return "1.2-dev";
 }
 
 DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode) {
