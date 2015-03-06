@@ -1,10 +1,10 @@
-## libmojibake license ##
+## utf8proc license ##
 
-**libmojibake** is a lightly updated version of the **utf8proc**
-library by Jan Behrens and the rest of the Public Software Group, who
-deserve nearly all of the credit for this library.  Like utf8proc,
+**utf8proc** is a software package originally developed
+by Jan Behrens and the rest of the Public Software Group, who
+deserve nearly all of the credit for this library, that is now maintained by the Julia-language developers.  Like the original utf8proc,
 whose copyright and license statements are reproduced below, all new
-work on the libmojibake library is licensed under the [MIT "expat"
+work on the utf8proc library is licensed under the [MIT "expat"
 license](http://opensource.org/licenses/MIT):
 
 *Copyright &copy; 2014 by Steven G. Johnson, Jiahao Chen, Tony Kelman, and other contributors listed in the git history.*
