@@ -6,3 +6,4 @@ notifications:
     email: false
 script:
     - make && make check
+    - make utf8proc_data.c.new && (diff utf8proc_data.c.new utf8proc_data.c > /dev/null)
