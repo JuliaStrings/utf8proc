@@ -5,7 +5,7 @@
 library that provides Unicode normalization, case-folding, and other
 operations for data in the [UTF-8
 encoding](http://en.wikipedia.org/wiki/UTF-8).  It was [initially
-developed](http://www.public-software-group.org/utf8proc) from Jan
+developed](http://www.public-software-group.org/utf8proc) by Jan
 Behrens and the rest of the [Public Software
 Group](http://www.public-software-group.org/), who deserve *nearly all
 of the credit* for this package.  With the blessing of the Public
