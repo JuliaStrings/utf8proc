@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="utf8proc releases">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>utf8proc releases</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/JuliaLang/utf8proc">View on GitHub</a>
+
+          <h1 id="project_title"><a href="../index.html">utf8proc</a> releases</h1>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="utf8proc-v1.1.6.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="utf8proc-v1.1.6.tar.gz">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="utf8proc" class="anchor" href="#utf8proc" aria-hidden="true"><span class="octicon octicon-link"></span></a>utf8proc</h1>
+
+<p>The following are the current and past releases of the <a href="../index.html">utf8proc library</a>.   See also the <a href="https://github.com/JuliaLang/utf8proc">development version of utf8proc on Github.</a> 
+
+<p>The utf8proc package is licensed under the
+free/open-source <a href="http://opensource.org/licenses/MIT">MIT "expat"
+license</a> (plus certain Unicode
+data governed by the similarly permissive <a href="http://www.unicode.org/copyright.html#Exhibit1">Unicode data
+license</a>); please see
+the included <a href="https://github.com/JuliaLang/utf8proc/blob/master/LICENSE.md">LICENSE.md</a> file for more detailed information.</p>
+
+<ul>
+
+<li><a href="utf8proc-v1.1.6.tar.gz">utf8proc-v1.1.6.tar.gz</a> (2013-11-27):
+<ul> 
+   <li>PostgreSQL 9.2 and 9.3 compatibility (lower case 'c' language name)
+</ul>
+
+<li><a href="utf8proc-v1.1.5.tar.gz">utf8proc-v1.1.5.tar.gz</a> (2009-10-16)
+<ul>
+   <li>Use <code>RSTRING_PTR()</code> and <code>RSTRING_LEN()</code> instead of <code>RSTRING()->ptr</code> and <code>RSTRING()->len</code> for ruby-1.9 compatibility (and <code>#define</code> them, if nonexistent)
+   <li>Patches for compatibility with Microsoft Visual Studio
+   <li>Fixes to make utf8proc usable in C++ programs
+</ul>
+
+<li><a href="utf8proc-v1.1.4.tar.gz">utf8proc-v1.1.4.tar.gz</a> (2009-08-19)
+<ul>
+        <li>Replaced C++ style comments for compatibility reasons
+        <li>Added typecasts to suppress compiler warnings
+        <li>Removed redundant source files for ruby-gemfile generation
+        <li>Changed copyright notice for Public Software Group e. V.
+        <li>Minor changes in the README file
+</ul>
+
+<li><a href="utf8proc-v1.1.3.tar.gz">utf8proc-v1.1.3.tar.gz</a>
+<ul>
+        <li>PostgreSQL 8.3 compatibility (use of <code>SET_VARSIZE</code> macro)
+        <li>Added a function <code>utf8proc_version</code> returning a string containing the version number of the library.
+        <li>Included a target <code>libutf8proc.dylib</code> for MacOSX.
+</ul>
+
+<li><a href="utf8proc-v1.1.2.tar.gz">utf8proc-v1.1.2.tar.gz</a>
+<ul>
+        <li>Fixed a serious bug in the data file generator, which caused characters being treated incorrectly, when stripping default ignorable characters or calculating grapheme cluster boundaries.
+</ul>
+
+<li><a href="utf8proc-v1.1.1.tar.gz">utf8proc-v1.1.1.tar.gz</a>
+<ul>
+        <li>Changed license from BSD to MIT style.
+        <li>Added a new function <code>utf8proc_codepoint_valid</code> to the C library.
+        <li>Changed compiler flags in <code>Makefile</code> from <code>-g -O0</code> to <code>-O2</code>
+        <li>The ruby script, which was used to build the <code>utf8proc_data.c<code/> file, is now included in the distribution.
+        <li>Added a new PostgreSQL function unistrip, which behaves like unifold, but also removes all character marks (e.g. accents).
+</ul>
+
+
+<li><a href="utf8proc-v1.0.3.tar.gz">utf8proc-v1.0.3.tar.gz</a>
+<ul>
+        <li>Fixed a bug in the ruby library, which caused an error, when splitting an empty string at grapheme cluster boundaries (method <code>String#utf8chars</code>).
+</ul>
+
+<li><a href="utf8proc-v1.0.2.tar.gz">utf8proc-v1.0.2.tar.gz</a>
+<ul>
+        <li>added support for PostgreSQL version 8.2
+        <li>included a check in <code>Integer#utf8</code>, which raises an exception, if the given code-point is invalid because of being too high (this was missing yet)
+</ul>
+
+<li><a href="utf8proc-v1.0.1.tar.gz">utf8proc-v1.0.1.tar.gz</a>
+<ul>
+        <li>included a gem file for the ruby version of the library
+</ul>
+
+<li><a href="utf8proc-v1.0.tar.gz">utf8proc-v1.0.tar.gz</a>
+<ul>
+        <li>added the <code>LUMP</code> option, which lumps certain characters together (see <code>lump.txt</code>) (also used for the PostgreSQL <code>unifold</code> function)
+        <li>added the <code>STRIPMARK</code> option, which strips marking characters (or marks of composed characters)
+        <li>deprecated ruby method <code>String#char_ary</code> in favour of <code>String#utf8chars</code>
+</ul>
+
+<li><a href="utf8proc-v0.3.tar.gz">utf8proc-v0.3.tar.gz</a>
+<ul>
+    <li>added support to mark the beginning of a grapheme cluster with <code>0xFF</code> (option: <code>CHARBOUND</code>)
+    <li>added the ruby method <code>String#chars</code>, which returns an array of UTF-8 encoded grapheme clusters
+    <li>added <code>NLF2LF</code> transformation in postgresql <code>unifold</code> function
+    <li>added the <code>DECOMPOSE</code> option, if you neither use <code>COMPOSE</code> or <code>DECOMPOSE</code>, no normalization will be performed (different from previous versions)
+    <li>using integer constants rather than C-strings for character properties
+    <li>fixed (hopefully) a problem with the ruby library on Mac OS X, which occured when compiler optimization was switched on
+    <li>changed normalization from NFC to NFKC for postgresql <code>unifold</code> function
+</ul>
+
+<li><a href="utf8proc-v0.2.tar.gz">utf8proc-v0.2.tar.gz</a>
+<ul>
+        <li>added <code>-fpic</code> compiler flag in <code>Makefile</code>
+        <li>fixed bug in the C code for the ruby library (usage of non-existent function)
+        <li>changed behaviour of PostgreSQL function to return <code>NULL</code> in case of invalid input, rather than raising an exceptional condition
+        <li>improved efficiency of PostgreSQL function (no transformation to C string is done)
+</ul>
+
+<li><a href="utf8proc-v0.1.tar.gz">utf8proc-v0.1.tar.gz</a> (2006-06-02): Initial public release.
+
+</ul> <!-- end releases -->
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">utf8proc maintained by <a href="https://github.com/JuliaLang">JuliaLang</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
