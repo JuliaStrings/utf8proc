@@ -12,10 +12,10 @@ INSTALL=install
 cflags = -O2 -std=c99 -pedantic -Wall -fpic -DUTF8PROC_EXPORTS $(CFLAGS)
 cc = $(CC) $(cflags)
 
-# shared-library version MAJOR.MINOR.RELEASE ... this may be *different*
+# shared-library version MAJOR.MINOR.PATCH ... this may be *different*
 # from the utf8proc version number because it indicates ABI compatibility,
 # not API compatibility: MAJOR should be incremented whenever *binary*
-# compatibility is broken, even if the API is backward-compatibile
+# compatibility is broken, even if the API is backward-compatible
 MAJOR=1
 MINOR=2
 PATCH=0
