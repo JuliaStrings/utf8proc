@@ -18,7 +18,7 @@ cc = $(CC) $(cflags)
 # compatibility is broken, even if the API is backward-compatibile
 MAJOR=1
 MINOR=2
-RELEASE=0
+PATCH=0
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
@@ -26,7 +26,7 @@ ifeq ($(OS),Darwin) # MacOS X
   SHLIB_VERS_EXT = $(MAJOR).dylib
 else # GNU/Linux, at least (Windows should probably use cmake)
   SHLIB_EXT = so
-  SHLIB_VERS_EXT = so.$(MAJOR).$(MINOR).$(REVISION)
+  SHLIB_VERS_EXT = so.$(MAJOR).$(MINOR).$(PATCH)
 endif
 
 # installation directories (for 'make install')
@@ -74,15 +74,15 @@ libutf8proc.a: utf8proc.o
 	rm -f libutf8proc.a
 	$(AR) rs libutf8proc.a utf8proc.o
 
-libutf8proc.so.$(MAJOR).$(MINOR).$(REVISION): utf8proc.o
-	$(cc) -shared -o $@ -soname libutf8proc.so.$(MAJOR) utf8proc.o
+libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH): utf8proc.o
+	$(cc) -shared -o $@ -Wl,-soname -Wl,libutf8proc.so.$(MAJOR) utf8proc.o
 	chmod a-x $@
 
-libutf8proc.so: libutf8proc.so.$(MAJOR).$(MINOR).$(REVISION)
-	ln -s libutf8proc.so.$(MAJOR).$(MINOR).$(REVISION) $@
+libutf8proc.so: libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH)
+	ln -f -s libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH) $@
 
 libutf8proc.$(MAJOR).dylib: utf8proc.o
-	$(cc) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(REVISION)
+	$(cc) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
 
 libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 	ln -s libutf8proc.$(MAJOR).dylib $@
