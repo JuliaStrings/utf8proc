@@ -11,7 +11,7 @@ int main(int argc, char **argv)
           check(sscanf(argv[i],"%x",&c) == 1, "invalid hex input %s", argv[i]);
           const utf8proc_property_t *p = utf8proc_get_property(c);
           printf("U+%s:\n"
-                 "  category = %d\n"
+                 "  category = %s\n"
                  "  combining_class = %d\n"
                  "  bidi_class = %d\n"
                  "  decomp_type = %d\n"
@@ -24,9 +24,10 @@ int main(int argc, char **argv)
                  "  comp_exclusion = %d\n"
                  "  ignorable = %d\n"
                  "  control_boundary = %d\n"
-                 "  boundclass = %d\n",
+                 "  boundclass = %d\n"
+                 "  charwidth = %d\n",
                  argv[i],
-                 p->category,
+                 utf8proc_category_string(c),
                  p->combining_class,
                  p->bidi_class,
                  p->decomp_type,
@@ -39,7 +40,8 @@ int main(int argc, char **argv)
                  p->comp_exclusion,
                  p->ignorable,
                  p->control_boundary,
-                 p->boundclass);
+                 p->boundclass,
+                 utf8proc_charwidth(c));
      }
      return 0;
 }

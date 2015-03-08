@@ -4,15 +4,14 @@ compiler:
  - clang
 notifications:
     email: false
+before_install:
+  - sudo add-apt-repository ppa:staticfloat/julia-deps -y
+  - sudo add-apt-repository ppa:staticfloat/juliareleases -y
+  - sudo apt-get update -qq -y
+  - sudo apt-get install libpcre3-dev julia fontforge -y
 script:
     - make prefix=`pwd`/local install
     - make check
-    - make utf8proc_data.c.new && (diff utf8proc_data.c.new utf8proc_data.c > /dev/null)
-    - mkdir build_static
-    - cd build_static
-    - cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON
-    - make
-    - mkdir ../build_shared
-    - cd ../build_shared
-    - cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON
-    - make
+    - make data && (diff data/utf8proc_data.c.new utf8proc_data.c > /dev/null)
+    - (mkdir build_static && cd build_static && cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON && make)
+    - (mkdir build_shared && cd build_shared && cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON && make)

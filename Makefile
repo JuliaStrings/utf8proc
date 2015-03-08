@@ -1,9 +1,6 @@
 # libutf8proc Makefile
 
 # programs
-CURL=curl
-RUBY=ruby
-PERL=perl
 MAKE=make
 AR=ar
 INSTALL=install
@@ -37,36 +34,24 @@ includedir=$(prefix)/include
 
 # meta targets
 
-all: c-library
+.PHONY: all, clean, update, data
 
-c-library: libutf8proc.a libutf8proc.$(SHLIB_EXT)
+all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
 clean:
-	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT) test/normtest test/graphemetest data/UnicodeData.txt data/DerivedCoreProperties.txt data/CompositionExclusions.txt data/CaseFolding.txt data/NormalizationTest.txt data/GraphemeBreakTest.txt
+	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT) test/normtest test/graphemetest test/printproperty test/charwidth
 	$(MAKE) -C bench clean
+	$(MAKE) -C data clean
 
-update: utf8proc_data.c.new
-	cp -f utf8proc_data.c.new utf8proc_data.c
+data: data/utf8proc_data.c.new
+
+update: data/utf8proc_data.c.new
+	cp -f data/utf8proc_data.c.new utf8proc_data.c
 
 # real targets
 
-utf8proc_data.c.new: data/data_generator.rb data/UnicodeData.txt data/GraphemeBreakProperty.txt data/DerivedCoreProperties.txt data/CompositionExclusions.txt data/CaseFolding.txt
-	(cd data; $(RUBY) data_generator.rb < UnicodeData.txt) > utf8proc_data.c.new
-
-data/UnicodeData.txt:
-	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/UnicodeData.txt
-
-data/GraphemeBreakProperty.txt:
-	$(CURL) -o $@ -O http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakProperty.txt
-
-data/DerivedCoreProperties.txt:
-	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
-
-data/CompositionExclusions.txt:
-	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt
-
-data/CaseFolding.txt:
-	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/CaseFolding.txt
+data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.rb data/charwidths.jl
+	$(MAKE) -C data utf8proc_data.c.new
 
 utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
 	$(cc) -c -o utf8proc.o utf8proc.c
@@ -86,7 +71,7 @@ libutf8proc.$(MAJOR).dylib: utf8proc.o
 	$(cc) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
 
 libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
-	ln -s libutf8proc.$(MAJOR).dylib $@
+	ln -f -s libutf8proc.$(MAJOR).dylib $@
 
 install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT)
 	mkdir -m 755 -p $(includedir)
@@ -99,10 +84,10 @@ install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT)
 # Test programs
 
 data/NormalizationTest.txt:
-	$(CURL) -o $@ -O http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
+	$(MAKE) -C data NormalizationTest.txt
 
 data/GraphemeBreakTest.txt:
-	$(CURL) http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakTest.txt | $(PERL) -pe 's,÷,/,g;s,×,+,g' > $@
+	$(MAKE) -C data GraphemeBreakTest.txt
 
 test/normtest: test/normtest.c utf8proc.o utf8proc.h test/tests.h
 	$(cc) test/normtest.c utf8proc.o -o $@
@@ -113,6 +98,10 @@ test/graphemetest: test/graphemetest.c utf8proc.o utf8proc.h test/tests.h
 test/printproperty: test/printproperty.c utf8proc.o utf8proc.h test/tests.h
 	$(cc) test/printproperty.c utf8proc.o -o $@
 
-check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt
+test/charwidth: test/charwidth.c utf8proc.o utf8proc.h test/tests.h
+	$(cc) test/charwidth.c utf8proc.o -o $@
+
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/charwidth
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
+	test/charwidth

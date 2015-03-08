@@ -223,6 +223,21 @@ DLLEXPORT bool utf8proc_grapheme_break(int32_t c1, int32_t c2) {
                            utf8proc_get_property(c2)->boundclass);
 }
 
+/* return a character width analogous to wcwidth (except portable and
+   hopefully less buggy than most system wcwidth functions). */
+DLLEXPORT int utf8proc_charwidth(int32_t c) {
+     return utf8proc_get_property(c)->charwidth;
+}
+
+DLLEXPORT int utf8proc_category(int32_t c) {
+     return utf8proc_get_property(c)->category;
+}
+
+DLLEXPORT const char *utf8proc_category_string(int32_t c) {
+     static const char s[][3] = {"Cn","Lu","Ll","Lt","Lm","Lo","Mn","Mc","Me","Nd","Nl","No","Pc","Pd","Ps","Pe","Pi","Pf","Po","Sm","Sc","Sk","So","Zs","Zl","Zp","Cc","Cf","Cs","Co"};
+     return s[utf8proc_category(c)];
+}
+
 #define utf8proc_decompose_lump(replacement_uc) \
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
   options & ~UTF8PROC_LUMP, last_boundclass)

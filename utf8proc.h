@@ -181,6 +181,7 @@ typedef struct utf8proc_property_struct {
   unsigned ignorable:1;
   unsigned control_boundary:1;
   unsigned boundclass:4;
+  unsigned charwidth:2;
 } utf8proc_property_t;
 
 #define UTF8PROC_CATEGORY_CN  0
@@ -387,6 +388,21 @@ DLLEXPORT bool utf8proc_grapheme_break(int32_t c1, int32_t c2);
  * Given a pair of consecutive codepoints (c1,c2), return whether a grapheme break is
  * permitted between them (as defined by the extended grapheme clusters in UAX#29).
  */
+
+DLLEXPORT int utf8proc_charwidth(int32_t c);
+/* Given a codepoint c, return a character width analogous to wcwidth(c),
+   except that a width of 0 is returned for non-printable characters
+   instead of -1 as in wcwidth.
+
+   If you want to check for particular types of non-printable characters,
+   (analogous to isprint or iscntrl), use utf8proc_category(c). */
+
+DLLEXPORT int utf8proc_category(int32_t c);
+/* Return the Unicode character category for c (one of the
+   UTF8PROC_CATEGORY_* constants.) */
+
+DLLEXPORT const char *utf8proc_category_string(int32_t c);
+/* Return the two-letter Unicode category string for c (e.g. "Lu" or "Co"). */
 
 DLLEXPORT ssize_t utf8proc_map(
   const uint8_t *str, ssize_t strlen, uint8_t **dstptr, int options
