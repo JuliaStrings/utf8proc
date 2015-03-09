@@ -16,6 +16,7 @@ cc = $(CC) $(cflags)
 # from the utf8proc version number because it indicates ABI compatibility,
 # not API compatibility: MAJOR should be incremented whenever *binary*
 # compatibility is broken, even if the API is backward-compatible
+# Be sure to also update these in CMakeLists.txt!
 MAJOR=1
 MINOR=2
 PATCH=0

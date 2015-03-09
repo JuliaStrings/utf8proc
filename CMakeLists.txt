@@ -6,6 +6,11 @@ disallow_intree_builds()
 
 project (utf8proc C)
 
+# Be sure to also update these in Makefile!
+set(SO_MAJOR 1)
+set(SO_MINOR 2)
+set(SO_PATCH 0)
+
 add_definitions (
   -DUTF8PROC_EXPORTS
 )
@@ -19,4 +24,8 @@ add_library (utf8proc
   utf8proc.h
 )
 
-set_property (TARGET utf8proc PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_target_properties (utf8proc PROPERTIES
+  POSITION_INDEPENDENT_CODE ON
+  VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
+  SOVERSION ${SO_MAJOR}
+)
