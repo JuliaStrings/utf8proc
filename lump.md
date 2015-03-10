@@ -1,3 +1,4 @@
+```
 U+0020      <-- all space characters (general category Zs)
 U+0027  '   <-- left/right single quotation mark U+2018..2019,
                 modifier letter apostrophe U+02BC,
@@ -23,4 +24,4 @@ U+005F  _   <-- all connector characters (general category Pc),
 U+0060  `   <-- modifier letter grave accent U+02CB
 U+007C  |   <-- divides U+2223
 U+007E  ~   <-- tilde operator U+223C
-
+```

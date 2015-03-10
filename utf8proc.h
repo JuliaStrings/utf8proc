@@ -140,7 +140,7 @@ extern "C" {
  *             is representing a single grapheme cluster (see UAX#29).
  *  LUMP:      Lumps certain characters together
  *             (e.g. HYPHEN U+2010 and MINUS U+2212 to ASCII "-").
- *             (See lump.txt for details.)
+ *             (See lump.md for details.)
  *             If NLF2LF is set, this includes a transformation of
  *             paragraph and line separators to ASCII line-feed (LF).
  *  STRIPMARK: Strips all character markings

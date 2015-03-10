@@ -105,7 +105,7 @@ Release of version 1.0.1
 
 2006-09-17:
 
-- added the `LUMP` option, which lumps certain characters together (see `lump.txt`) (also used for the PostgreSQL `unifold` function)
+- added the `LUMP` option, which lumps certain characters together (see `lump.md`) (also used for the PostgreSQL `unifold` function)
 - added the `STRIPMARK` option, which strips marking characters (or marks of composed characters)
 - deprecated ruby method `String#char_ary` in favour of `String#utf8chars`
 

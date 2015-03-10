@@ -8,8 +8,8 @@
 *.dll
 *.dylib
 *.dSYM
-*.txt
 *.out
+data/*.txt
 bench/bench
 bench/icu
 bench/unistring
