@@ -85,14 +85,23 @@ $grapheme_boundclass_list.each_line do |entry|
   end
 end
 
+$charwidth_list = File.read("CharWidths.txt")
+$charwidth = Hash.new(0)
+$charwidth_list.each_line do |entry|
+  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)\s*;\s*([0-9]+)/
+    $1.hex.upto($2.hex) { |e2| $charwidth[e2] = $3.to_i }
+  elsif entry =~ /^([0-9A-F]+)\s*;\s*([0-9]+)/
+    $charwidth[$1.hex] = $2.to_i
+  end
+end
+
 $exclusions = File.read("CompositionExclusions.txt")[/# \(1\) Script Specifics.*?# Total code points:/m]
 $exclusions = $exclusions.chomp.split("\n").collect { |e| e.hex }
 
 $excl_version = File.read("CompositionExclusions.txt")[/# \(2\) Post Composition Version precomposed characters.*?# Total code points:/m]
 $excl_version = $excl_version.chomp.split("\n").collect { |e| e.hex }
 
-$case_folding_string = File.open("CaseFolding.txt").read
-
+$case_folding_string = File.open("CaseFolding.txt", :encoding => 'utf-8').read
 $case_folding = {}
 $case_folding_string.chomp.split("\n").each do |line|
   next unless line =~ /([0-9A-F]+); [CFS]; ([0-9A-F ]+);/i
@@ -172,7 +181,8 @@ class UnicodeChar
     "#{$exclusions.include?(code) or $excl_version.include?(code)}, " <<
     "#{$ignorable.include?(code)}, " <<
     "#{%W[Zl Zp Cc Cf].include?(category) and not [0x200C, 0x200D].include?(category)}, " <<
-    "#{$grapheme_boundclass[code]}},\n"
+    "#{$grapheme_boundclass[code]}, " <<
+    "#{$charwidth[code]}},\n"
   end
 end
 
@@ -295,7 +305,7 @@ end
 $stdout << "};\n\n"
 
 $stdout << "const utf8proc_property_t utf8proc_properties[] = {\n"
-$stdout << "  {0, 0, 0, 0, NULL, NULL, -1, -1, -1, -1, -1, false,false,false,false, UTF8PROC_BOUNDCLASS_OTHER},\n"
+$stdout << "  {0, 0, 0, 0, NULL, NULL, -1, -1, -1, -1, -1, false,false,false,false, UTF8PROC_BOUNDCLASS_OTHER, 0},\n"
 properties.each { |line|
   $stdout << line
 }

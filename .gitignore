@@ -10,6 +10,8 @@
 *.dSYM
 *.out
 data/*.txt
+data/*.ttf
+data/*.sfd
 bench/bench
 bench/icu
 bench/unistring
@@ -17,3 +19,4 @@ normtest
 graphemetest
 utf8proc_data.c.new
 printproperty
+charwidth
