@@ -1,8 +1,28 @@
-# libutf8proc release history #
-
-No releases so far.
-
 # utf8proc release history #
+
+## Version 1.2-dev ##
+
+- Updated for Unicode 7.0.
+
+- New function `utf8proc_grapheme_break(c1,c2)` that returns whether
+  there is a grapheme break between `c1` and `c2`.
+
+- New function `utf8proc_charwidth(c)` that returns the number of
+  column-positions that should be required for `c`; essentially a
+  portable replacment for `wcwidth(c)`.
+
+- New function `utf8proc_category(c)` that returns the Unicode
+  category of `c` (as one of the constants `UTF8PROC_CATEGORY_xx`).
+
+- New function `utf8proc_category_string(c)` that returns the Unicode
+  category of `c` as a two-character string.
+
+- `cmake` script `CMakeLists.txt`, in addition to `Makefile`, for
+  easier compilation on Windows.
+
+- The shared library is now versioned (e.g. has a soname on GNU/Linux).
+
+- C++/MSVC compatibility.
 
 ## Version 1.1.6 ##
 

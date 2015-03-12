@@ -398,7 +398,8 @@ DLLEXPORT int utf8proc_category(int32_t c);
    UTF8PROC_CATEGORY_* constants.) */
 
 DLLEXPORT const char *utf8proc_category_string(int32_t c);
-/* Return the two-letter Unicode category string for c (e.g. "Lu" or "Co"). */
+/* Return the two-letter (nul-terminated) Unicode category string for
+   c (e.g. "Lu" or "Co"). */
 
 DLLEXPORT ssize_t utf8proc_map(
   const uint8_t *str, ssize_t strlen, uint8_t **dstptr, int options
