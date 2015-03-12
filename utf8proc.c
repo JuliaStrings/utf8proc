@@ -182,13 +182,18 @@ DLLEXPORT ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst) {
   } else return 0;
 }
 
-DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t uc) {
+/* internal "unsafe" version that does not check whether uc is in range */
+static const utf8proc_property_t *get_property(int32_t uc) {
   /* ASSERT: uc >= 0 && uc < 0x110000 */
   return utf8proc_properties + (
     utf8proc_stage2table[
       utf8proc_stage1table[uc >> 8] + (uc & 0xFF)
     ]
   );
+}
+
+DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t uc) {
+     return uc < 0 || uc >= 0x110000 ? utf8proc_properties : get_property(uc);
 }
 
 /* return whether there is a grapheme break between boundclasses lbc and tbc */
@@ -242,13 +247,12 @@ DLLEXPORT const char *utf8proc_category_string(int32_t c) {
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
   options & ~UTF8PROC_LUMP, last_boundclass)
 
-DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufsize,
-    int options, int *last_boundclass) {
-  /* ASSERT: uc >= 0 && uc < 0x110000 */
+DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufsize, int options, int *last_boundclass) {
   const utf8proc_property_t *property;
   utf8proc_propval_t category;
   int32_t hangul_sindex;
-  property = utf8proc_get_property(uc);
+  if (uc < 0 || uc >= 0x110000) return UTF8PROC_ERROR_NOTASSIGNED;
+  property = get_property(uc);
   category = property->category;
   hangul_sindex = uc - UTF8PROC_HANGUL_SBASE;
   if (options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) {
@@ -394,8 +398,8 @@ DLLEXPORT ssize_t utf8proc_decompose(
       const utf8proc_property_t *property1, *property2;
       uc1 = buffer[pos];
       uc2 = buffer[pos+1];
-      property1 = utf8proc_get_property(uc1);
-      property2 = utf8proc_get_property(uc2);
+      property1 = get_property(uc1);
+      property2 = get_property(uc2);
       if (property1->combining_class > property2->combining_class &&
           property2->combining_class > 0) {
         buffer[pos] = uc2;
@@ -453,7 +457,7 @@ DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options
     int32_t composition;
     for (rpos = 0; rpos < length; rpos++) {
       current_char = buffer[rpos];
-      current_property = utf8proc_get_property(current_char);
+      current_property = get_property(current_char);
       if (starter && current_property->combining_class > max_combining_class) {
         /* combination perhaps possible */
         int32_t hangul_lindex;
@@ -482,7 +486,7 @@ DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options
           }
         }
         if (!starter_property) {
-          starter_property = utf8proc_get_property(*starter);
+          starter_property = get_property(*starter);
         }
         if (starter_property->comb1st_index >= 0 &&
             current_property->comb2nd_index >= 0) {
@@ -491,7 +495,7 @@ DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options
             current_property->comb2nd_index
           ];
           if (composition >= 0 && (!(options & UTF8PROC_STABLE) ||
-              !(utf8proc_get_property(composition)->comp_exclusion))) {
+              !(get_property(composition)->comp_exclusion))) {
             *starter = composition;
             starter_property = NULL;
             continue;

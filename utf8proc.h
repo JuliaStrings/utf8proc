@@ -310,8 +310,6 @@ DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t uc);
  *  the unicode char with the given code point 'uc'.
  *  If the character is not existent a pointer to a special struct is
  *  returned, where 'category' is 0 (UTF8PROC_CATEGORY_CN).
- *  WARNING: The parameter 'uc' has to be in the range of 0x0000 to
- *           0x10FFFF, otherwise the program might crash!
  */
 
 DLLEXPORT ssize_t utf8proc_decompose_char(
@@ -338,8 +336,6 @@ DLLEXPORT ssize_t utf8proc_decompose_char(
  *  If the number of written chars would be bigger than 'bufsize',
  *  the buffer (up to 'bufsize') has inpredictable data, and the needed
  *  buffer size is returned.
- *  WARNING: The parameter 'uc' has to be in the range of 0x0000 to
- *           0x10FFFF, otherwise the program might crash!
  */
 
 DLLEXPORT ssize_t utf8proc_decompose(
