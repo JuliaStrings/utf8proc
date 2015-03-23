@@ -12,6 +12,7 @@
 data/*.txt
 data/*.ttf
 data/*.sfd
+/docs/
 bench/bench
 bench/icu
 bench/unistring

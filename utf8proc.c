@@ -234,7 +234,7 @@ DLLEXPORT int utf8proc_charwidth(int32_t c) {
      return utf8proc_get_property(c)->charwidth;
 }
 
-DLLEXPORT int utf8proc_category(int32_t c) {
+DLLEXPORT utf8proc_category_t utf8proc_category(int32_t c) {
      return utf8proc_get_property(c)->category;
 }
 
@@ -247,7 +247,7 @@ DLLEXPORT const char *utf8proc_category_string(int32_t c) {
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
   options & ~UTF8PROC_LUMP, last_boundclass)
 
-DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufsize, int options, int *last_boundclass) {
+DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufsize, utf8proc_option_t options, int *last_boundclass) {
   const utf8proc_property_t *property;
   utf8proc_propval_t category;
   int32_t hangul_sindex;
@@ -353,7 +353,7 @@ DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufs
 
 DLLEXPORT ssize_t utf8proc_decompose(
   const uint8_t *str, ssize_t strlen,
-  int32_t *buffer, ssize_t bufsize, int options
+  int32_t *buffer, ssize_t bufsize, utf8proc_option_t options
 ) {
   /* strlen will be ignored, if UTF8PROC_NULLTERM is set in options */
   ssize_t wpos = 0;
@@ -413,7 +413,7 @@ DLLEXPORT ssize_t utf8proc_decompose(
   return wpos;
 }
 
-DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options) {
+DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, utf8proc_option_t options) {
   /* UTF8PROC_NULLTERM option will be ignored, 'length' is never ignored
      ASSERT: 'buffer' has one spare byte of free space at the end! */
   if (options & (UTF8PROC_NLF2LS | UTF8PROC_NLF2PS | UTF8PROC_STRIPCC)) {
@@ -529,7 +529,7 @@ DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, int options
 }
 
 DLLEXPORT ssize_t utf8proc_map(
-  const uint8_t *str, ssize_t strlen, uint8_t **dstptr, int options
+  const uint8_t *str, ssize_t strlen, uint8_t **dstptr, utf8proc_option_t options
 ) {
   int32_t *buffer;
   ssize_t result;
