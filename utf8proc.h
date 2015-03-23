@@ -24,10 +24,11 @@
 /** 
  * @mainpage
  *
- * uf8proc is a mapping tool for UTF-8 strings with the following features:
+ * uf8proc is a tool for processing UTF-8 strings, with the following features:
  *
  * - decomposing and composing of strings
  * - replacing compatibility characters with their equivalents
+ * - grapheme segmentation
  * - stripping of "default ignorable characters"
  *   like SOFT-HYPHEN or ZERO-WIDTH-SPACE
  * - folding of certain characters for string comparison
@@ -40,9 +41,10 @@
  *   or to the unicode chararacters for paragraph separation (PS)
  *   or line separation (LS).
  * - unicode case folding (for case insensitive string comparisons)
- * - rejection of illegal UTF-8 data
+ * - rejection of invalid UTF-8 data
  *   (i.e. UTF-8 encoded UTF-16 surrogates)
  * - support for korean hangul characters
+ * - character widths
  *
  * Unicode Version 7.0.0 is supported.
  *
