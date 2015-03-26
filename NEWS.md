@@ -26,6 +26,10 @@
 
 - C++/MSVC compatibility.
 
+- Most `#defined` constants are now `enums`.
+
+- Doxygen-formatted documentation.
+
 ## Version 1.1.6 ##
 
 2013-11-27:
