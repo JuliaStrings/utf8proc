@@ -24,31 +24,27 @@
 /** 
  * @mainpage
  *
- * uf8proc is a tool for processing UTF-8 strings, with the following features:
+ * utf8proc is a free/open-source (MIT/expat licensed) C library
+ * providing Unicode normalization, case-folding, and other operations
+ * for strings in the UTF-8 encoding, supporting Unicode version
+ * 7.0.0.  See the utf8proc home page (http://julialang.org/utf8proc/)
+ * for downloads and other information, or the source code on github
+ * (https://github.com/JuliaLang/utf8proc).
  *
- * - decomposing and composing of strings
- * - replacing compatibility characters with their equivalents
- * - grapheme segmentation
- * - stripping of "default ignorable characters"
- *   like SOFT-HYPHEN or ZERO-WIDTH-SPACE
- * - folding of certain characters for string comparison
- *   (e.g. HYPHEN U+2010 and MINUS U+2212 to ASCII "-")
- *   (see "LUMP" option)
- * - optional rejection of strings containing non-assigned code points
- * - stripping of control characters
- * - stripping of character marks (accents, etc.)
- * - transformation of LF, CRLF, CR and NEL to line-feed (LF)
- *   or to the unicode chararacters for paragraph separation (PS)
- *   or line separation (LS).
- * - unicode case folding (for case insensitive string comparisons)
- * - rejection of invalid UTF-8 data
- *   (i.e. UTF-8 encoded UTF-16 surrogates)
- * - support for korean hangul characters
- * - character widths
+ * For the utf8proc API documentation, see: @ref utf8proc.h
  *
- * Unicode Version 7.0.0 is supported.
+ * The features of utf8proc include:
  *
- * See @ref utf8proc.h for the API.
+ * - Transformation of strings (@ref utf8proc_map) to:
+ *    - decompose (@ref UTF8PROC_DECOMPOSE) or compose (@ref UTF8PROC_COMPOSE) Unicode combining characters (http://en.wikipedia.org/wiki/Combining_character)
+ *    - canonicalize Unicode compatibility characters (@ref UTF8PROC_COMPAT)
+ *    - strip "ignorable" (@ref UTF8PROC_IGNORE) characters, control characters (@ref UTF8PROC_STRIPCC), or combining characters such as accents (@ref UTF8PROC_STRIPMARK)
+ *    - case-folding (@ref UTF8PROC_CASEFOLD)
+ * - Unicode normalization: @ref utf8proc_NFD, @ref utf8proc_NFC, @ref utf8proc_NFKD, @ref utf8proc_NFKC
+ * - Detecting grapheme boundaries (@ref utf8proc_grapheme_break and @ref UTF8PROC_CHARBOUND)
+ * - Character-width computation: @ref utf8proc_charwidth
+ * - Classification of characters by Unicode category: @ref utf8proc_category and @ref utf8proc_category_string
+ * - Encode (@ref utf8proc_encode_char) and decode (@ref utf8proc_iterate) Unicode codepoints to/from UTF-8.
  */
 
 /** @file */
@@ -135,7 +131,7 @@ typedef enum {
   UTF8PROC_COMPOSE   = (1<<3),
   /** Return a result with decomposed characters. */
   UTF8PROC_DECOMPOSE = (1<<4),
-  /** Strip "default ignorable characters". */
+  /** Strip "default ignorable characters" such as SOFT-HYPHEN or ZERO-WIDTH-SPACE. */
   UTF8PROC_IGNORE    = (1<<5),
   /** Return an error, if the input contains unassigned code points. */
   UTF8PROC_REJECTNA  = (1<<6),
@@ -547,15 +543,21 @@ DLLEXPORT ssize_t utf8proc_map(
   const uint8_t *str, ssize_t strlen, uint8_t **dstptr, utf8proc_option_t options
 );
 
-/** @name Normalized versions.
+/** @name Unicode normalization
  *
  * Returns a pointer to newly allocated memory of a NFD, NFC, NFKD or NFKC
- * normalized version of the null-terminated string 'str'.
+ * normalized version of the null-terminated string 'str'.  These
+ * are shortcuts to calling @ref utf8proc_map with @ref UTF8PROC_NULLTERM
+ * combined with @ref UTF8PROC_STABLE and flags indicating the normalization.
  */
 /** @{ */
+/** NFD normalization (@ref UTF8PROC_DECOMPOSE). */
 DLLEXPORT uint8_t *utf8proc_NFD(const uint8_t *str);
+/** NFC normalization (@ref UTF8PROC_COMPOSE). */
 DLLEXPORT uint8_t *utf8proc_NFC(const uint8_t *str);
+/** NFD normalization (@ref UTF8PROC_DECOMPOSE and @ref UTF8PROC_COMPAT). */
 DLLEXPORT uint8_t *utf8proc_NFKD(const uint8_t *str);
+/** NFD normalization (@ref UTF8PROC_COMPOSE and @ref UTF8PROC_COMPAT). */
 DLLEXPORT uint8_t *utf8proc_NFKC(const uint8_t *str);
 /** @} */
 
