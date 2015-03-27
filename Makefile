@@ -80,6 +80,10 @@ install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT)
 	$(INSTALL) -m 644 libutf8proc.a $(DESTDIR)$(libdir)
 	$(INSTALL) -m 755 libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)
 	ln -f -s $(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
+ifneq ($(OS),Darwin)
+	ln -f -s $(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
+	ln -f -s $(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR).$(MINOR)
+endif
 
 # Test programs
 
