@@ -4,8 +4,6 @@
 
 - Updated for Unicode 7.0.
 
-- Ruby and PostgreSQL plugins have been removed due to lack of testing.
-
 - New function `utf8proc_grapheme_break(c1,c2)` that returns whether
   there is a grapheme break between `c1` and `c2`.
 
@@ -35,6 +33,8 @@
   detection of the API version.
 
 - Doxygen-formatted documentation.
+
+- The Ruby and PostgreSQL plugins have been removed due to lack of testing.
 
 ## Version 1.1.6 ##
 
