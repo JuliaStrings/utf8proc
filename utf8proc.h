@@ -66,7 +66,7 @@
  * runtime version may append a string like "-dev" to the version number
  * for prerelease versions.
  *
- * @note The shared-library version number in the Makefile will be different,
+ * @note The shared-library version number in the Makefile may be different,
  *       being based on ABI compatibility rather than API compatibility.
  */
 /** @{ */
