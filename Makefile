@@ -74,12 +74,12 @@ libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 	ln -f -s libutf8proc.$(MAJOR).dylib $@
 
 install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT)
-	mkdir -m 755 -p $(includedir)
-	$(INSTALL) -m 644 utf8proc.h $(includedir)
-	mkdir -m 755 -p $(libdir)
-	$(INSTALL) -m 644 libutf8proc.a $(libdir)
-	$(INSTALL) -m 755 libutf8proc.$(SHLIB_VERS_EXT) $(libdir)
-	ln -f -s $(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(libdir)/libutf8proc.$(SHLIB_EXT)
+	mkdir -m 755 -p $(DESTDIR)$(includedir)
+	$(INSTALL) -m 644 utf8proc.h $(DESTDIR)$(includedir)
+	mkdir -m 755 -p $(DESTDIR)$(libdir)
+	$(INSTALL) -m 644 libutf8proc.a $(DESTDIR)$(libdir)
+	$(INSTALL) -m 755 libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)
+	ln -f -s $(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
 
 # Test programs
 
