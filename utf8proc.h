@@ -133,7 +133,7 @@ typedef enum {
   UTF8PROC_DECOMPOSE = (1<<4),
   /** Strip "default ignorable characters" such as SOFT-HYPHEN or ZERO-WIDTH-SPACE. */
   UTF8PROC_IGNORE    = (1<<5),
-  /** Return an error, if the input contains unassigned code points. */
+  /** Return an error, if the input contains unassigned codepoints. */
   UTF8PROC_REJECTNA  = (1<<6),
   /**
    * Indicating that NLF-sequences (LF, CRLF, CR, NEL) are representing a
@@ -194,7 +194,7 @@ typedef enum {
 #define UTF8PROC_ERROR_OVERFLOW -2
 /** The given string is not a legal UTF-8 string. */
 #define UTF8PROC_ERROR_INVALIDUTF8 -3
-/** The @ref UTF8PROC_REJECTNA flag was set and an unassigned code point was found. */
+/** The @ref UTF8PROC_REJECTNA flag was set and an unassigned codepoint was found. */
 #define UTF8PROC_ERROR_NOTASSIGNED -4
 /** Invalid options have been used. */
 #define UTF8PROC_ERROR_INVALIDOPTS -5
@@ -361,53 +361,53 @@ DLLEXPORT extern const int8_t utf8proc_utf8class[256];
 DLLEXPORT const char *utf8proc_version(void);
 
 /**
- * Con
- * Returns a static error string for the given error code.
+ * Returns an informative error string for the given utf8proc error code
+ * (e.g. the error codes returned by @ref utf8proc_map).
  */
 DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode);
 
 /**
- * Reads a single codepoint from the UTF-8 sequence being pointed to by 'str'.
- * The maximum number of bytes read is 'strlen', unless 'strlen' is
+ * Reads a single codepoint from the UTF-8 sequence being pointed to by `str`.
+ * The maximum number of bytes read is `strlen`, unless `strlen` is
  * negative (in which case up to 4 bytes are read).
  *
  * If a valid codepoint could be read, it is stored in the variable
- * being pointed to by 'codepoint_ref', otherwise that variable will be set to -1.
- * In case of success the number of bytes read is returned, otherwise a
+ * pointed to by `codepoint_ref`, otherwise that variable will be set to -1.
+ * In case of success, the number of bytes read is returned; otherwise, a
  * negative error code is returned.
  */
 DLLEXPORT ssize_t utf8proc_iterate(const uint8_t *str, ssize_t strlen, int32_t *codepoint_ref);
 
 /**
- * Check if a codepoint is valid.
+ * Check if a codepoint is valid (regardless of whether it has been
+ * assigned a value by the current Unicode standard).
  *
- * @return 1, if the given codepoint is valid, otherwise 0.
+ * @return 1 if the given `codepoint` is valid and otherwise return 0.
  */
 DLLEXPORT bool utf8proc_codepoint_valid(int32_t codepoint);
 
 /**
- * Encodes the codepoint as an UTF-8 string in
- * the byte array being pointed to by 'dst'. This array has to be at least
- * 4 bytes long.
+ * Encodes the codepoint as an UTF-8 string in the byte array pointed
+ * to by `dst`. This array must be at least 4 bytes long.
  *
- * In case of success the number of bytes written is returned,
- * otherwise 0.
+ * In case of success the number of bytes written is returned, and
+ * otherwise 0 is returned.
  *
- * This function does not check if the codepoint is a valid unicode code point.
+ * This function does not check whether `codepoint` is valid Unicode.
  */
 DLLEXPORT ssize_t utf8proc_encode_char(int32_t codepoint, uint8_t *dst);
 
 /**
- * Lookup the properties for a given codepoint.
+ * Look up the properties for a given codepoint.
  *
- * @param codepoint The codepoint.
+ * @param codepoint The Unicode codepoint.
  *
  * @returns
  * A pointer to a (constant) struct containing information about
  * the codepoint.
  * @par
- * If the codepoint is not existent a pointer to a special struct is
- * returned, where `category` is 0 (@ref UTF8PROC_CATEGORY_CN).
+ * If the codepoint is unassigned or invalid, a pointer to a special struct is
+ * returned in which `category` is 0 (@ref UTF8PROC_CATEGORY_CN).
  */
 DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t codepoint);
 
@@ -426,17 +426,17 @@ DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t codepoint);
  * - @ref UTF8PROC_LUMP      - lump certain different codepoints together
  * - @ref UTF8PROC_STRIPMARK - remove all character marks
  * @param last_boundclass
- * This pointer has to point to an integer variable which is storing
- * the last codepoint's boundary class, if the @ref UTF8PROC_CHARBOUND
- * option is used.
+ * Pointer to an integer variable containing
+ * the previous codepoint's boundary class if the @ref UTF8PROC_CHARBOUND
+ * option is used.  Otherwise, this parameter is ignored.
  *
  * @return
- * In case of success the number of codepoints written is returned, in case
- * of an error, a negative error code is returned.
+ * In case of success, the number of codepoints written is returned; in case
+ * of an error, a negative error code is returned (@ref utf8proc_errmsg).
  * @par
- * If the number of written codepoints would be bigger than 'bufsize', the
- * buffer (up to 'bufsize') has inpredictable data, and the needed
- * buffer size is returned.
+ * If the number of written codepoints would be bigger than `bufsize`, the
+ * required buffer size is returned, while the buffer will be overwritten with
+ * undefined data.
  */
 DLLEXPORT ssize_t utf8proc_decompose_char(
   int32_t codepoint, int32_t *dst, ssize_t bufsize,
@@ -444,19 +444,20 @@ DLLEXPORT ssize_t utf8proc_decompose_char(
 );
 
 /**
- * Does the same as 'utf8proc_decompose_char', but acts on a whole UTF-8
- * string, and orders the decomposed sequences correctly.
+ * The same as @ref utf8proc_decompose_char, but acts on a whole UTF-8
+ * string and orders the decomposed sequences correctly.
  *
- * If the @ref UTF8PROC_NULLTERM flag in 'options' is set, processing will be stopped,
- * when a NULL byte is encounted, otherwise 'strlen' bytes are processed.
- * The result in form of unicode code points is written into the buffer
- * being pointed to by 'buffer', having the length of 'bufsize' entries.
- * In case of success the number of codepoints written is returned,
- * in case of an error, a negative error code is returned.
+ * If the @ref UTF8PROC_NULLTERM flag in `options` is set, processing
+ * will be stopped, when a NULL byte is encounted, otherwise `strlen`
+ * bytes are processed.  The result (in the form of 32-bit unicode
+ * codepoints) is written into the buffer being pointed to by
+ * `buffer` (which must contain at least `bufsize` entries).  In case of
+ * success, the number of codepoints written is returned; in case of an
+ * error, a negative error code is returned (@ref utf8proc_errmsg).
  *
- * If the number of written codepoints would be bigger than 'bufsize',
- * the buffer (up to 'bufsize') has inpredictable data, and the needed
- * buffer size is returned.
+ * If the number of written codepoints would be bigger than `bufsize`, the
+ * required buffer size is returned, while the buffer will be overwritten with
+ * undefined data.
  */
 DLLEXPORT ssize_t utf8proc_decompose(
   const uint8_t *str, ssize_t strlen,
@@ -464,32 +465,29 @@ DLLEXPORT ssize_t utf8proc_decompose(
 );
 
 /**
- * Reencodes the sequence of codepoints given by the pointer
- * 'buffer' and 'length' as UTF-8.
- *
- * The result is stored in the same memory area where the data is read.
+ * Reencodes the sequence of `length` codepoints pointed to by `buffer`
+ * UTF-8 data in-place (i.e., the result is also stored in `buffer`).
  *
  * @param buffer the (native-endian UTF-32) unicode codepoints to re-encode.
  * @param length the length (in codepoints) of the buffer.
- * @param options one or more of the following flags:
+ * @param options a bitwise or (`|`) of one or more of the following flags:
  * - @ref UTF8PROC_NLF2LS  - convert LF, CRLF, CR and NEL into LS
  * - @ref UTF8PROC_NLF2PS  - convert LF, CRLF, CR and NEL into PS
  * - @ref UTF8PROC_NLF2LF  - convert LF, CRLF, CR and NEL into LF
  * - @ref UTF8PROC_STRIPCC - strip or convert all non-affected control characters
  * - @ref UTF8PROC_COMPOSE - try to combine decomposed codepoints into composite
  *                           codepoints
- * - @ref UTF8PROC_STABLE  - prohibit combining characters which would violate
+ * - @ref UTF8PROC_STABLE  - prohibit combining characters that would violate
  *                           the unicode versioning stability
  *
  * @return
- * In case of success the length of the resulting UTF-8 string is
- * returned, otherwise a negative error code is returned.
+ * In case of success, the length (in bytes) of the resulting UTF-8 string is
+ * returned; otherwise, a negative error code is returned (@ref utf8proc_errmsg).
  *
- * @warning The amount of free space being pointed to by 'buffer', has to
+ * @warning The amount of free space pointed to by `buffer` must
  *          exceed the amount of the input data by one byte, and the
- *          entries of the array pointed to by 'str' have to be in the
- *          range of 0x0000 to 0x10FFFF, otherwise the program might
- *          crash!
+ *          entries of the array pointed to by `str` have to be in the
+ *          range `0x0000` to `0x10FFFF`. Otherwise, the program might crash!
  */
 DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, utf8proc_option_t options);
 
@@ -500,13 +498,13 @@ DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, utf8proc_op
 DLLEXPORT bool utf8proc_grapheme_break(int32_t codepoint1, int32_t codepoint2);
 
 /**
- * Given a codepoint, return a character width analogous to wcwidth(codepoint),
+ * Given a codepoint, return a character width analogous to `wcwidth(codepoint)`,
  * except that a width of 0 is returned for non-printable codepoints
- * instead of -1 as in wcwidth.
+ * instead of -1 as in `wcwidth`.
  * 
  * @note
  * If you want to check for particular types of non-printable characters,
- * (analogous to isprint or iscntrl), use @ref utf8proc_category. */
+ * (analogous to `isprint` or `iscntrl`), use @ref utf8proc_category. */
 DLLEXPORT int utf8proc_charwidth(int32_t codepoint);
 
 /**
@@ -517,27 +515,27 @@ DLLEXPORT utf8proc_category_t utf8proc_category(int32_t codepoint);
 
 /**
  * Return the two-letter (nul-terminated) Unicode category string for
- * the codepoint (e.g. "Lu" or "Co").
+ * the codepoint (e.g. `"Lu"` or `"Co"`).
  */
 DLLEXPORT const char *utf8proc_category_string(int32_t codepoint);
 
 /**
- * Maps the given UTF-8 string being pointed to by 'str' to a new UTF-8
- * string, which is allocated dynamically, and afterwards pointed to by
- * the pointer being pointed to by 'dstptr'.
+ * Maps the given UTF-8 string pointed to by `str` to a new UTF-8
+ * string, allocated dynamically by `malloc` and returned via `dstptr`.
  *
- * If the @ref UTF8PROC_NULLTERM flag in the 'options' field is set, the length is
- * determined by a NULL terminator, otherwise the parameter 'strlen' is
- * evaluated to determine the string length, but in any case the result
- * will be NULL terminated (though it might contain NULL characters
- * before). Other flags in the 'options' field are passed to the
+ * If the @ref UTF8PROC_NULLTERM flag in the `options` field is set,
+ * the length is determined by a NULL terminator, otherwise the
+ * parameter `strlen` is evaluated to determine the string length, but
+ * in any case the result will be NULL terminated (though it might
+ * contain NULL characters with the string if `str` contained NULL
+ * characters). Other flags in the `options` field are passed to the
  * functions defined above, and regarded as described.
  *
  * In case of success the length of the new string is returned,
  * otherwise a negative error code is returned.
  *
- * *NOTICE*: The memory of the new UTF-8 string will have been allocated
- * with 'malloc', and has theirfore to be freed with 'free'.
+ * @note The memory of the new UTF-8 string will have been allocated
+ * with `malloc`, and should therefore be deallocated with `free`.
  */
 DLLEXPORT ssize_t utf8proc_map(
   const uint8_t *str, ssize_t strlen, uint8_t **dstptr, utf8proc_option_t options
@@ -546,7 +544,7 @@ DLLEXPORT ssize_t utf8proc_map(
 /** @name Unicode normalization
  *
  * Returns a pointer to newly allocated memory of a NFD, NFC, NFKD or NFKC
- * normalized version of the null-terminated string 'str'.  These
+ * normalized version of the null-terminated string `str`.  These
  * are shortcuts to calling @ref utf8proc_map with @ref UTF8PROC_NULLTERM
  * combined with @ref UTF8PROC_STABLE and flags indicating the normalization.
  */
