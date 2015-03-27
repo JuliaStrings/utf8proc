@@ -2,14 +2,14 @@
 
 ## Version 1.2-dev ##
 
-- Updated for Unicode 7.0 [#6].
+- Updated for Unicode 7.0 ([#6]).
 
 - New function `utf8proc_grapheme_break(c1,c2)` that returns whether
-  there is a grapheme break between `c1` and `c2` [#20].
+  there is a grapheme break between `c1` and `c2` ([#20]).
 
 - New function `utf8proc_charwidth(c)` that returns the number of
   column-positions that should be required for `c`; essentially a
-  portable replacment for `wcwidth(c)` [#27].
+  portable replacment for `wcwidth(c)` ([#27]).
 
 - New function `utf8proc_category(c)` that returns the Unicode
   category of `c` (as one of the constants `UTF8PROC_CATEGORY_xx`).
@@ -17,25 +17,25 @@
   category of `c` as a two-character string.
 
 - `cmake` script `CMakeLists.txt`, in addition to `Makefile`, for
-  easier compilation on Windows [#28].
+  easier compilation on Windows ([#28]).
 
 - Various `Makefile` improvements: a `make check` target to perform
-  tests [#13], `make install`, a rule to automate updating the Unicode
+  tests ([#13]), `make install`, a rule to automate updating the Unicode
   tables, etcetera.
 
-- The shared library is now versioned (e.g. has a soname on GNU/Linux) [#24].
+- The shared library is now versioned (e.g. has a soname on GNU/Linux) ([#24]).
 
-- C++/MSVC compatibility [#17].
+- C++/MSVC compatibility ([#17]).
 
-- Most `#defined` constants are now `enums` [#29].
+- Most `#defined` constants are now `enums` ([#29]).
 
 - New preprocessor constants `UTF8PROC_VERSION_MAJOR`,
   `UTF8PROC_VERSION_MINOR`, and `UTF8PROC_VERSION_PATCH` for compile-time
   detection of the API version.
 
-- Doxygen-formatted documentation [#29].
+- Doxygen-formatted documentation ([#29]).
 
-- The Ruby and PostgreSQL plugins have been removed due to lack of testing [#22].
+- The Ruby and PostgreSQL plugins have been removed due to lack of testing ([#22]).
 
 ## Version 1.1.6 ##
 
