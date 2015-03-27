@@ -2,14 +2,14 @@
 
 ## Version 1.2-dev ##
 
-- Updated for Unicode 7.0.
+- Updated for Unicode 7.0 [#6].
 
 - New function `utf8proc_grapheme_break(c1,c2)` that returns whether
-  there is a grapheme break between `c1` and `c2`.
+  there is a grapheme break between `c1` and `c2` [#20].
 
 - New function `utf8proc_charwidth(c)` that returns the number of
   column-positions that should be required for `c`; essentially a
-  portable replacment for `wcwidth(c)`.
+  portable replacment for `wcwidth(c)` [#27].
 
 - New function `utf8proc_category(c)` that returns the Unicode
   category of `c` (as one of the constants `UTF8PROC_CATEGORY_xx`).
@@ -17,24 +17,25 @@
   category of `c` as a two-character string.
 
 - `cmake` script `CMakeLists.txt`, in addition to `Makefile`, for
-  easier compilation on Windows.
+  easier compilation on Windows [#28].
 
 - Various `Makefile` improvements: a `make check` target to perform
-  tests, `make install`, a rule to automate updating the Unicode tables, etc.
+  tests [#13], `make install`, a rule to automate updating the Unicode
+  tables, etcetera.
 
-- The shared library is now versioned (e.g. has a soname on GNU/Linux).
+- The shared library is now versioned (e.g. has a soname on GNU/Linux) [#24].
 
-- C++/MSVC compatibility.
+- C++/MSVC compatibility [#17].
 
-- Most `#defined` constants are now `enums`.
+- Most `#defined` constants are now `enums` [#29].
 
 - New preprocessor constants `UTF8PROC_VERSION_MAJOR`,
   `UTF8PROC_VERSION_MINOR`, and `UTF8PROC_VERSION_PATCH` for compile-time
   detection of the API version.
 
-- Doxygen-formatted documentation.
+- Doxygen-formatted documentation [#29].
 
-- The Ruby and PostgreSQL plugins have been removed due to lack of testing.
+- The Ruby and PostgreSQL plugins have been removed due to lack of testing [#22].
 
 ## Version 1.1.6 ##
 
@@ -172,3 +173,12 @@ Release of version 1.0.1
 
 2006-06-02: initial release of version 0.1
 
+[#6]: https://github.com/JuliaLang/utf8proc/issues/6
+[#13]: https://github.com/JuliaLang/utf8proc/issues/13
+[#17]: https://github.com/JuliaLang/utf8proc/issues/17
+[#20]: https://github.com/JuliaLang/utf8proc/issues/20
+[#22]: https://github.com/JuliaLang/utf8proc/issues/22
+[#24]: https://github.com/JuliaLang/utf8proc/issues/24
+[#27]: https://github.com/JuliaLang/utf8proc/issues/27
+[#28]: https://github.com/JuliaLang/utf8proc/issues/28
+[#29]: https://github.com/JuliaLang/utf8proc/issues/29
