@@ -8,6 +8,10 @@ int main(int argc, char **argv)
 
      for (i = 1; i < argc; ++i) {
           int c;
+          if (!strcmp(argv[i], "-V")) {
+               printf("utf8proc version %s\n", utf8proc_version());
+               continue;
+          }
           check(sscanf(argv[i],"%x",&c) == 1, "invalid hex input %s", argv[i]);
           const utf8proc_property_t *p = utf8proc_get_property(c);
           printf("U+%s:\n"

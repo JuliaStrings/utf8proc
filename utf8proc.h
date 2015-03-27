@@ -56,6 +56,27 @@
 #ifndef UTF8PROC_H
 #define UTF8PROC_H
 
+/** @name API version
+ *  
+ * The utf8proc API version MAJOR.MINOR.PATCH, following
+ * semantic-versioning rules (http://semver.org) based on API
+ * compatibility.
+ *
+ * This is also returned at runtime by @ref utf8proc_version; however, the
+ * runtime version may append a string like "-dev" to the version number
+ * for prerelease versions.
+ *
+ * @note The shared-library version number in the Makefile will be different,
+ *       being based on ABI compatibility rather than API compatibility.
+ */
+/** @{ */
+/** The MAJOR version number (increased when backwards API compatibility is broken). */
+#define UTF8PROC_VERSION_MAJOR 1
+/** The MINOR version number (increased when new functionality is added in a backwards-compatible manner). */
+#define UTF8PROC_VERSION_MINOR 2
+/** The PATCH version (increased for fixes that do not change the API). */
+#define UTF8PROC_VERSION_PATCH 0
+/** @} */
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -337,7 +358,9 @@ typedef enum {
 DLLEXPORT extern const int8_t utf8proc_utf8class[256];
 
 /**
- * Returns the version as a string.
+ * Returns the utf8proc API version as a string MAJOR.MINOR.PATCH
+ * (http://semver.org format), possibly with a "-dev" suffix for
+ * development versions.
  */
 DLLEXPORT const char *utf8proc_version(void);
 

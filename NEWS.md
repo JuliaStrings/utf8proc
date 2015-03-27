@@ -28,6 +28,10 @@
 
 - Most `#defined` constants are now `enums`.
 
+- New preprocessor constants `UTF8PROC_VERSION_MAJOR`,
+  `UTF8PROC_VERSION_MINOR`, and `UTF8PROC_VERSION_PATCH` for compile-time
+  detection of the API version.
+
 - Doxygen-formatted documentation.
 
 ## Version 1.1.6 ##

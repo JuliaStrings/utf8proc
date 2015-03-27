@@ -84,8 +84,10 @@ DLLEXPORT const int8_t utf8proc_utf8class[256] = {
 /* Should follow semantic-versioning rules (semver.org) based on API
    compatibility.  (Note that the shared-library version number will
    be different, being based on ABI compatibility.): */
+#define STRINGIZEx(x) #x
+#define STRINGIZE(x) STRINGIZEx(x)
 DLLEXPORT const char *utf8proc_version(void) {
-  return "1.2-dev";
+     return STRINGIZE(UTF8PROC_VERSION_MAJOR) "." STRINGIZE(UTF8PROC_VERSION_MINOR) "." STRINGIZE(UTF8PROC_VERSION_PATCH) "-dev";
 }
 
 DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode) {
