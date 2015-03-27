@@ -15,12 +15,14 @@
 
 - New function `utf8proc_category(c)` that returns the Unicode
   category of `c` (as one of the constants `UTF8PROC_CATEGORY_xx`).
-
-- New function `utf8proc_category_string(c)` that returns the Unicode
+  Also, a function `utf8proc_category_string(c)` that returns the Unicode
   category of `c` as a two-character string.
 
 - `cmake` script `CMakeLists.txt`, in addition to `Makefile`, for
   easier compilation on Windows.
+
+- Various `Makefile` improvements: a `make check` target to perform
+  tests, `make install`, a rule to automate updating the Unicode tables, etc.
 
 - The shared library is now versioned (e.g. has a soname on GNU/Linux).
 
