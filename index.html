@@ -74,7 +74,7 @@ and optionally <code>sudo make install</code> to install the libraries and heade
 files in <code>/usr/local</code> (or <code>sudo make prefix=/some/dir
 install</code> to install in <code>/some/dir</code>).  You can then link with the resulting <code>libutf8proc</code> library by including <code>-lutf8proc</code> in your link flags (preceded by <code>-L/some/dir/lib</code> if you installed in a nonstandard directory) and <code>#include &lt;utf8proc.h&gt;</code> in your source code (with a <code>-I/some/dir/include</code> compiler flag if you installed in a nonstandard directory).
 
-<li>Alternatively, you can compile utf8proc using <code>cmake</code> (which runs on both Unix-like systems and Windows).  Assuming <a href="http://www.cmake.org/">cmake is installed</a>, you can follow the <a href="http://www.cmake.org/runningcmake/">running cmake instructions</a> to compile the library.
+<li>Alternatively, you can compile utf8proc using <a href="http://www.cmake.org/">cmake</a> (which runs on both Unix-like systems and Windows).  Assuming cmake and a compiler are installed, run <code>mkdir build</code> in the utf8proc directory (to create a build directory), followed by <code>cd build</code> and <code>cmake ..</code> to build the library.
 
 </ul>
 
