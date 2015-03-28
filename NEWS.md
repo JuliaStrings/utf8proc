@@ -1,6 +1,8 @@
 # utf8proc release history #
 
-## Version 1.2-dev ##
+## Version 1.2 ##
+
+2015-03-28:
 
 - Updated for Unicode 7.0 ([#6]).
 

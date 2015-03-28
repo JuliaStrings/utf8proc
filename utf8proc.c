@@ -88,7 +88,7 @@ DLLEXPORT const int8_t utf8proc_utf8class[256] = {
 #define STRINGIZEx(x) #x
 #define STRINGIZE(x) STRINGIZEx(x)
 DLLEXPORT const char *utf8proc_version(void) {
-  return STRINGIZE(UTF8PROC_VERSION_MAJOR) "." STRINGIZE(UTF8PROC_VERSION_MINOR) "." STRINGIZE(UTF8PROC_VERSION_PATCH) "-dev";
+  return STRINGIZE(UTF8PROC_VERSION_MAJOR) "." STRINGIZE(UTF8PROC_VERSION_MINOR) "." STRINGIZE(UTF8PROC_VERSION_PATCH) "";
 }
 
 DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode) {
