@@ -105,7 +105,8 @@ test/printproperty: test/printproperty.c utf8proc.o utf8proc.h test/tests.h
 test/charwidth: test/charwidth.c utf8proc.o utf8proc.h test/tests.h
 	$(cc) test/charwidth.c utf8proc.o -o $@
 
-check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/charwidth
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/charwidth bench/bench.c bench/util.c bench/util.h utf8proc.o
+	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
 	test/charwidth

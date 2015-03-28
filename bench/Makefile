@@ -5,7 +5,7 @@ CFLAGS = -O2 -std=c99 -pedantic -Wall
 
 all: bench
 
-LIBUTF8PROC = ../libutf8proc.a
+LIBUTF8PROC = ../utf8proc.o
 
 bench: bench.o util.o $(LIBUTF8PROC)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ bench.o util.o $(LIBUTF8PROC)
