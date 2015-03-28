@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "mojibake.h"
+#include "utf8proc.h"
 #include "util.h"
 
 int main(int argc, char **argv)

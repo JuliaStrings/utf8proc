@@ -5,10 +5,10 @@ CFLAGS = -O2 -std=c99 -pedantic -Wall
 
 all: bench
 
-LIBMOJIBAKE = ../libmojibake.a
+LIBUTF8PROC = ../libutf8proc.a
 
-bench: bench.o util.o $(LIBMOJIBAKE)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ bench.o util.o $(LIBMOJIBAKE)
+bench: bench.o util.o $(LIBUTF8PROC)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ bench.o util.o $(LIBUTF8PROC)
 
 DATAURL = https://raw.githubusercontent.com/duerst/eprun/master/benchmark
 DATAFILES = Deutsch_.txt Japanese_.txt Korean_.txt Vietnamese_.txt
