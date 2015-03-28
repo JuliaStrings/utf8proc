@@ -21,8 +21,8 @@
           <h1 id="project_title"><a href="../index.html">utf8proc</a> releases</h1>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.1.6.zip">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.1.6.tar.gz">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.2.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.2.tar.gz">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -43,6 +43,34 @@ license</a>); please see
 the included <a href="https://github.com/JuliaLang/utf8proc/blob/master/LICENSE.md">LICENSE.md</a> file for more detailed information.</p>
 
 <ul>
+
+<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.2">utf8proc v1.2</a> (2015-03-28):
+
+<ul class="task-list">
+<li><p>Updated for Unicode 7.0 (<a href="https://github.com/JuliaLang/utf8proc/issues/6">#6</a>).</p></li>
+<li><p>New function <code>utf8proc_grapheme_break(c1,c2)</code> that returns whether
+there is a grapheme break between <code>c1</code> and <code>c2</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/20">#20</a>).</p></li>
+<li><p>New function <code>utf8proc_charwidth(c)</code> that returns the number of
+column-positions that should be required for <code>c</code>; essentially a
+portable replacment for <code>wcwidth(c)</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/27">#27</a>).</p></li>
+<li><p>New function <code>utf8proc_category(c)</code> that returns the Unicode
+category of <code>c</code> (as one of the constants <code>UTF8PROC_CATEGORY_xx</code>).
+Also, a function <code>utf8proc_category_string(c)</code> that returns the Unicode
+category of <code>c</code> as a two-character string.</p></li>
+<li><p><code>cmake</code> script <code>CMakeLists.txt</code>, in addition to <code>Makefile</code>, for
+easier compilation on Windows (<a href="https://github.com/JuliaLang/utf8proc/issues/28">#28</a>).</p></li>
+<li><p>Various <code>Makefile</code> improvements: a <code>make check</code> target to perform
+tests (<a href="https://github.com/JuliaLang/utf8proc/issues/13">#13</a>), <code>make install</code>, a rule to automate updating the Unicode
+tables, etcetera.</p></li>
+<li><p>The shared library is now versioned (e.g. has a soname on GNU/Linux) (<a href="https://github.com/JuliaLang/utf8proc/issues/24">#24</a>).</p></li>
+<li><p>C++/MSVC compatibility (<a href="https://github.com/JuliaLang/utf8proc/issues/17">#17</a>).</p></li>
+<li><p>Most <code>#defined</code> constants are now <code>enums</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/29">#29</a>).</p></li>
+<li><p>New preprocessor constants <code>UTF8PROC_VERSION_MAJOR</code>,
+<code>UTF8PROC_VERSION_MINOR</code>, and <code>UTF8PROC_VERSION_PATCH</code> for compile-time
+detection of the API version.</p></li>
+<li><p>Doxygen-formatted documentation (<a href="https://github.com/JuliaLang/utf8proc/issues/29">#29</a>).</p></li>
+<li><p>The Ruby and PostgreSQL plugins have been removed due to lack of testing (<a href="https://github.com/JuliaLang/utf8proc/issues/22">#22</a>).</p></li>
+</ul>
 
 <li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.1.6">utf8proc v1.1.6</a> (2013-11-27):
 <ul> 

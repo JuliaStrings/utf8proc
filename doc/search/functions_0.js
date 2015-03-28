@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['utf8proc_5fcategory',['utf8proc_category',['../utf8proc_8h.html#a7432ccd990da5148d5e880f85b524f5a',1,'utf8proc.c']]],
+  ['utf8proc_5fcategory_5fstring',['utf8proc_category_string',['../utf8proc_8h.html#a200c19463b4d1cfb7d8bde60afd5da5e',1,'utf8proc.c']]],
+  ['utf8proc_5fcharwidth',['utf8proc_charwidth',['../utf8proc_8h.html#aacf21d44fac3d440fc8834b6d32fd98c',1,'utf8proc.c']]],
+  ['utf8proc_5fcodepoint_5fvalid',['utf8proc_codepoint_valid',['../utf8proc_8h.html#a3e1362e84a1edb1d8bfe4353ec16da7a',1,'utf8proc.c']]],
+  ['utf8proc_5fdecompose',['utf8proc_decompose',['../utf8proc_8h.html#abe7ade386f866e9a944d7abd6da137f2',1,'utf8proc.c']]],
+  ['utf8proc_5fdecompose_5fchar',['utf8proc_decompose_char',['../utf8proc_8h.html#ad67327721f438370db73bb911d456f0f',1,'utf8proc.c']]],
+  ['utf8proc_5fencode_5fchar',['utf8proc_encode_char',['../utf8proc_8h.html#ae01f2abe4f2c50376fd2daa66aaba30f',1,'utf8proc.c']]],
+  ['utf8proc_5ferrmsg',['utf8proc_errmsg',['../utf8proc_8h.html#ab6efdbd6e58bcc70f7e7888b9e8cbd3e',1,'utf8proc.c']]],
+  ['utf8proc_5fget_5fproperty',['utf8proc_get_property',['../utf8proc_8h.html#a800874d86c1ad094e1e52394341f39fd',1,'utf8proc.c']]],
+  ['utf8proc_5fgrapheme_5fbreak',['utf8proc_grapheme_break',['../utf8proc_8h.html#aa08ebdad4c90c9bec532f7e8a69e830a',1,'utf8proc.c']]],
+  ['utf8proc_5fiterate',['utf8proc_iterate',['../utf8proc_8h.html#adaa14e580429126bbbe727303ea95119',1,'utf8proc.c']]],
+  ['utf8proc_5fmap',['utf8proc_map',['../utf8proc_8h.html#a9eda57a4a35770e34c7ece84b0efd39e',1,'utf8proc.c']]],
+  ['utf8proc_5fnfc',['utf8proc_NFC',['../utf8proc_8h.html#aecc18b2b2614c9f80926a53a22d641df',1,'utf8proc.c']]],
+  ['utf8proc_5fnfd',['utf8proc_NFD',['../utf8proc_8h.html#a82879aecca564b6a1b20f862496d8475',1,'utf8proc.c']]],
+  ['utf8proc_5fnfkc',['utf8proc_NFKC',['../utf8proc_8h.html#ae06dde573df617f67e2a987bff81cac6',1,'utf8proc.c']]],
+  ['utf8proc_5fnfkd',['utf8proc_NFKD',['../utf8proc_8h.html#a3669b8f0523d26b162e271bf3d6e6660',1,'utf8proc.c']]],
+  ['utf8proc_5freencode',['utf8proc_reencode',['../utf8proc_8h.html#a5c8cc8144b430ac0514a779f90d65277',1,'utf8proc.c']]],
+  ['utf8proc_5fversion',['utf8proc_version',['../utf8proc_8h.html#ae867a59a5f1e5adc5841d103edc2aca9',1,'utf8proc.c']]]
+];

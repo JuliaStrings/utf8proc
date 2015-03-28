@@ -1,0 +1,7 @@
+data/*
+test/*
+docs/*
+*.dylib
+*.so
+*.a
+*.o

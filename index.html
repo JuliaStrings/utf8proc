@@ -22,8 +22,8 @@
           <h2 id="project_tagline">a clean C library for processing UTF-8 Unicode data: normalization, case-folding, graphemes, and more</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.1.6.zip">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.1.6.tar.gz">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.2.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.2.tar.gz">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -56,6 +56,25 @@ license</a> (plus certain Unicode
 data governed by the similarly permissive <a href="http://www.unicode.org/copyright.html#Exhibit1">Unicode data
 license</a>); please see
 the included <a href="https://github.com/JuliaLang/utf8proc/blob/master/LICENSE.md">LICENSE.md</a> file for more detailed information.</p>
+
+<h2>
+<a id="doc" class="anchor" href="#doc" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="doc/index.html">Documentation</a></h2>
+
+<p>See the <a href="doc/index.html">utf8proc manual</a> (or the <code>utfproc.h</code> header file included with utf8proc) for a description of the utf8proc API.
+
+<p>utf8proc can be compiled on Unix-flavor (e.g. GNU/Linux or MacOS X)
+or Windows systems with a C or C++ compiler.
+
+<ul>
+
+<li>On Unix,
+run <code>make</code> to compile static and dynamic
+libraries, <code>make check</code> to run some self-tests,
+and optionally <code>sudo make install<code> to install the libraries and header
+files in <code>/usr/local</code> (or <code>sudo make prefix=/some/dir
+install<code> to install in <code>/some/dir</code>).  You can then link with the resulting <code>libutf8proc</code> library by including <code>-lutf8proc</code> in your link flags (preceded by <code>-L/some/dir/lib</code> if you installed in a nonstandard directory) and <code>#include &lt;utf8proc.h&gt;</code> in your source code (with a <code>-I/some/dir/include</code> compiler flag if you installed in a nonstandard directory).
+
+<li>Alternatively, you can compile utf8proc using <code>cmake</code> (which runs on both Unix-like systems and Windows).  Assuming <a href="http://www.cmake.org/">cmake is installed</a>, you can follow the <a href="http://www.cmake.org/runningcmake/">running cmake instructions</a> to compile the library.
 
 <h2>
 <a id="releases" class="anchor" href="#releases" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="releases/index.html">Releases</a></h2>
