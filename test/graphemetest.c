@@ -41,7 +41,7 @@ int main(int argc, char **argv)
         if (si) {
             uint8_t utf8[1024]; /* copy src without 0xff grapheme separators */
             size_t i = 0, j = 0;
-            ssize_t glen;
+            utf8proc_ssize_t glen;
             uint8_t *g; /* utf8proc_map grapheme results */
             while (i < si) {
                 if (src[i] != '/')

@@ -91,7 +91,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_version(void) {
   return STRINGIZE(UTF8PROC_VERSION_MAJOR) "." STRINGIZE(UTF8PROC_VERSION_MINOR) "." STRINGIZE(UTF8PROC_VERSION_PATCH) "";
 }
 
-UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode) {
+UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(utf8proc_ssize_t errcode) {
   switch (errcode) {
     case UTF8PROC_ERROR_NOMEM:
     return "Memory for processing UTF-8 data could not be allocated.";
@@ -108,8 +108,8 @@ UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode) {
   }
 }
 
-UTF8PROC_DLLEXPORT ssize_t utf8proc_iterate(
-  const uint8_t *str, ssize_t strlen, int32_t *dst
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate(
+  const uint8_t *str, utf8proc_ssize_t strlen, int32_t *dst
 ) {
   int length;
   int i;
@@ -155,7 +155,7 @@ UTF8PROC_DLLEXPORT bool utf8proc_codepoint_valid(int32_t uc) {
   else return true;
 }
 
-UTF8PROC_DLLEXPORT ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst) {
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_encode_char(int32_t uc, uint8_t *dst) {
   if (uc < 0x00) {
     return 0;
   } else if (uc < 0x80) {
@@ -250,7 +250,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(int32_t c) {
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
   options & ~UTF8PROC_LUMP, last_boundclass)
 
-UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssize_t bufsize, utf8proc_option_t options, int *last_boundclass) {
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, utf8proc_ssize_t bufsize, utf8proc_option_t options, int *last_boundclass) {
   const utf8proc_property_t *property;
   utf8proc_propval_t category;
   int32_t hangul_sindex;
@@ -313,7 +313,7 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssi
   if (options & UTF8PROC_CASEFOLD) {
     if (property->casefold_mapping) {
       const int32_t *casefold_entry;
-      ssize_t written = 0;
+      utf8proc_ssize_t written = 0;
       for (casefold_entry = property->casefold_mapping;
           *casefold_entry >= 0; casefold_entry++) {
         written += utf8proc_decompose_char(*casefold_entry, dst+written,
@@ -328,7 +328,7 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssi
     if (property->decomp_mapping &&
         (!property->decomp_type || (options & UTF8PROC_COMPAT))) {
       const int32_t *decomp_entry;
-      ssize_t written = 0;
+      utf8proc_ssize_t written = 0;
       for (decomp_entry = property->decomp_mapping;
           *decomp_entry >= 0; decomp_entry++) {
         written += utf8proc_decompose_char(*decomp_entry, dst+written,
@@ -354,12 +354,12 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose_char(int32_t uc, int32_t *dst, ssi
   return 1;
 }
 
-UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose(
-  const uint8_t *str, ssize_t strlen,
-  int32_t *buffer, ssize_t bufsize, utf8proc_option_t options
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
+  const uint8_t *str, utf8proc_ssize_t strlen,
+  int32_t *buffer, utf8proc_ssize_t bufsize, utf8proc_option_t options
 ) {
   /* strlen will be ignored, if UTF8PROC_NULLTERM is set in options */
-  ssize_t wpos = 0;
+  utf8proc_ssize_t wpos = 0;
   if ((options & UTF8PROC_COMPOSE) && (options & UTF8PROC_DECOMPOSE))
     return UTF8PROC_ERROR_INVALIDOPTS;
   if ((options & UTF8PROC_STRIPMARK) &&
@@ -367,8 +367,8 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose(
     return UTF8PROC_ERROR_INVALIDOPTS;
   {
     int32_t uc;
-    ssize_t rpos = 0;
-    ssize_t decomp_result;
+    utf8proc_ssize_t rpos = 0;
+    utf8proc_ssize_t decomp_result;
     int boundclass = UTF8PROC_BOUNDCLASS_START;
     while (1) {
       if (options & UTF8PROC_NULLTERM) {
@@ -395,7 +395,7 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose(
     }
   }
   if ((options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) && bufsize >= wpos) {
-    ssize_t pos = 0;
+    utf8proc_ssize_t pos = 0;
     while (pos < wpos-1) {
       int32_t uc1, uc2;
       const utf8proc_property_t *property1, *property2;
@@ -416,12 +416,12 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose(
   return wpos;
 }
 
-UTF8PROC_DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, utf8proc_option_t options) {
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(int32_t *buffer, utf8proc_ssize_t length, utf8proc_option_t options) {
   /* UTF8PROC_NULLTERM option will be ignored, 'length' is never ignored
      ASSERT: 'buffer' has one spare byte of free space at the end! */
   if (options & (UTF8PROC_NLF2LS | UTF8PROC_NLF2PS | UTF8PROC_STRIPCC)) {
-    ssize_t rpos;
-    ssize_t wpos = 0;
+    utf8proc_ssize_t rpos;
+    utf8proc_ssize_t wpos = 0;
     int32_t uc;
     for (rpos = 0; rpos < length; rpos++) {
       uc = buffer[rpos];
@@ -455,8 +455,8 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, ut
     int32_t current_char;
     const utf8proc_property_t *starter_property = NULL, *current_property;
     utf8proc_propval_t max_combining_class = -1;
-    ssize_t rpos;
-    ssize_t wpos = 0;
+    utf8proc_ssize_t rpos;
+    utf8proc_ssize_t wpos = 0;
     int32_t composition;
     for (rpos = 0; rpos < length; rpos++) {
       current_char = buffer[rpos];
@@ -520,7 +520,7 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, ut
     length = wpos;
   }
   {
-    ssize_t rpos, wpos = 0;
+    utf8proc_ssize_t rpos, wpos = 0;
     int32_t uc;
     for (rpos = 0; rpos < length; rpos++) {
       uc = buffer[rpos];
@@ -531,11 +531,11 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, ut
   }
 }
 
-UTF8PROC_DLLEXPORT ssize_t utf8proc_map(
-  const uint8_t *str, ssize_t strlen, uint8_t **dstptr, utf8proc_option_t options
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map(
+  const uint8_t *str, utf8proc_ssize_t strlen, uint8_t **dstptr, utf8proc_option_t options
 ) {
   int32_t *buffer;
-  ssize_t result;
+  utf8proc_ssize_t result;
   *dstptr = NULL;
   result = utf8proc_decompose(str, strlen, NULL, 0, options);
   if (result < 0) return result;

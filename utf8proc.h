@@ -83,9 +83,9 @@ typedef short int16_t;
 typedef unsigned short uint16_t;
 typedef int int32_t;
 #  ifdef _WIN64
-#    define ssize_t __int64
+typedef __int64 utf8proc_ssize_t;
 #  else
-#    define ssize_t int
+typedef int utf8proc_ssize_t;
 #  endif
 #  ifndef __cplusplus
 typedef unsigned char bool;
@@ -94,6 +94,7 @@ enum {false, true};
 #else
 #  include <stdbool.h>
 #  include <inttypes.h>
+typedef ssize_t utf8proc_ssize_t;
 #endif
 #include <limits.h>
 
@@ -364,7 +365,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_version(void);
  * Returns an informative error string for the given utf8proc error code
  * (e.g. the error codes returned by @ref utf8proc_map).
  */
-UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode);
+UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(utf8proc_ssize_t errcode);
 
 /**
  * Reads a single codepoint from the UTF-8 sequence being pointed to by `str`.
@@ -376,7 +377,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(ssize_t errcode);
  * In case of success, the number of bytes read is returned; otherwise, a
  * negative error code is returned.
  */
-UTF8PROC_DLLEXPORT ssize_t utf8proc_iterate(const uint8_t *str, ssize_t strlen, int32_t *codepoint_ref);
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate(const uint8_t *str, utf8proc_ssize_t strlen, int32_t *codepoint_ref);
 
 /**
  * Check if a codepoint is valid (regardless of whether it has been
@@ -395,7 +396,7 @@ UTF8PROC_DLLEXPORT bool utf8proc_codepoint_valid(int32_t codepoint);
  *
  * This function does not check whether `codepoint` is valid Unicode.
  */
-UTF8PROC_DLLEXPORT ssize_t utf8proc_encode_char(int32_t codepoint, uint8_t *dst);
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_encode_char(int32_t codepoint, uint8_t *dst);
 
 /**
  * Look up the properties for a given codepoint.
@@ -438,8 +439,8 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(int32_t code
  * required buffer size is returned, while the buffer will be overwritten with
  * undefined data.
  */
-UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose_char(
-  int32_t codepoint, int32_t *dst, ssize_t bufsize,
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(
+  int32_t codepoint, int32_t *dst, utf8proc_ssize_t bufsize,
   utf8proc_option_t options, int *last_boundclass
 );
 
@@ -459,9 +460,9 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose_char(
  * required buffer size is returned, while the buffer will be overwritten with
  * undefined data.
  */
-UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose(
-  const uint8_t *str, ssize_t strlen,
-  int32_t *buffer, ssize_t bufsize, utf8proc_option_t options
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
+  const uint8_t *str, utf8proc_ssize_t strlen,
+  int32_t *buffer, utf8proc_ssize_t bufsize, utf8proc_option_t options
 );
 
 /**
@@ -489,7 +490,7 @@ UTF8PROC_DLLEXPORT ssize_t utf8proc_decompose(
  *          entries of the array pointed to by `str` have to be in the
  *          range `0x0000` to `0x10FFFF`. Otherwise, the program might crash!
  */
-UTF8PROC_DLLEXPORT ssize_t utf8proc_reencode(int32_t *buffer, ssize_t length, utf8proc_option_t options);
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(int32_t *buffer, utf8proc_ssize_t length, utf8proc_option_t options);
 
 /**
  * Given a pair of consecutive codepoints, return whether a grapheme break is
@@ -537,8 +538,8 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(int32_t codepoint);
  * @note The memory of the new UTF-8 string will have been allocated
  * with `malloc`, and should therefore be deallocated with `free`.
  */
-UTF8PROC_DLLEXPORT ssize_t utf8proc_map(
-  const uint8_t *str, ssize_t strlen, uint8_t **dstptr, utf8proc_option_t options
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map(
+  const uint8_t *str, utf8proc_ssize_t strlen, uint8_t **dstptr, utf8proc_option_t options
 );
 
 /** @name Unicode normalization
