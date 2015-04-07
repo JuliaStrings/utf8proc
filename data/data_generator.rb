@@ -268,7 +268,7 @@ for code in 0...0x110000
   end
 end
 
-$stdout << "const int32_t utf8proc_sequences[] = {\n  "
+$stdout << "const utf8proc_int32_t utf8proc_sequences[] = {\n  "
 i = 0
 $int_array.each do |entry|
   i += 1
@@ -280,7 +280,7 @@ $int_array.each do |entry|
 end
 $stdout << "};\n\n"
 
-$stdout << "const uint16_t utf8proc_stage1table[] = {\n  "
+$stdout << "const utf8proc_uint16_t utf8proc_stage1table[] = {\n  "
 i = 0
 stage1.each do |entry|
   i += 1
@@ -292,7 +292,7 @@ stage1.each do |entry|
 end
 $stdout << "};\n\n"
 
-$stdout << "const uint16_t utf8proc_stage2table[] = {\n  "
+$stdout << "const utf8proc_uint16_t utf8proc_stage2table[] = {\n  "
 i = 0
 stage2.flatten.each do |entry|
   i += 1
@@ -311,7 +311,7 @@ properties.each { |line|
 }
 $stdout << "};\n\n"
 
-$stdout << "const int32_t utf8proc_combinations[] = {\n  "
+$stdout << "const utf8proc_int32_t utf8proc_combinations[] = {\n  "
 i = 0
 comb1st_indicies.keys.each_index do |a|
   comb2nd_indicies.keys.each_index do |b|
