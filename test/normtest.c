@@ -1,7 +1,7 @@
 #include "tests.h"
 
 #define CHECK_NORM(NRM, norm, src) {                                 \
-    char *src_norm = (char*) utf8proc_ ## NRM((uint8_t*) src);      \
+    char *src_norm = (char*) utf8proc_ ## NRM((utf8proc_uint8_t*) src);      \
     check(!strcmp(norm, src_norm),                                  \
           "normalization failed for %s -> %s", src, norm);          \
     free(src_norm);                                                 \
