@@ -5,7 +5,7 @@ int main(int argc, char **argv)
     char *buf = NULL;
     size_t bufsize = 0;
     FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
-    uint8_t src[1024];
+    utf8proc_uint8_t src[1024];
     
     check(f != NULL, "error opening GraphemeBreakTest.txt");
     while (getline(&buf, &bufsize, f) > 0) {
@@ -39,10 +39,10 @@ int main(int argc, char **argv)
         src[si] = 0; /* NUL-terminate */
         
         if (si) {
-            uint8_t utf8[1024]; /* copy src without 0xff grapheme separators */
+            utf8proc_uint8_t utf8[1024]; /* copy src without 0xff grapheme separators */
             size_t i = 0, j = 0;
-            ssize_t glen;
-            uint8_t *g; /* utf8proc_map grapheme results */
+            utf8proc_ssize_t glen;
+            utf8proc_uint8_t *g; /* utf8proc_map grapheme results */
             while (i < si) {
                 if (src[i] != '/')
                     utf8[j++] = src[i++];

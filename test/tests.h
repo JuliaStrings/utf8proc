@@ -47,7 +47,7 @@ size_t encode(char *dest, const char *buf)
           }
           check(sscanf(buf + i, "%x", &c) == 1, "invalid hex input %s", buf+i);
           i = j; /* skip to char after hex input */
-          d += utf8proc_encode_char(c, (uint8_t *) (dest + d));
+          d += utf8proc_encode_char(c, (utf8proc_uint8_t *) (dest + d));
      } while (1);
 }
 
