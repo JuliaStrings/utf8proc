@@ -10,7 +10,7 @@ int my_isprint(int c) {
 
 int main(int argc, char **argv)
 {
-     int prevc, c, error = 0;
+     int c, error = 0;
 
      (void) argc; /* unused */
      (void) argv; /* unused */

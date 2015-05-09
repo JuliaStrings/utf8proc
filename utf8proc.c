@@ -108,51 +108,57 @@ UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(utf8proc_ssize_t errcode) {
   }
 }
 
+#define utf_cont(ch)  (((ch) & 0xc0) == 0x80)
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate(
   const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_int32_t *dst
 ) {
-  int length;
-  int i;
-  utf8proc_int32_t uc = -1;
+  utf8proc_uint32_t uc;
+  const utf8proc_uint8_t *end;
+
   *dst = -1;
   if (!strlen) return 0;
-  length = utf8proc_utf8class[str[0]];
-  if (!length) return UTF8PROC_ERROR_INVALIDUTF8;
-  if (strlen >= 0 && length > strlen) return UTF8PROC_ERROR_INVALIDUTF8;
-  for (i=1; i<length; i++) {
-    if ((str[i] & 0xC0) != 0x80) return UTF8PROC_ERROR_INVALIDUTF8;
+  end = str + ((strlen < 0) ? 4 : strlen);
+  uc = *str++;
+  if (uc < 0x80) {
+    *dst = uc;
+    return 1;
   }
-  switch (length) {
-    case 1:
-    uc = str[0];
-    break;
-    case 2:
-    uc = ((str[0] & 0x1F) <<  6) + (str[1] & 0x3F);
-    if (uc < 0x80) uc = -1;
-    break;
-    case 3:
-    uc = ((str[0] & 0x0F) << 12) + ((str[1] & 0x3F) <<  6)
-      + (str[2] & 0x3F);
-    if (uc < 0x800 || (uc >= 0xD800 && uc < 0xE000) ||
-      (uc >= 0xFDD0 && uc < 0xFDF0)) uc = -1;
-    break;
-    case 4:
-    uc = ((str[0] & 0x07) << 18) + ((str[1] & 0x3F) << 12)
-      + ((str[2] & 0x3F) <<  6) + (str[3] & 0x3F);
-    if (uc < 0x10000 || uc >= 0x110000) uc = -1;
-    break;
+  // Must be between 0xc2 and 0xf4 inclusive to be valid
+  if ((uc - 0xc2) > (0xf4-0xc2)) return UTF8PROC_ERROR_INVALIDUTF8;
+  if (uc < 0xe0) {         // 2-byte sequence
+     // Must have valid continuation character
+     if (!utf_cont(*str)) return UTF8PROC_ERROR_INVALIDUTF8;
+     *dst = ((uc & 0x1f)<<6) | (*str & 0x3f);
+     return 2;
   }
-  if (uc < 0 || ((uc & 0xFFFF) >= 0xFFFE))
-    return UTF8PROC_ERROR_INVALIDUTF8;
-  *dst = uc;
-  return length;
+  if (uc < 0xf0) {        // 3-byte sequence
+     if ((str + 1 >= end) || !utf_cont(*str) || !utf_cont(str[1]))
+        return UTF8PROC_ERROR_INVALIDUTF8;
+     // Check for surrogate chars
+     if (uc == 0xed && *str > 0x9f)
+         return UTF8PROC_ERROR_INVALIDUTF8;
+     uc = ((uc & 0xf)<<12) | ((*str & 0x3f)<<6) | (str[1] & 0x3f);
+     if (uc < 0x800)
+         return UTF8PROC_ERROR_INVALIDUTF8;
+     *dst = uc;
+     return 3;
+  }
+  // 4-byte sequence
+  // Must have 3 valid continuation characters
+  if ((str + 2 >= end) || !utf_cont(*str) || !utf_cont(str[1]) || !utf_cont(str[2]))
+     return UTF8PROC_ERROR_INVALIDUTF8;
+  // Make sure in correct range (0x10000 - 0x10ffff)
+  if (uc == 0xf0) {
+    if (*str < 0x90) return UTF8PROC_ERROR_INVALIDUTF8;
+  } else if (uc == 0xf4) {
+    if (*str > 0x8f) return UTF8PROC_ERROR_INVALIDUTF8;
+  }
+  *dst = ((uc & 7)<<18) | ((*str & 0x3f)<<12) | ((str[1] & 0x3f)<<6) | (str[2] & 0x3f);
+  return 4;
 }
 
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_codepoint_valid(utf8proc_int32_t uc) {
-  if (uc < 0 || uc >= 0x110000 ||
-    ((uc & 0xFFFF) >= 0xFFFE) || (uc >= 0xD800 && uc < 0xE000) ||
-    (uc >= 0xFDD0 && uc < 0xFDF0)) return false;
-  else return true;
+    return (((utf8proc_uint32_t)uc)-0xd800 > 0x07ff) && ((utf8proc_uint32_t)uc < 0x110000);
 }
 
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_encode_char(utf8proc_int32_t uc, utf8proc_uint8_t *dst) {
@@ -165,12 +171,8 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_encode_char(utf8proc_int32_t uc, ut
     dst[0] = 0xC0 + (uc >> 6);
     dst[1] = 0x80 + (uc & 0x3F);
     return 2;
-  } else if (uc == 0xFFFF) {
-    dst[0] = 0xFF;
-    return 1;
-  } else if (uc == 0xFFFE) {
-    dst[0] = 0xFE;
-    return 1;
+  // Note: we allow encoding 0xd800-0xdfff here, so as not to change
+  // the API, however, these are actually invalid in UTF-8
   } else if (uc < 0x10000) {
     dst[0] = 0xE0 + (uc >> 12);
     dst[1] = 0x80 + ((uc >> 6) & 0x3F);
@@ -186,7 +188,38 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_encode_char(utf8proc_int32_t uc, ut
 }
 
 /* internal "unsafe" version that does not check whether uc is in range */
-static const utf8proc_property_t *get_property(utf8proc_int32_t uc) {
+utf8proc_ssize_t unsafe_encode_char(utf8proc_int32_t uc, utf8proc_uint8_t *dst) {
+   if (uc < 0x00) {
+      return 0;
+   } else if (uc < 0x80) {
+      dst[0] = uc;
+      return 1;
+   } else if (uc < 0x800) {
+      dst[0] = 0xC0 + (uc >> 6);
+      dst[1] = 0x80 + (uc & 0x3F);
+      return 2;
+   } else if (uc == 0xFFFF) {
+       dst[0] = 0xFF;
+       return 1;
+   } else if (uc == 0xFFFE) {
+       dst[0] = 0xFE;
+       return 1;
+   } else if (uc < 0x10000) {
+      dst[0] = 0xE0 + (uc >> 12);
+      dst[1] = 0x80 + ((uc >> 6) & 0x3F);
+      dst[2] = 0x80 + (uc & 0x3F);
+      return 3;
+   } else if (uc < 0x110000) {
+      dst[0] = 0xF0 + (uc >> 18);
+      dst[1] = 0x80 + ((uc >> 12) & 0x3F);
+      dst[2] = 0x80 + ((uc >> 6) & 0x3F);
+      dst[3] = 0x80 + (uc & 0x3F);
+      return 4;
+   } else return 0;
+}
+
+/* internal "unsafe" version that does not check whether uc is in range */
+static const utf8proc_property_t *unsafe_get_property(utf8proc_int32_t uc) {
   /* ASSERT: uc >= 0 && uc < 0x110000 */
   return utf8proc_properties + (
     utf8proc_stage2table[
@@ -196,7 +229,7 @@ static const utf8proc_property_t *get_property(utf8proc_int32_t uc) {
 }
 
 UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int32_t uc) {
-  return uc < 0 || uc >= 0x110000 ? utf8proc_properties : get_property(uc);
+  return uc < 0 || uc >= 0x110000 ? utf8proc_properties : unsafe_get_property(uc);
 }
 
 /* return whether there is a grapheme break between boundclasses lbc and tbc */
@@ -255,7 +288,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
   utf8proc_propval_t category;
   utf8proc_int32_t hangul_sindex;
   if (uc < 0 || uc >= 0x110000) return UTF8PROC_ERROR_NOTASSIGNED;
-  property = get_property(uc);
+  property = unsafe_get_property(uc);
   category = property->category;
   hangul_sindex = uc - UTF8PROC_HANGUL_SBASE;
   if (options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) {
@@ -401,8 +434,8 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
       const utf8proc_property_t *property1, *property2;
       uc1 = buffer[pos];
       uc2 = buffer[pos+1];
-      property1 = get_property(uc1);
-      property2 = get_property(uc2);
+      property1 = unsafe_get_property(uc1);
+      property2 = unsafe_get_property(uc2);
       if (property1->combining_class > property2->combining_class &&
           property2->combining_class > 0) {
         buffer[pos] = uc2;
@@ -460,7 +493,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
     utf8proc_int32_t composition;
     for (rpos = 0; rpos < length; rpos++) {
       current_char = buffer[rpos];
-      current_property = get_property(current_char);
+      current_property = unsafe_get_property(current_char);
       if (starter && current_property->combining_class > max_combining_class) {
         /* combination perhaps possible */
         utf8proc_int32_t hangul_lindex;
@@ -489,7 +522,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
           }
         }
         if (!starter_property) {
-          starter_property = get_property(*starter);
+          starter_property = unsafe_get_property(*starter);
         }
         if (starter_property->comb1st_index >= 0 &&
             current_property->comb2nd_index >= 0) {
@@ -498,7 +531,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
             current_property->comb2nd_index
           ];
           if (composition >= 0 && (!(options & UTF8PROC_STABLE) ||
-              !(get_property(composition)->comp_exclusion))) {
+              !(unsafe_get_property(composition)->comp_exclusion))) {
             *starter = composition;
             starter_property = NULL;
             continue;
@@ -522,9 +555,16 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
   {
     utf8proc_ssize_t rpos, wpos = 0;
     utf8proc_int32_t uc;
-    for (rpos = 0; rpos < length; rpos++) {
-      uc = buffer[rpos];
-      wpos += utf8proc_encode_char(uc, ((utf8proc_uint8_t *)buffer) + wpos);
+    if (options & UTF8PROC_CHARBOUND) {
+        for (rpos = 0; rpos < length; rpos++) {
+            uc = buffer[rpos];
+            wpos += unsafe_encode_char(uc, ((utf8proc_uint8_t *)buffer) + wpos);
+        }
+    } else {
+        for (rpos = 0; rpos < length; rpos++) {
+            uc = buffer[rpos];
+            wpos += utf8proc_encode_char(uc, ((utf8proc_uint8_t *)buffer) + wpos);
+        }
     }
     ((utf8proc_uint8_t *)buffer)[wpos] = 0;
     return wpos;
