@@ -1,9 +1,9 @@
 # libutf8proc Makefile
 
 # programs
-MAKE=make
-AR=ar
-INSTALL=install
+MAKE?=make
+AR?=ar
+INSTALL?=install
 
 # compiler settings
 cflags = -O2 -std=c99 -pedantic -Wall -fpic -DUTF8PROC_EXPORTS $(CFLAGS)
