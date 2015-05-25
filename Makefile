@@ -2,12 +2,13 @@
 
 # programs
 MAKE=make
-AR=ar
+AR?=ar
+CC?=gcc
 INSTALL=install
 
 # compiler settings
-cflags = -O2 -std=c99 -pedantic -Wall -fpic -DUTF8PROC_EXPORTS $(CFLAGS)
-cc = $(CC) $(cflags)
+CFLAGS ?= -O2
+CFLAGS += -std=c99 -pedantic -Wall -fpic -DUTF8PROC_EXPORTS
 
 # shared-library version MAJOR.MINOR.PATCH ... this may be *different*
 # from the utf8proc version number because it indicates ABI compatibility,
@@ -54,21 +55,22 @@ data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.rb data/c
 	$(MAKE) -C data utf8proc_data.c.new
 
 utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
-	$(cc) -c -o utf8proc.o utf8proc.c
+	$(CC) $(CFLAGS) -c -o utf8proc.o utf8proc.c
 
 libutf8proc.a: utf8proc.o
 	rm -f libutf8proc.a
 	$(AR) rs libutf8proc.a utf8proc.o
 
 libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH): utf8proc.o
-	$(cc) -shared -o $@ -Wl,-soname -Wl,libutf8proc.so.$(MAJOR) utf8proc.o
+	$(CC) $(LDFLAGS) -shared -o $@ -Wl,-soname -Wl,libutf8proc.so.$(MAJOR) utf8proc.o
 	chmod a-x $@
 
 libutf8proc.so: libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH)
 	ln -f -s libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH) $@
+	ln -f -s libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH) $@.$(MAJOR)
 
 libutf8proc.$(MAJOR).dylib: utf8proc.o
-	$(cc) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
+	$(CC) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
 
 libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 	ln -f -s libutf8proc.$(MAJOR).dylib $@
@@ -94,16 +96,16 @@ data/GraphemeBreakTest.txt:
 	$(MAKE) -C data GraphemeBreakTest.txt
 
 test/normtest: test/normtest.c utf8proc.o utf8proc.h test/tests.h
-	$(cc) test/normtest.c utf8proc.o -o $@
+	$(CC) test/normtest.c utf8proc.o -o $@
 
 test/graphemetest: test/graphemetest.c utf8proc.o utf8proc.h test/tests.h
-	$(cc) test/graphemetest.c utf8proc.o -o $@
+	$(CC) test/graphemetest.c utf8proc.o -o $@
 
 test/printproperty: test/printproperty.c utf8proc.o utf8proc.h test/tests.h
-	$(cc) test/printproperty.c utf8proc.o -o $@
+	$(CC) test/printproperty.c utf8proc.o -o $@
 
 test/charwidth: test/charwidth.c utf8proc.o utf8proc.h test/tests.h
-	$(cc) test/charwidth.c utf8proc.o -o $@
+	$(CC) test/charwidth.c utf8proc.o -o $@
 
 check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/charwidth bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
