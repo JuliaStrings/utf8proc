@@ -39,7 +39,7 @@ includedir=$(prefix)/include
 all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
 clean:
-	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT) test/normtest test/graphemetest test/printproperty test/charwidth
+	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT) test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate
 	$(MAKE) -C bench clean
 	$(MAKE) -C data clean
 
@@ -105,8 +105,16 @@ test/printproperty: test/printproperty.c utf8proc.o utf8proc.h test/tests.h
 test/charwidth: test/charwidth.c utf8proc.o utf8proc.h test/tests.h
 	$(cc) test/charwidth.c utf8proc.o -o $@
 
-check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/charwidth bench/bench.c bench/util.c bench/util.h utf8proc.o
+test/valid: test/valid.c utf8proc.o utf8proc.h test/tests.h
+	$(cc) test/valid.c utf8proc.o -o $@
+
+test/iterate: test/iterate.c utf8proc.o utf8proc.h test/tests.h
+	$(cc) test/iterate.c utf8proc.o -o $@
+
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
 	test/charwidth
+	test/valid
+	test/iterate
