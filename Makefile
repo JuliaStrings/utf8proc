@@ -111,10 +111,14 @@ test/valid: test/valid.c utf8proc.o utf8proc.h test/tests.h
 test/iterate: test/iterate.c utf8proc.o utf8proc.h test/tests.h
 	$(cc) test/iterate.c utf8proc.o -o $@
 
-check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
+test/case: test/case.c utf8proc.o utf8proc.h test/tests.h
+	$(cc) test/case.c utf8proc.o -o $@
+
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
 	test/charwidth
 	test/valid
 	test/iterate
+	test/case

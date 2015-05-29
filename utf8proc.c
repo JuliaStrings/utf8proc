@@ -264,6 +264,18 @@ UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(utf8proc_int32_t c1, ut
                         utf8proc_get_property(c2)->boundclass);
 }
 
+UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_tolower(utf8proc_int32_t c)
+{
+  utf8proc_int32_t cl = utf8proc_get_property(c)->lowercase_mapping;
+  return cl >= 0 ? cl : c;
+}
+
+UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_toupper(utf8proc_int32_t c)
+{
+  utf8proc_int32_t cu = utf8proc_get_property(c)->uppercase_mapping;
+  return cu >= 0 ? cu : c;
+}
+
 /* return a character width analogous to wcwidth (except portable and
    hopefully less buggy than most system wcwidth functions). */
 UTF8PROC_DLLEXPORT int utf8proc_charwidth(utf8proc_int32_t c) {
