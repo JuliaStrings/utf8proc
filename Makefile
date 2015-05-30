@@ -96,25 +96,25 @@ data/GraphemeBreakTest.txt:
 	$(MAKE) -C data GraphemeBreakTest.txt
 
 test/normtest: test/normtest.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) test/normtest.c utf8proc.o -o $@
+	$(CC) $(CFLAGS) test/normtest.c utf8proc.o -o $@
 
 test/graphemetest: test/graphemetest.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) test/graphemetest.c utf8proc.o -o $@
+	$(CC) $(CFLAGS) test/graphemetest.c utf8proc.o -o $@
 
 test/printproperty: test/printproperty.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) test/printproperty.c utf8proc.o -o $@
+	$(CC) $(CFLAGS) test/printproperty.c utf8proc.o -o $@
 
 test/charwidth: test/charwidth.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) test/charwidth.c utf8proc.o -o $@
+	$(CC) $(CFLAGS) test/charwidth.c utf8proc.o -o $@
 
 test/valid: test/valid.c utf8proc.o utf8proc.h test/tests.h
-	$(cc) test/valid.c utf8proc.o -o $@
+	$(CC) $(CFLAGS) test/valid.c utf8proc.o -o $@
 
 test/iterate: test/iterate.c utf8proc.o utf8proc.h test/tests.h
-	$(cc) test/iterate.c utf8proc.o -o $@
+	$(CC) $(CFLAGS) test/iterate.c utf8proc.o -o $@
 
 test/case: test/case.c utf8proc.o utf8proc.h test/tests.h
-	$(cc) test/case.c utf8proc.o -o $@
+	$(CC) $(CFLAGS) test/case.c utf8proc.o -o $@
 
 check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
