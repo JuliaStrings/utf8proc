@@ -6,6 +6,7 @@ int main(int argc, char **argv)
     size_t bufsize = 0;
     FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
     utf8proc_uint8_t src[1024];
+    int len;
     
     check(f != NULL, "error opening GraphemeBreakTest.txt");
     while (getline(&buf, &bufsize, f) > 0) {
@@ -29,9 +30,10 @@ int main(int argc, char **argv)
             else if (buf[bi] == '#') { /* start of comments */
                 break;
             }
-            else { /* hex-encoded codepoint */
-                bi += encode((char*) (src + si), buf + bi) - 1;
+	    else { /* hex-encoded codepoint */
+                len = encode((char*) (src + si), buf + bi) - 1;
                 while (src[si]) ++si; /* advance to NUL termination */
+                bi += len;
             }
         }
         if (si && src[si-1] == '/')
@@ -59,7 +61,7 @@ int main(int argc, char **argv)
                        utf8proc_errmsg(glen));
                  for (i = 0; i <= glen; ++i)
                       if (g[i] == 0xff)
-                           g[i] = '/'; /* easier-to-read output (/ is not in test strings) */
+                          g[i] = '/'; /* easier-to-read output (/ is not in test strings) */
                  check(!strcmp((char*)g, (char*)src),
                        "grapheme mismatch: \"%s\" instead of \"%s\"", (char*)g, (char*)src);
             }

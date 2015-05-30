@@ -21,3 +21,5 @@ graphemetest
 utf8proc_data.c.new
 printproperty
 charwidth
+valid
+iterate
