@@ -511,6 +511,21 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
  */
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2);
 
+
+/**
+ * Given a codepoint `c`, return the codepoint of the corresponding
+ * lower-case character, if any; otherwise (if there is no lower-case
+ * variant, or if `c` is not a valid codepoint) return `c`.
+ */
+UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_tolower(utf8proc_int32_t c);
+
+/**
+ * Given a codepoint `c`, return the codepoint of the corresponding
+ * upper-case character, if any; otherwise (if there is no upper-case
+ * variant, or if `c` is not a valid codepoint) return `c`.
+ */
+UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_toupper(utf8proc_int32_t c);
+
 /**
  * Given a codepoint, return a character width analogous to `wcwidth(codepoint)`,
  * except that a width of 0 is returned for non-printable codepoints
