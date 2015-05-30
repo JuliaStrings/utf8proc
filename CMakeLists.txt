@@ -8,7 +8,7 @@ project (utf8proc C)
 
 # Be sure to also update these in Makefile!
 set(SO_MAJOR 1)
-set(SO_MINOR 2)
+set(SO_MINOR 3)
 set(SO_PATCH 0)
 
 add_definitions (

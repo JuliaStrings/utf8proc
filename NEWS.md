@@ -1,5 +1,20 @@
 # utf8proc release history #
 
+## Version 1.3-dev ##
+
+- New `utf8proc_tolower` and `utf8proc_toupper` functions, portable
+  replacements for `towlower` and `towupper` in the C library ([#40]).
+
+- Don't treat Unicode "non-characters" as invalid, and improved
+  validity checking in general ([#35]).
+
+- Prefix all typedefs with `utf8proc_`, e.g. `utf8proc_int32_t`,
+  to avoid collisions with other libraries ([#32]).
+
+- Rename `DLLEXPORT` to `UTF8PROC_DLLEXPORT` to prevent collisions.
+
+- Fix build breakage in the benchmark routines.
+
 ## Version 1.2 ##
 
 2015-03-28:

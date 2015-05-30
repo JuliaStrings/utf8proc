@@ -15,7 +15,7 @@ cc = $(CC) $(cflags)
 # compatibility is broken, even if the API is backward-compatible
 # Be sure to also update these in CMakeLists.txt!
 MAJOR=1
-MINOR=2
+MINOR=3
 PATCH=0
 
 OS := $(shell uname)
