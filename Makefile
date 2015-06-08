@@ -8,7 +8,9 @@ INSTALL=install
 
 # compiler settings
 CFLAGS ?= -O2
-CFLAGS += -std=c99 -pedantic -Wall -fpic -DUTF8PROC_EXPORTS
+PICFLAG = -fPIC
+C99FLAG = -std=c99
+UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) -DUTF8PROC_EXPORTS
 
 # shared-library version MAJOR.MINOR.PATCH ... this may be *different*
 # from the utf8proc version number because it indicates ABI compatibility,
@@ -55,7 +57,7 @@ data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.rb data/c
 	$(MAKE) -C data utf8proc_data.c.new
 
 utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
-	$(CC) $(CFLAGS) -c -o utf8proc.o utf8proc.c
+	$(CC) $(UCFLAGS) -c -o utf8proc.o utf8proc.c
 
 libutf8proc.a: utf8proc.o
 	rm -f libutf8proc.a
@@ -96,25 +98,25 @@ data/GraphemeBreakTest.txt:
 	$(MAKE) -C data GraphemeBreakTest.txt
 
 test/normtest: test/normtest.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(CFLAGS) test/normtest.c utf8proc.o -o $@
+	$(CC) $(UCFLAGS) test/normtest.c utf8proc.o -o $@
 
 test/graphemetest: test/graphemetest.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(CFLAGS) test/graphemetest.c utf8proc.o -o $@
+	$(CC) $(UCFLAGS) test/graphemetest.c utf8proc.o -o $@
 
 test/printproperty: test/printproperty.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(CFLAGS) test/printproperty.c utf8proc.o -o $@
+	$(CC) $(UCFLAGS) test/printproperty.c utf8proc.o -o $@
 
 test/charwidth: test/charwidth.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(CFLAGS) test/charwidth.c utf8proc.o -o $@
+	$(CC) $(UCFLAGS) test/charwidth.c utf8proc.o -o $@
 
 test/valid: test/valid.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(CFLAGS) test/valid.c utf8proc.o -o $@
+	$(CC) $(UCFLAGS) test/valid.c utf8proc.o -o $@
 
 test/iterate: test/iterate.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(CFLAGS) test/iterate.c utf8proc.o -o $@
+	$(CC) $(UCFLAGS) test/iterate.c utf8proc.o -o $@
 
 test/case: test/case.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(CFLAGS) test/case.c utf8proc.o -o $@
+	$(CC) $(UCFLAGS) test/case.c utf8proc.o -o $@
 
 check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
