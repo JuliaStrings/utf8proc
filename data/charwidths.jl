@@ -27,6 +27,7 @@ end
 function parsesfd(filename::String, CharWidths::Dict{Int,Int}=Dict{Int,Int}())
     state=:seekchar
     lineno = 0
+    codepoint = width = nothing
     for line in readlines(open(filename))
         lineno += 1
         if state==:seekchar         #StartChar: nonmarkingreturn
@@ -91,7 +92,7 @@ function catcode(c)
 end
 
 # use Base.UTF8proc module to get category codes constants, since
-# we aren't goint to change these in utf8proc.
+# we won't change these in utf8proc.
 import Base.UTF8proc
 
 for c in keys(CharWidths)
@@ -116,7 +117,7 @@ for c in keys(CharWidths)
     if cat==UTF8proc.UTF8PROC_CATEGORY_CO || cat==UTF8proc.UTF8PROC_CATEGORY_CN
         CharWidths[c]=0
     end
-    
+
     # for some reason, Unifont has width-2 glyphs for ASCII control chars
     if cat==UTF8proc.UTF8PROC_CATEGORY_CC
         CharWidths[c]=0
