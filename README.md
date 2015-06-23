@@ -28,17 +28,17 @@ data governed by the similarly permissive [Unicode data
 license](http://www.unicode.org/copyright.html#Exhibit1)); please see
 the included `LICENSE.md` file for more detailed information.
 
-## Quick Start ##
+## Quick Start
 
 For compilation of the C library run `make`.
 
-## General Information ##
+## General Information
 
 The C library is found in this directory after successful compilation
 and is named `libutf8proc.a` (for the static library) and
 `libutf8proc.so` (for the dynamic library).
 
-The Unicode version being supported is 7.0.0.
+The Unicode version supported is 8.0.0.
 
 For Unicode normalizations, the following options are used:
 
@@ -47,17 +47,21 @@ For Unicode normalizations, the following options are used:
 * Normalization Form KC: `STABLE`, `COMPOSE`, `COMPAT`
 * Normalization Form KD: `STABLE`, `DECOMPOSE`, `COMPAT`
 
-## C Library ##
+## C Library
 
 The documentation for the C library is found in the `utf8proc.h` header file.
 `utf8proc_map` is function you will most likely be using for mapping UTF-8
 strings, unless you want to allocate memory yourself.
 
-## To Do ##
+## To Do
 
 See the Github [issues list](https://github.com/JuliaLang/utf8proc/issues).
 
-## Contact ##
+## Contact
 
 Bug reports, feature requests, and other queries can be filed at
 the [utf8proc issues page on Github](https://github.com/JuliaLang/utf8proc/issues).
+
+## See also
+
+An independent Lua translation of this library, [lua-mojibake](https://github.com/differentprogramming/lua-mojibake), is also available.
