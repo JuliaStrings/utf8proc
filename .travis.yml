@@ -12,6 +12,6 @@ before_install:
 script:
     - make prefix=`pwd`/local install
     - make check
-    - make data && (diff data/utf8proc_data.c.new utf8proc_data.c > /dev/null)
+    - make data && diff data/utf8proc_data.c.new utf8proc_data.c
     - (mkdir build_static && cd build_static && cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON && make)
     - (mkdir build_shared && cd build_shared && cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON && make)
