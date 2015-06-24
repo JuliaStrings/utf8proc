@@ -2,6 +2,8 @@
 
 ## Version 1.3-dev ##
 
+- Updated for Unicode 8.0 ([#45]).
+
 - New `utf8proc_tolower` and `utf8proc_toupper` functions, portable
   replacements for `towlower` and `towupper` in the C library ([#40]).
 
@@ -14,6 +16,11 @@
 - Rename `DLLEXPORT` to `UTF8PROC_DLLEXPORT` to prevent collisions.
 
 - Fix build breakage in the benchmark routines.
+
+- More fine-grained Makefile variables (`PICFLAG` etcetera), so that
+  compilation flags can be selectively overridden, and in particular
+  so that `CFLAGS` can be changed without accidentally eliminating
+  necessary flags like `-fPIC` and `-std=c99` ([#43]).
 
 ## Version 1.2 ##
 
@@ -199,3 +206,5 @@ Release of version 1.0.1
 [#27]: https://github.com/JuliaLang/utf8proc/issues/27
 [#28]: https://github.com/JuliaLang/utf8proc/issues/28
 [#29]: https://github.com/JuliaLang/utf8proc/issues/29
+[#43]: https://github.com/JuliaLang/utf8proc/issues/43
+[#45]: https://github.com/JuliaLang/utf8proc/issues/45
