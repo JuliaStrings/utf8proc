@@ -11,6 +11,7 @@ before_install:
   - sudo apt-get install libpcre3-dev julia fontforge -y
 script:
     - make prefix=`pwd`/local install
+    - ruby -v
     - make check
     - make data && diff data/utf8proc_data.c.new utf8proc_data.c
     - (mkdir build_static && cd build_static && cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON && make)
