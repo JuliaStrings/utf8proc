@@ -3,7 +3,7 @@
 *.dll
 *.do
 *.o
-*.so
+*.so*
 *.a
 *.dll
 *.dylib
