@@ -313,8 +313,8 @@ $stdout << "};\n\n"
 
 $stdout << "const utf8proc_int32_t utf8proc_combinations[] = {\n  "
 i = 0
-comb1st_indicies.keys.each_index do |a|
-  comb2nd_indicies.keys.each_index do |b|
+comb1st_indicies.keys.sort.each_index do |a|
+  comb2nd_indicies.keys.sort.each_index do |b|
     i += 1
     if i == 8
       i = 0

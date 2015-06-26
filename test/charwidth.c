@@ -10,7 +10,7 @@ int my_isprint(int c) {
 
 int main(int argc, char **argv)
 {
-     int c, error = 0;
+     int c, error = 0, updates = 0;
 
      (void) argc; /* unused */
      (void) argv; /* unused */
@@ -22,6 +22,13 @@ int main(int argc, char **argv)
           if ((cat == UTF8PROC_CATEGORY_MN || cat == UTF8PROC_CATEGORY_ME) &&
               w > 0) {
                fprintf(stderr, "nonzero width %d for combining char %x\n", w, c);
+               error = 1;
+          }
+          if (w == 0 &&
+			  ((cat >= UTF8PROC_CATEGORY_LU && cat <= UTF8PROC_CATEGORY_LO) ||
+			   (cat >= UTF8PROC_CATEGORY_ND && cat <= UTF8PROC_CATEGORY_SC) ||
+			   (cat >= UTF8PROC_CATEGORY_SO && cat <= UTF8PROC_CATEGORY_ZS))) {
+               fprintf(stderr, "zero width for symbol-like char %x\n", c);
                error = 1;
           }
           if (c <= 127 && ((!isprint(c) && w > 0) ||
@@ -44,17 +51,20 @@ int main(int argc, char **argv)
           int w = utf8proc_charwidth(c);
           int wc = wcwidth(c);
           if (sizeof(wchar_t) == 2 && c >= (1<<16)) continue;
-#if 0
           /* lots of these errors for out-of-date system unicode tables */
-          if (wc == -1 && my_isprint(c) && w > 0)
+          if (wc == -1 && my_isprint(c) && w > 0) {
+			   updates += 1;
+#if 0
                printf("  wcwidth(%x) = -1 for printable char\n", c);
 #endif
+		  }
           if (wc == -1 && !my_isprint(c) && w > 0)
                printf("  wcwidth(%x) = -1 for non-printable width-%d char\n", c, w);
           if (wc >= 0 && wc != w)
                printf("  wcwidth(%x) = %d != charwidth %d\n", c, wc, w);
      }
-
+	 printf("   ... (positive widths for %d chars unknown to wcwidth) ...\n",
+			updates);
      printf("Character-width tests SUCCEEDED.\n");
 
      return 0;

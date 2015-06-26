@@ -15,6 +15,40 @@ end
 CharWidths = Dict{Int,Int}()
 
 #############################################################################
+# Use ../libutf8proc for category codes, rather than the one in Julia,
+# to minimize bootstrapping complexity when a new version of Unicode comes out.
+catcode(c) = ccall((:utf8proc_category,"../libutf8proc"), Cint, (Int32,), c)
+
+# use Base.UTF8proc module to get category codes constants, since
+# we won't change these in utf8proc.
+import Base.UTF8proc
+
+#############################################################################
+# Use a default width of 1 for all character categories that are
+# letter/symbol/number-like.  This can be overriden by Unifont or UAX 11
+# below, but provides a useful nonzero fallback for new codepoints when
+# a new Unicode version has been released but Unifont hasn't been updated yet.
+
+zerowidth = Set{Int}() # categories that may contain zero-width chars
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CN)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_MN)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_MC)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ME)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_SK)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ZS)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ZL)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ZP)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CC)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CF)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CS)
+push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CO)
+for c in 0x0000:0x110000
+    if catcode(c) ∉ zerowidth
+        CharWidths[c] = 1
+    end
+end
+
+#############################################################################
 # Widths from GNU Unifont
 
 universion=get(ENV, "UNIFONT_VERSION", "7.0.06")
@@ -40,7 +74,13 @@ function parsesfd(filename::String, CharWidths::Dict{Int,Int}=Dict{Int,Int}())
             contains(line, "Encoding:") && (codepoint = int(split(line)[3]))
             contains(line, "Width:") && (width = int(split(line)[2]))
             if codepoint!=nothing && width!=nothing && codepoint >= 0
-                CharWidths[codepoint]=div(width, 512) # 512 units to the en
+                w=div(width, 512) # 512 units to the en
+                if w > 0
+                    # only add nonzero widths, since (1) the default is zero
+                    # and (2) this circumvents some apparent bugs in Unifont
+                    # (https://savannah.gnu.org/bugs/index.php?45395)
+                    CharWidths[codepoint] = w
+                end
                 state = :seekchar
             end
         end
@@ -83,17 +123,6 @@ end
 #############################################################################
 # A few exceptions to the above cases, found by manual comparison
 # to other wcwidth functions and similar checks.
-
-# Use ../libutf8proc for category codes, rather than the one in Julia,
-# to minimize bootstrapping complexity when a new version of Unicode comes out.
-function catcode(c)
-    uint(c) > 0x10FFFF && return 0x0000 # see utf8proc_get_property docs
-    return unsafe_load(ccall((:utf8proc_get_property,"../libutf8proc"), Ptr{UInt16}, (Int32,), c))
-end
-
-# use Base.UTF8proc module to get category codes constants, since
-# we won't change these in utf8proc.
-import Base.UTF8proc
 
 for c in keys(CharWidths)
     cat = catcode(c)
