@@ -22,8 +22,8 @@ URLCACHE=https://cache.e.ip.saba.us/
 utf8proc_data.c.new: data_generator.rb UnicodeData.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt CharWidths.txt
 	$(RUBY) data_generator.rb < UnicodeData.txt > $@
 
-# GNU Unifont version for font-metric calculations:
-UNIFONT_VERSION=7.0.06
+# GNU Unifont version for font metric calculations:
+UNIFONT_VERSION=8.0.01
 
 unifont-$(UNIFONT_VERSION).ttf:
 	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://unifoundry.com/pub/unifont-$(UNIFONT_VERSION)/font-builds/unifont-$(UNIFONT_VERSION).ttf
