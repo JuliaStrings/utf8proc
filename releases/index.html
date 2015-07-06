@@ -21,8 +21,8 @@
           <h1 id="project_title"><a href="http://julialang.org/utf8proc">utf8proc</a> releases</h1>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.2.zip">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.2.tar.gz">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.3.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v1.3.tar.gz">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -43,6 +43,26 @@ license</a>); please see
 the included <a href="https://github.com/JuliaLang/utf8proc/blob/master/LICENSE.md">LICENSE.md</a> file for more detailed information.</p>
 
 <ul>
+
+<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.3">utf8proc v1.3</a> (2015-07-06):
+
+<ul>
+<li><p>Updated for Unicode 8.0 (<a href="https://github.com/JuliaLang/utf8proc/issues/45">#45</a>).</p></li>
+<li><p>New <code>utf8proc_tolower</code> and <code>utf8proc_toupper</code> functions, portable
+replacements for <code>towlower</code> and <code>towupper</code> in the C library ([#40]).</p></li>
+<li><p>Don't treat Unicode "non-characters" as invalid, and improved
+validity checking in general ([#35]).</p></li>
+<li><p>Prefix all typedefs with <code>utf8proc_</code>, e.g. <code>utf8proc_int32_t</code>,
+to avoid collisions with other libraries ([#32]).</p></li>
+<li><p>Rename <code>DLLEXPORT</code> to <code>UTF8PROC_DLLEXPORT</code> to prevent collisions.</p></li>
+<li><p>Fix build breakage in the benchmark routines.</p></li>
+<li><p>More fine-grained Makefile variables (<code>PICFLAG</code> etcetera), so that
+compilation flags can be selectively overridden, and in particular
+so that <code>CFLAGS</code> can be changed without accidentally eliminating
+necessary flags like <code>-fPIC</code> and <code>-std=c99</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/43">#43</a>).</p></li>
+<li><p>Updated character-width tables based on Unifont 8.0.01 (<a href="https://github.com/JuliaLang/utf8proc/issues/51">#51</a>) and
+the Unicode 8 character categories (<a href="https://github.com/JuliaLang/utf8proc/issues/47">#47</a>).</p></li>
+</ul>
 
 <li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.2">utf8proc v1.2</a> (2015-03-28):
 

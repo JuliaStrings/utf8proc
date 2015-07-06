@@ -84,6 +84,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
@@ -107,6 +108,9 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:ae935e3690f3f34a94961daf312190028"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae935e3690f3f34a94961daf312190028"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>UTF8PROC_DLLEXPORT</b></td></tr>
+<tr class="separator:ae935e3690f3f34a94961daf312190028"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">API version</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>The utf8proc API version MAJOR.MINOR.PATCH, following semantic-versioning rules (<a href="http://semver.org">http://semver.org</a>) based on API compatibility.</p>
 <p>This is also returned at runtime by <a class="el" href="utf8proc_8h.html#ae867a59a5f1e5adc5841d103edc2aca9">utf8proc_version</a>; however, the runtime version may append a string like "-dev" to the version number for prerelease versions.</p>
@@ -114,7 +118,7 @@ Macros</h2></td></tr>
 </div></td></tr>
 <tr class="memitem:a7a3995078813bc54ea79dd739bfc418f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a7a3995078813bc54ea79dd739bfc418f">UTF8PROC_VERSION_MAJOR</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a7a3995078813bc54ea79dd739bfc418f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae15393cd3bf616d2742e6ecc1e7ff1ea"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ae15393cd3bf616d2742e6ecc1e7ff1ea">UTF8PROC_VERSION_MINOR</a>&#160;&#160;&#160;2</td></tr>
+<tr class="memitem:ae15393cd3bf616d2742e6ecc1e7ff1ea"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ae15393cd3bf616d2742e6ecc1e7ff1ea">UTF8PROC_VERSION_MINOR</a>&#160;&#160;&#160;3</td></tr>
 <tr class="separator:ae15393cd3bf616d2742e6ecc1e7ff1ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5f9d82e76e0265cbe6ce09a2227fe60"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ad5f9d82e76e0265cbe6ce09a2227fe60">UTF8PROC_VERSION_PATCH</a>&#160;&#160;&#160;0</td></tr>
 <tr class="separator:ad5f9d82e76e0265cbe6ce09a2227fe60"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,8 +138,35 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ac342769dc6c73e943c30ada9b7ea137d"><td class="memItemLeft" align="right" valign="top">typedef int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ac342769dc6c73e943c30ada9b7ea137d">utf8proc_propval_t</a></td></tr>
-<tr class="separator:ac342769dc6c73e943c30ada9b7ea137d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4fb53a2e4ace2dab260a9e702cadee0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac4fb53a2e4ace2dab260a9e702cadee0"></a>
+typedef int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_int8_t</b></td></tr>
+<tr class="separator:ac4fb53a2e4ace2dab260a9e702cadee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a699108ed21012dfffdd8f7ff2f6ef7ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a699108ed21012dfffdd8f7ff2f6ef7ed"></a>
+typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_uint8_t</b></td></tr>
+<tr class="separator:a699108ed21012dfffdd8f7ff2f6ef7ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab86e59f14f52db0b62130dee4bfb1862"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab86e59f14f52db0b62130dee4bfb1862"></a>
+typedef int16_t&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_int16_t</b></td></tr>
+<tr class="separator:ab86e59f14f52db0b62130dee4bfb1862"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af28978340ac1c026fea69a1fb2cf2cc0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af28978340ac1c026fea69a1fb2cf2cc0"></a>
+typedef uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_uint16_t</b></td></tr>
+<tr class="separator:af28978340ac1c026fea69a1fb2cf2cc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae56d3d08b79f0e29b6ab7e7f463d1aa4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae56d3d08b79f0e29b6ab7e7f463d1aa4"></a>
+typedef int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_int32_t</b></td></tr>
+<tr class="separator:ae56d3d08b79f0e29b6ab7e7f463d1aa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9aa06a9f3fe5d5f050846b25cd093bb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac9aa06a9f3fe5d5f050846b25cd093bb"></a>
+typedef uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_uint32_t</b></td></tr>
+<tr class="separator:ac9aa06a9f3fe5d5f050846b25cd093bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a844af1e255e7bfb46017e64da5f3d338"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a844af1e255e7bfb46017e64da5f3d338"></a>
+typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_size_t</b></td></tr>
+<tr class="separator:a844af1e255e7bfb46017e64da5f3d338"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05fc44eb6e2de6972516024ebb1d6531"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a05fc44eb6e2de6972516024ebb1d6531"></a>
+typedef ssize_t&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_ssize_t</b></td></tr>
+<tr class="separator:a05fc44eb6e2de6972516024ebb1d6531"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bda924643ede7a1b8fb18c2570ad73e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bda924643ede7a1b8fb18c2570ad73e"></a>
+typedef bool&#160;</td><td class="memItemRight" valign="bottom"><b>utf8proc_bool</b></td></tr>
+<tr class="separator:a6bda924643ede7a1b8fb18c2570ad73e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6af2c24193540a798c7eeb490c017c32"><td class="memItemLeft" align="right" valign="top">typedef utf8proc_int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a6af2c24193540a798c7eeb490c017c32">utf8proc_propval_t</a></td></tr>
+<tr class="separator:a6af2c24193540a798c7eeb490c017c32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e1065c727f2aae573c43e2956211b48"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structutf8proc__property__struct.html">utf8proc_property_struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a2e1065c727f2aae573c43e2956211b48">utf8proc_property_t</a></td></tr>
 <tr class="separator:a2e1065c727f2aae573c43e2956211b48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -355,48 +386,52 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:ae867a59a5f1e5adc5841d103edc2aca9"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ae867a59a5f1e5adc5841d103edc2aca9">utf8proc_version</a> (void)</td></tr>
 <tr class="separator:ae867a59a5f1e5adc5841d103edc2aca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6efdbd6e58bcc70f7e7888b9e8cbd3e"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ab6efdbd6e58bcc70f7e7888b9e8cbd3e">utf8proc_errmsg</a> (ssize_t errcode)</td></tr>
-<tr class="separator:ab6efdbd6e58bcc70f7e7888b9e8cbd3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adaa14e580429126bbbe727303ea95119"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#adaa14e580429126bbbe727303ea95119">utf8proc_iterate</a> (const uint8_t *str, ssize_t strlen, int32_t *codepoint_ref)</td></tr>
-<tr class="separator:adaa14e580429126bbbe727303ea95119"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e1362e84a1edb1d8bfe4353ec16da7a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a3e1362e84a1edb1d8bfe4353ec16da7a">utf8proc_codepoint_valid</a> (int32_t codepoint)</td></tr>
-<tr class="separator:a3e1362e84a1edb1d8bfe4353ec16da7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae01f2abe4f2c50376fd2daa66aaba30f"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ae01f2abe4f2c50376fd2daa66aaba30f">utf8proc_encode_char</a> (int32_t codepoint, uint8_t *dst)</td></tr>
-<tr class="separator:ae01f2abe4f2c50376fd2daa66aaba30f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a800874d86c1ad094e1e52394341f39fd"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="utf8proc_8h.html#a2e1065c727f2aae573c43e2956211b48">utf8proc_property_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a800874d86c1ad094e1e52394341f39fd">utf8proc_get_property</a> (int32_t codepoint)</td></tr>
-<tr class="separator:a800874d86c1ad094e1e52394341f39fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad67327721f438370db73bb911d456f0f"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ad67327721f438370db73bb911d456f0f">utf8proc_decompose_char</a> (int32_t codepoint, int32_t *dst, ssize_t bufsize, <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2d">utf8proc_option_t</a> options, int *last_boundclass)</td></tr>
-<tr class="separator:ad67327721f438370db73bb911d456f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe7ade386f866e9a944d7abd6da137f2"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#abe7ade386f866e9a944d7abd6da137f2">utf8proc_decompose</a> (const uint8_t *str, ssize_t strlen, int32_t *buffer, ssize_t bufsize, <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2d">utf8proc_option_t</a> options)</td></tr>
-<tr class="separator:abe7ade386f866e9a944d7abd6da137f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c8cc8144b430ac0514a779f90d65277"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a5c8cc8144b430ac0514a779f90d65277">utf8proc_reencode</a> (int32_t *buffer, ssize_t length, <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2d">utf8proc_option_t</a> options)</td></tr>
-<tr class="separator:a5c8cc8144b430ac0514a779f90d65277"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa08ebdad4c90c9bec532f7e8a69e830a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#aa08ebdad4c90c9bec532f7e8a69e830a">utf8proc_grapheme_break</a> (int32_t codepoint1, int32_t codepoint2)</td></tr>
-<tr class="separator:aa08ebdad4c90c9bec532f7e8a69e830a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacf21d44fac3d440fc8834b6d32fd98c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#aacf21d44fac3d440fc8834b6d32fd98c">utf8proc_charwidth</a> (int32_t codepoint)</td></tr>
-<tr class="separator:aacf21d44fac3d440fc8834b6d32fd98c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7432ccd990da5148d5e880f85b524f5a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="utf8proc_8h.html#af83b663a76c493b5e3f20dea6249de2e">utf8proc_category_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a7432ccd990da5148d5e880f85b524f5a">utf8proc_category</a> (int32_t codepoint)</td></tr>
-<tr class="separator:a7432ccd990da5148d5e880f85b524f5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a200c19463b4d1cfb7d8bde60afd5da5e"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a200c19463b4d1cfb7d8bde60afd5da5e">utf8proc_category_string</a> (int32_t codepoint)</td></tr>
-<tr class="separator:a200c19463b4d1cfb7d8bde60afd5da5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9eda57a4a35770e34c7ece84b0efd39e"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a9eda57a4a35770e34c7ece84b0efd39e">utf8proc_map</a> (const uint8_t *str, ssize_t strlen, uint8_t **dstptr, <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2d">utf8proc_option_t</a> options)</td></tr>
-<tr class="separator:a9eda57a4a35770e34c7ece84b0efd39e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab859ccd5c838f83de32b75254f3cc9f8"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ab859ccd5c838f83de32b75254f3cc9f8">utf8proc_errmsg</a> (utf8proc_ssize_t errcode)</td></tr>
+<tr class="separator:ab859ccd5c838f83de32b75254f3cc9f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48041dd763513b314763f5b40fad50b0"><td class="memItemLeft" align="right" valign="top">utf8proc_ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a48041dd763513b314763f5b40fad50b0">utf8proc_iterate</a> (const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_int32_t *codepoint_ref)</td></tr>
+<tr class="separator:a48041dd763513b314763f5b40fad50b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab38b8c7bef8f17cada3d39fe1f0a1859"><td class="memItemLeft" align="right" valign="top">utf8proc_bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ab38b8c7bef8f17cada3d39fe1f0a1859">utf8proc_codepoint_valid</a> (utf8proc_int32_t codepoint)</td></tr>
+<tr class="separator:ab38b8c7bef8f17cada3d39fe1f0a1859"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bedb20ad110b64cd88faecde740254b"><td class="memItemLeft" align="right" valign="top">utf8proc_ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a8bedb20ad110b64cd88faecde740254b">utf8proc_encode_char</a> (utf8proc_int32_t codepoint, utf8proc_uint8_t *dst)</td></tr>
+<tr class="separator:a8bedb20ad110b64cd88faecde740254b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e2738a05ed855fd6579f60e0746c547"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="utf8proc_8h.html#a2e1065c727f2aae573c43e2956211b48">utf8proc_property_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a3e2738a05ed855fd6579f60e0746c547">utf8proc_get_property</a> (utf8proc_int32_t codepoint)</td></tr>
+<tr class="separator:a3e2738a05ed855fd6579f60e0746c547"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45780bffb79ff4ee2509972a97ac69cf"><td class="memItemLeft" align="right" valign="top">utf8proc_ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a45780bffb79ff4ee2509972a97ac69cf">utf8proc_decompose_char</a> (utf8proc_int32_t codepoint, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2d">utf8proc_option_t</a> options, int *last_boundclass)</td></tr>
+<tr class="separator:a45780bffb79ff4ee2509972a97ac69cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4442ceac1199d51b0b7ea39d60a1b6e"><td class="memItemLeft" align="right" valign="top">utf8proc_ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#aa4442ceac1199d51b0b7ea39d60a1b6e">utf8proc_decompose</a> (const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_int32_t *buffer, utf8proc_ssize_t bufsize, <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2d">utf8proc_option_t</a> options)</td></tr>
+<tr class="separator:aa4442ceac1199d51b0b7ea39d60a1b6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e7debdee382d00b237d75f0932a3e73"><td class="memItemLeft" align="right" valign="top">utf8proc_ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a5e7debdee382d00b237d75f0932a3e73">utf8proc_reencode</a> (utf8proc_int32_t *buffer, utf8proc_ssize_t length, <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2d">utf8proc_option_t</a> options)</td></tr>
+<tr class="separator:a5e7debdee382d00b237d75f0932a3e73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac28670ceccfe2314e7f4eacb9cafb989"><td class="memItemLeft" align="right" valign="top">utf8proc_bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ac28670ceccfe2314e7f4eacb9cafb989">utf8proc_grapheme_break</a> (utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2)</td></tr>
+<tr class="separator:ac28670ceccfe2314e7f4eacb9cafb989"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68d9d24f9861b55d3eecddfa45e5b256"><td class="memItemLeft" align="right" valign="top">utf8proc_int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a68d9d24f9861b55d3eecddfa45e5b256">utf8proc_tolower</a> (utf8proc_int32_t c)</td></tr>
+<tr class="separator:a68d9d24f9861b55d3eecddfa45e5b256"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc057bb9df96e64175ad82713187e0d9"><td class="memItemLeft" align="right" valign="top">utf8proc_int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#adc057bb9df96e64175ad82713187e0d9">utf8proc_toupper</a> (utf8proc_int32_t c)</td></tr>
+<tr class="separator:adc057bb9df96e64175ad82713187e0d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45ae07c1a2b9836d5a1aae0ca4289d32"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a45ae07c1a2b9836d5a1aae0ca4289d32">utf8proc_charwidth</a> (utf8proc_int32_t codepoint)</td></tr>
+<tr class="separator:a45ae07c1a2b9836d5a1aae0ca4289d32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abeb4ff19038521361762638955974b55"><td class="memItemLeft" align="right" valign="top"><a class="el" href="utf8proc_8h.html#af83b663a76c493b5e3f20dea6249de2e">utf8proc_category_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#abeb4ff19038521361762638955974b55">utf8proc_category</a> (utf8proc_int32_t codepoint)</td></tr>
+<tr class="separator:abeb4ff19038521361762638955974b55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c087c57b7217b04d33464dd3d4daca3"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a4c087c57b7217b04d33464dd3d4daca3">utf8proc_category_string</a> (utf8proc_int32_t codepoint)</td></tr>
+<tr class="separator:a4c087c57b7217b04d33464dd3d4daca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02754ce205112a5228b3db2914b53583"><td class="memItemLeft" align="right" valign="top">utf8proc_ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a02754ce205112a5228b3db2914b53583">utf8proc_map</a> (const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_uint8_t **dstptr, <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2d">utf8proc_option_t</a> options)</td></tr>
+<tr class="separator:a02754ce205112a5228b3db2914b53583"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Unicode normalization</div></td></tr>
-<tr><td colspan="2"><div class="groupText"><p>Returns a pointer to newly allocated memory of a NFD, NFC, NFKD or NFKC normalized version of the null-terminated string <code>str</code>. These are shortcuts to calling <a class="el" href="utf8proc_8h.html#a9eda57a4a35770e34c7ece84b0efd39e">utf8proc_map</a> with <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da17b5019dec7a34409d6219facf94ce74">UTF8PROC_NULLTERM</a> combined with <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da8c31c338d15484be9d134a15b425c188">UTF8PROC_STABLE</a> and flags indicating the normalization. </p>
+<tr><td colspan="2"><div class="groupText"><p>Returns a pointer to newly allocated memory of a NFD, NFC, NFKD or NFKC normalized version of the null-terminated string <code>str</code>. These are shortcuts to calling <a class="el" href="utf8proc_8h.html#a02754ce205112a5228b3db2914b53583">utf8proc_map</a> with <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da17b5019dec7a34409d6219facf94ce74">UTF8PROC_NULLTERM</a> combined with <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da8c31c338d15484be9d134a15b425c188">UTF8PROC_STABLE</a> and flags indicating the normalization. </p>
 </div></td></tr>
-<tr class="memitem:a82879aecca564b6a1b20f862496d8475"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a82879aecca564b6a1b20f862496d8475">utf8proc_NFD</a> (const uint8_t *str)</td></tr>
-<tr class="separator:a82879aecca564b6a1b20f862496d8475"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecc18b2b2614c9f80926a53a22d641df"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#aecc18b2b2614c9f80926a53a22d641df">utf8proc_NFC</a> (const uint8_t *str)</td></tr>
-<tr class="separator:aecc18b2b2614c9f80926a53a22d641df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3669b8f0523d26b162e271bf3d6e6660"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a3669b8f0523d26b162e271bf3d6e6660">utf8proc_NFKD</a> (const uint8_t *str)</td></tr>
-<tr class="separator:a3669b8f0523d26b162e271bf3d6e6660"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae06dde573df617f67e2a987bff81cac6"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ae06dde573df617f67e2a987bff81cac6">utf8proc_NFKC</a> (const uint8_t *str)</td></tr>
-<tr class="separator:ae06dde573df617f67e2a987bff81cac6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5966f101a0bca9fdf143073944346ec4"><td class="memItemLeft" align="right" valign="top">utf8proc_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a5966f101a0bca9fdf143073944346ec4">utf8proc_NFD</a> (const utf8proc_uint8_t *str)</td></tr>
+<tr class="separator:a5966f101a0bca9fdf143073944346ec4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11717c1d4b4725be52102a1cc5cd1d3c"><td class="memItemLeft" align="right" valign="top">utf8proc_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a11717c1d4b4725be52102a1cc5cd1d3c">utf8proc_NFC</a> (const utf8proc_uint8_t *str)</td></tr>
+<tr class="separator:a11717c1d4b4725be52102a1cc5cd1d3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87e45c14172155701e01f03e06f25462"><td class="memItemLeft" align="right" valign="top">utf8proc_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a87e45c14172155701e01f03e06f25462">utf8proc_NFKD</a> (const utf8proc_uint8_t *str)</td></tr>
+<tr class="separator:a87e45c14172155701e01f03e06f25462"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad892762a3dbbefea0fc2acc1daa5beae"><td class="memItemLeft" align="right" valign="top">utf8proc_uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#ad892762a3dbbefea0fc2acc1daa5beae">utf8proc_NFKC</a> (const utf8proc_uint8_t *str)</td></tr>
+<tr class="separator:ad892762a3dbbefea0fc2acc1daa5beae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a644299c78d308ecec4b880d74e356466"><td class="memItemLeft" align="right" valign="top">const int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a644299c78d308ecec4b880d74e356466">utf8proc_utf8class</a> [256]</td></tr>
-<tr class="separator:a644299c78d308ecec4b880d74e356466"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fdd2302a43e652a147b9f2342cf877a"><td class="memItemLeft" align="right" valign="top">const utf8proc_int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utf8proc_8h.html#a4fdd2302a43e652a147b9f2342cf877a">utf8proc_utf8class</a> [256]</td></tr>
+<tr class="separator:a4fdd2302a43e652a147b9f2342cf877a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="a6ffb2e61767111ffb412c7273e68bc32"></a>
@@ -482,7 +517,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define UTF8PROC_VERSION_MINOR&#160;&#160;&#160;2</td>
+          <td class="memname">#define UTF8PROC_VERSION_MINOR&#160;&#160;&#160;3</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -517,12 +552,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac342769dc6c73e943c30ada9b7ea137d"></a>
+<a class="anchor" id="a6af2c24193540a798c7eeb490c017c32"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef int16_t <a class="el" href="utf8proc_8h.html#ac342769dc6c73e943c30ada9b7ea137d">utf8proc_propval_t</a></td>
+          <td class="memname">typedef utf8proc_int16_t <a class="el" href="utf8proc_8h.html#a6af2c24193540a798c7eeb490c017c32">utf8proc_propval_t</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -902,14 +937,14 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a7432ccd990da5148d5e880f85b524f5a"></a>
+<a class="anchor" id="abeb4ff19038521361762638955974b55"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="utf8proc_8h.html#af83b663a76c493b5e3f20dea6249de2e">utf8proc_category_t</a> utf8proc_category </td>
           <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint</em></td><td>)</td>
           <td></td>
         </tr>
@@ -919,14 +954,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a200c19463b4d1cfb7d8bde60afd5da5e"></a>
+<a class="anchor" id="a4c087c57b7217b04d33464dd3d4daca3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">const char* utf8proc_category_string </td>
           <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint</em></td><td>)</td>
           <td></td>
         </tr>
@@ -936,32 +971,32 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aacf21d44fac3d440fc8834b6d32fd98c"></a>
+<a class="anchor" id="a45ae07c1a2b9836d5a1aae0ca4289d32"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int utf8proc_charwidth </td>
           <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Given a codepoint, return a character width analogous to <code>wcwidth(codepoint)</code>, except that a width of 0 is returned for non-printable codepoints instead of -1 as in <code>wcwidth</code>.</p>
-<dl class="section note"><dt>Note</dt><dd>If you want to check for particular types of non-printable characters, (analogous to <code>isprint</code> or <code>iscntrl</code>), use <a class="el" href="utf8proc_8h.html#a7432ccd990da5148d5e880f85b524f5a">utf8proc_category</a>. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If you want to check for particular types of non-printable characters, (analogous to <code>isprint</code> or <code>iscntrl</code>), use <a class="el" href="utf8proc_8h.html#abeb4ff19038521361762638955974b55">utf8proc_category</a>. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a3e1362e84a1edb1d8bfe4353ec16da7a"></a>
+<a class="anchor" id="ab38b8c7bef8f17cada3d39fe1f0a1859"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool utf8proc_codepoint_valid </td>
+          <td class="memname">utf8proc_bool utf8proc_codepoint_valid </td>
           <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint</em></td><td>)</td>
           <td></td>
         </tr>
@@ -972,32 +1007,32 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="abe7ade386f866e9a944d7abd6da137f2"></a>
+<a class="anchor" id="aa4442ceac1199d51b0b7ea39d60a1b6e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ssize_t utf8proc_decompose </td>
+          <td class="memname">utf8proc_ssize_t utf8proc_decompose </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramtype">const utf8proc_uint8_t *&#160;</td>
           <td class="paramname"><em>str</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ssize_t&#160;</td>
+          <td class="paramtype">utf8proc_ssize_t&#160;</td>
           <td class="paramname"><em>strlen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramtype">utf8proc_int32_t *&#160;</td>
           <td class="paramname"><em>buffer</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ssize_t&#160;</td>
+          <td class="paramtype">utf8proc_ssize_t&#160;</td>
           <td class="paramname"><em>bufsize</em>, </td>
         </tr>
         <tr>
@@ -1013,32 +1048,32 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The same as <a class="el" href="utf8proc_8h.html#ad67327721f438370db73bb911d456f0f">utf8proc_decompose_char</a>, but acts on a whole UTF-8 string and orders the decomposed sequences correctly.</p>
-<p>If the <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da17b5019dec7a34409d6219facf94ce74">UTF8PROC_NULLTERM</a> flag in <code>options</code> is set, processing will be stopped, when a NULL byte is encounted, otherwise <code>strlen</code> bytes are processed. The result (in the form of 32-bit unicode codepoints) is written into the buffer being pointed to by <code>buffer</code> (which must contain at least <code>bufsize</code> entries). In case of success, the number of codepoints written is returned; in case of an error, a negative error code is returned (<a class="el" href="utf8proc_8h.html#ab6efdbd6e58bcc70f7e7888b9e8cbd3e">utf8proc_errmsg</a>).</p>
+<p>The same as <a class="el" href="utf8proc_8h.html#a45780bffb79ff4ee2509972a97ac69cf">utf8proc_decompose_char</a>, but acts on a whole UTF-8 string and orders the decomposed sequences correctly.</p>
+<p>If the <a class="el" href="utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da17b5019dec7a34409d6219facf94ce74">UTF8PROC_NULLTERM</a> flag in <code>options</code> is set, processing will be stopped, when a NULL byte is encounted, otherwise <code>strlen</code> bytes are processed. The result (in the form of 32-bit unicode codepoints) is written into the buffer being pointed to by <code>buffer</code> (which must contain at least <code>bufsize</code> entries). In case of success, the number of codepoints written is returned; in case of an error, a negative error code is returned (<a class="el" href="utf8proc_8h.html#ab859ccd5c838f83de32b75254f3cc9f8">utf8proc_errmsg</a>).</p>
 <p>If the number of written codepoints would be bigger than <code>bufsize</code>, the required buffer size is returned, while the buffer will be overwritten with undefined data. </p>
 
 </div>
 </div>
-<a class="anchor" id="ad67327721f438370db73bb911d456f0f"></a>
+<a class="anchor" id="a45780bffb79ff4ee2509972a97ac69cf"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ssize_t utf8proc_decompose_char </td>
+          <td class="memname">utf8proc_ssize_t utf8proc_decompose_char </td>
           <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramtype">utf8proc_int32_t *&#160;</td>
           <td class="paramname"><em>dst</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ssize_t&#160;</td>
+          <td class="paramtype">utf8proc_ssize_t&#160;</td>
           <td class="paramname"><em>bufsize</em>, </td>
         </tr>
         <tr>
@@ -1080,25 +1115,25 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>In case of success, the number of codepoints written is returned; in case of an error, a negative error code is returned (<a class="el" href="utf8proc_8h.html#ab6efdbd6e58bcc70f7e7888b9e8cbd3e">utf8proc_errmsg</a>). </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>In case of success, the number of codepoints written is returned; in case of an error, a negative error code is returned (<a class="el" href="utf8proc_8h.html#ab859ccd5c838f83de32b75254f3cc9f8">utf8proc_errmsg</a>). </dd></dl>
 <dl class="section user"><dt></dt><dd>If the number of written codepoints would be bigger than <code>bufsize</code>, the required buffer size is returned, while the buffer will be overwritten with undefined data. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ae01f2abe4f2c50376fd2daa66aaba30f"></a>
+<a class="anchor" id="a8bedb20ad110b64cd88faecde740254b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ssize_t utf8proc_encode_char </td>
+          <td class="memname">utf8proc_ssize_t utf8proc_encode_char </td>
           <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramtype">utf8proc_uint8_t *&#160;</td>
           <td class="paramname"><em>dst</em>&#160;</td>
         </tr>
         <tr>
@@ -1114,31 +1149,31 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab6efdbd6e58bcc70f7e7888b9e8cbd3e"></a>
+<a class="anchor" id="ab859ccd5c838f83de32b75254f3cc9f8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">const char* utf8proc_errmsg </td>
           <td>(</td>
-          <td class="paramtype">ssize_t&#160;</td>
+          <td class="paramtype">utf8proc_ssize_t&#160;</td>
           <td class="paramname"><em>errcode</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Returns an informative error string for the given utf8proc error code (e.g. the error codes returned by <a class="el" href="utf8proc_8h.html#a9eda57a4a35770e34c7ece84b0efd39e">utf8proc_map</a>). </p>
+<p>Returns an informative error string for the given utf8proc error code (e.g. the error codes returned by <a class="el" href="utf8proc_8h.html#a02754ce205112a5228b3db2914b53583">utf8proc_map</a>). </p>
 
 </div>
 </div>
-<a class="anchor" id="a800874d86c1ad094e1e52394341f39fd"></a>
+<a class="anchor" id="a3e2738a05ed855fd6579f60e0746c547"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">const <a class="el" href="utf8proc_8h.html#a2e1065c727f2aae573c43e2956211b48">utf8proc_property_t</a>* utf8proc_get_property </td>
           <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1156,20 +1191,20 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa08ebdad4c90c9bec532f7e8a69e830a"></a>
+<a class="anchor" id="ac28670ceccfe2314e7f4eacb9cafb989"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool utf8proc_grapheme_break </td>
+          <td class="memname">utf8proc_bool utf8proc_grapheme_break </td>
           <td>(</td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
           <td class="paramname"><em>codepoint2</em>&#160;</td>
         </tr>
         <tr>
@@ -1183,26 +1218,26 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="adaa14e580429126bbbe727303ea95119"></a>
+<a class="anchor" id="a48041dd763513b314763f5b40fad50b0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ssize_t utf8proc_iterate </td>
+          <td class="memname">utf8proc_ssize_t utf8proc_iterate </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramtype">const utf8proc_uint8_t *&#160;</td>
           <td class="paramname"><em>str</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ssize_t&#160;</td>
+          <td class="paramtype">utf8proc_ssize_t&#160;</td>
           <td class="paramname"><em>strlen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramtype">utf8proc_int32_t *&#160;</td>
           <td class="paramname"><em>codepoint_ref</em>&#160;</td>
         </tr>
         <tr>
@@ -1217,26 +1252,26 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9eda57a4a35770e34c7ece84b0efd39e"></a>
+<a class="anchor" id="a02754ce205112a5228b3db2914b53583"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ssize_t utf8proc_map </td>
+          <td class="memname">utf8proc_ssize_t utf8proc_map </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramtype">const utf8proc_uint8_t *&#160;</td>
           <td class="paramname"><em>str</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ssize_t&#160;</td>
+          <td class="paramtype">utf8proc_ssize_t&#160;</td>
           <td class="paramname"><em>strlen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t **&#160;</td>
+          <td class="paramtype">utf8proc_uint8_t **&#160;</td>
           <td class="paramname"><em>dstptr</em>, </td>
         </tr>
         <tr>
@@ -1259,14 +1294,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aecc18b2b2614c9f80926a53a22d641df"></a>
+<a class="anchor" id="a11717c1d4b4725be52102a1cc5cd1d3c"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t* utf8proc_NFC </td>
+          <td class="memname">utf8proc_uint8_t* utf8proc_NFC </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramtype">const utf8proc_uint8_t *&#160;</td>
           <td class="paramname"><em>str</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1276,14 +1311,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a82879aecca564b6a1b20f862496d8475"></a>
+<a class="anchor" id="a5966f101a0bca9fdf143073944346ec4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t* utf8proc_NFD </td>
+          <td class="memname">utf8proc_uint8_t* utf8proc_NFD </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramtype">const utf8proc_uint8_t *&#160;</td>
           <td class="paramname"><em>str</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1293,14 +1328,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae06dde573df617f67e2a987bff81cac6"></a>
+<a class="anchor" id="ad892762a3dbbefea0fc2acc1daa5beae"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t* utf8proc_NFKC </td>
+          <td class="memname">utf8proc_uint8_t* utf8proc_NFKC </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramtype">const utf8proc_uint8_t *&#160;</td>
           <td class="paramname"><em>str</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1310,14 +1345,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3669b8f0523d26b162e271bf3d6e6660"></a>
+<a class="anchor" id="a87e45c14172155701e01f03e06f25462"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t* utf8proc_NFKD </td>
+          <td class="memname">utf8proc_uint8_t* utf8proc_NFKD </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramtype">const utf8proc_uint8_t *&#160;</td>
           <td class="paramname"><em>str</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1327,20 +1362,20 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5c8cc8144b430ac0514a779f90d65277"></a>
+<a class="anchor" id="a5e7debdee382d00b237d75f0932a3e73"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ssize_t utf8proc_reencode </td>
+          <td class="memname">utf8proc_ssize_t utf8proc_reencode </td>
           <td>(</td>
-          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramtype">utf8proc_int32_t *&#160;</td>
           <td class="paramname"><em>buffer</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ssize_t&#160;</td>
+          <td class="paramtype">utf8proc_ssize_t&#160;</td>
           <td class="paramname"><em>length</em>, </td>
         </tr>
         <tr>
@@ -1373,8 +1408,42 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>In case of success, the length (in bytes) of the resulting UTF-8 string is returned; otherwise, a negative error code is returned (<a class="el" href="utf8proc_8h.html#ab6efdbd6e58bcc70f7e7888b9e8cbd3e">utf8proc_errmsg</a>).</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>In case of success, the length (in bytes) of the resulting UTF-8 string is returned; otherwise, a negative error code is returned (<a class="el" href="utf8proc_8h.html#ab859ccd5c838f83de32b75254f3cc9f8">utf8proc_errmsg</a>).</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The amount of free space pointed to by <code>buffer</code> must exceed the amount of the input data by one byte, and the entries of the array pointed to by <code>str</code> have to be in the range <code>0x0000</code> to <code>0x10FFFF</code>. Otherwise, the program might crash! </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a68d9d24f9861b55d3eecddfa45e5b256"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">utf8proc_int32_t utf8proc_tolower </td>
+          <td>(</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
+          <td class="paramname"><em>c</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Given a codepoint <code>c</code>, return the codepoint of the corresponding lower-case character, if any; otherwise (if there is no lower-case variant, or if <code>c</code> is not a valid codepoint) return <code>c</code>. </p>
+
+</div>
+</div>
+<a class="anchor" id="adc057bb9df96e64175ad82713187e0d9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">utf8proc_int32_t utf8proc_toupper </td>
+          <td>(</td>
+          <td class="paramtype">utf8proc_int32_t&#160;</td>
+          <td class="paramname"><em>c</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Given a codepoint <code>c</code>, return the codepoint of the corresponding upper-case character, if any; otherwise (if there is no upper-case variant, or if <code>c</code> is not a valid codepoint) return <code>c</code>. </p>
 
 </div>
 </div>
@@ -1396,12 +1465,12 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a class="anchor" id="a644299c78d308ecec4b880d74e356466"></a>
+<a class="anchor" id="a4fdd2302a43e652a147b9f2342cf877a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const int8_t utf8proc_utf8class[256]</td>
+          <td class="memname">const utf8proc_int8_t utf8proc_utf8class[256]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1412,7 +1481,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Mar 28 2015 09:12:02 for utf8proc by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 6 2015 11:36:14 for utf8proc by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
