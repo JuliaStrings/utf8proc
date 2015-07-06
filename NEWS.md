@@ -1,6 +1,8 @@
 # utf8proc release history #
 
-## Version 1.3-dev ##
+## Version 1.3 ##
+
+2015-07-06:
 
 - Updated for Unicode 8.0 ([#45]).
 
@@ -21,6 +23,9 @@
   compilation flags can be selectively overridden, and in particular
   so that `CFLAGS` can be changed without accidentally eliminating
   necessary flags like `-fPIC` and `-std=c99` ([#43]).
+
+- Updated character-width tables based on Unifont 8.0.01 ([#51]) and
+  the Unicode 8 character categories ([#47]).
 
 ## Version 1.2 ##
 
@@ -208,3 +213,5 @@ Release of version 1.0.1
 [#29]: https://github.com/JuliaLang/utf8proc/issues/29
 [#43]: https://github.com/JuliaLang/utf8proc/issues/43
 [#45]: https://github.com/JuliaLang/utf8proc/issues/45
+[#47]: https://github.com/JuliaLang/utf8proc/issues/47
+[#51]: https://github.com/JuliaLang/utf8proc/issues/51
