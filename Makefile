@@ -10,7 +10,8 @@ INSTALL=install
 CFLAGS ?= -O2
 PICFLAG = -fPIC
 C99FLAG = -std=c99
-UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) -DUTF8PROC_EXPORTS
+WCFLAGS = -Wall -Wmissing-prototypes -pedantic
+UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS
 
 # shared-library version MAJOR.MINOR.PATCH ... this may be *different*
 # from the utf8proc version number because it indicates ABI compatibility,
