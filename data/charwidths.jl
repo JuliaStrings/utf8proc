@@ -51,12 +51,6 @@ end
 #############################################################################
 # Widths from GNU Unifont
 
-universion=get(ENV, "UNIFONT_VERSION", "7.0.06")
-for fontfile in ["unifont-$universion", "unifont_upper-$universion"]
-    isfile("$fontfile.ttf") || download("http://unifoundry.com/pub/unifont-$universion/font-builds/$fontfile.ttf", "$fontfile.ttf")
-    isfile("$fontfile.sfd") || run(`fontforge -lang=ff -c "Open(\"$fontfile.ttf\");Save(\"$fontfile.sfd\");Quit(0);"`)
-end
-
 #Read sfdfile for character widths
 function parsesfd(filename::String, CharWidths::Dict{Int,Int}=Dict{Int,Int}())
     state=:seekchar
@@ -87,15 +81,14 @@ function parsesfd(filename::String, CharWidths::Dict{Int,Int}=Dict{Int,Int}())
     end
     CharWidths
 end
-CharWidths=parsesfd("unifont-$universion.sfd", CharWidths)
-CharWidths=parsesfd("unifont_upper-$universion.sfd", CharWidths)
+CharWidths=parsesfd("unifont.sfd", CharWidths)
+CharWidths=parsesfd("unifont_upper.sfd", CharWidths)
 
 #############################################################################
 # Widths from UAX #11: East Asian Width
 #   .. these take precedence over the Unifont width for all codepoints
 #      listed explicitly as wide/full/narrow/half-width
 
-isfile("EastAsianWidth.txt") || download("http://www.unicode.org/Public/UNIDATA/EastAsianWidth.txt", "EastAsianWidth.txt")
 for line in readlines(open("EastAsianWidth.txt"))
     #Strip comments
     line[1] == '#' && continue

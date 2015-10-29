@@ -9,6 +9,7 @@ RUBY=ruby
 PERL=perl
 MAKE=make
 JULIA=julia
+FONTFORGE=fontforge
 CURLFLAGS = --retry 5 --location
 
 # use JuliaLang caching (https://github.com/staticfloat/cache.julialang.org)
@@ -25,14 +26,17 @@ utf8proc_data.c.new: data_generator.rb UnicodeData.txt GraphemeBreakProperty.txt
 # GNU Unifont version for font metric calculations:
 UNIFONT_VERSION=8.0.01
 
-unifont-$(UNIFONT_VERSION).ttf:
+unifont.ttf:
 	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://unifoundry.com/pub/unifont-$(UNIFONT_VERSION)/font-builds/unifont-$(UNIFONT_VERSION).ttf
 
-unifont_upper-$(UNIFONT_VERSION).ttf:
+unifont_upper.ttf:
 	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://unifoundry.com/pub/unifont-$(UNIFONT_VERSION)/font-builds/unifont_upper-$(UNIFONT_VERSION).ttf
 
-CharWidths.txt: charwidths.jl unifont-$(UNIFONT_VERSION).ttf unifont_upper-$(UNIFONT_VERSION).ttf EastAsianWidth.txt
-	UNIFONT_VERSION=$(UNIFONT_VERSION) $(JULIA) charwidths.jl > $@
+%.sfd: %.ttf
+	$(FONTFORGE) -lang=ff -c "Open(\"$<\");Save(\"$@\");Quit(0);"
+
+CharWidths.txt: charwidths.jl unifont.sfd unifont_upper.sfd EastAsianWidth.txt
+	$(JULIA) charwidths.jl > $@
 
 UnicodeData.txt:
 	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/UNIDATA/UnicodeData.txt
