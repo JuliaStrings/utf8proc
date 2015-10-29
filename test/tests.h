@@ -33,7 +33,6 @@ size_t skipspaces(const char *buf, size_t i)
    separated by whitespace, and terminated by any character not in
    [0-9a-fA-F] or whitespace, then stores the corresponding utf8 string
    in dest, returning the number of bytes read from buf */
-utf8proc_ssize_t unsafe_encode_char(utf8proc_int32_t uc, utf8proc_uint8_t *dst);
 size_t encode(char *dest, const char *buf)
 {
      size_t i = 0, j, d = 0;
@@ -48,7 +47,7 @@ size_t encode(char *dest, const char *buf)
           }
           check(sscanf(buf + i, "%x", (unsigned int *)&c) == 1, "invalid hex input %s", buf+i);
           i = j; /* skip to char after hex input */
-          d += unsafe_encode_char(c, (utf8proc_uint8_t *) (dest + d));
+          d += utf8proc_encode_char(c, (utf8proc_uint8_t *) (dest + d));
      }
 }
 
