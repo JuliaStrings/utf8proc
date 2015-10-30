@@ -22,16 +22,16 @@ build_script:
   - cd ..\msvc_shared
   - cmake .. -DBUILD_SHARED_LIBS=ON
   - cmake --build .
+  - set PATH=C:\MinGW\bin;%PATH%
   - C:\MinGW\msys\1.0\bin\sh --login -c "
-      echo 'C:\MinGW\ /MinGW' > /etc/fstab;
-      cd /c/projects/utf8proc;
-      mkdir mingw_static;
-      cd mingw_static;
-      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -G'MSYS Makefiles';
-      make;
-      mkdir ../mingw_shared;
-      cd ../mingw_shared;
-      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON -G'MSYS Makefiles';
+      cd /c/projects/utf8proc &&
+      mkdir mingw_static &&
+      cd mingw_static &&
+      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -G'MSYS Makefiles' &&
+      make &&
+      mkdir ../mingw_shared &&
+      cd ../mingw_shared &&
+      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON -G'MSYS Makefiles' &&
       make
       "
 
