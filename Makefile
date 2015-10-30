@@ -43,10 +43,11 @@ includedir=$(prefix)/include
 all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
 clean:
-	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT) test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate
+	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT)
 ifneq ($(OS),Darwin)
 	rm -f libutf8proc.so.$(MAJOR)
 endif
+	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case
 	$(MAKE) -C bench clean
 	$(MAKE) -C data clean
 
@@ -100,26 +101,29 @@ data/NormalizationTest.txt:
 data/GraphemeBreakTest.txt:
 	$(MAKE) -C data GraphemeBreakTest.txt
 
-test/normtest: test/normtest.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/normtest.c utf8proc.o -o $@
+test/tests.o: test/tests.c test/tests.h utf8proc.h
+	$(CC) $(UCFLAGS) -c -o test/tests.o test/tests.c
 
-test/graphemetest: test/graphemetest.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/graphemetest.c utf8proc.o -o $@
+test/normtest: test/normtest.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/normtest.c test/tests.o utf8proc.o -o $@
 
-test/printproperty: test/printproperty.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/printproperty.c utf8proc.o -o $@
+test/graphemetest: test/graphemetest.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/graphemetest.c test/tests.o utf8proc.o -o $@
 
-test/charwidth: test/charwidth.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/charwidth.c utf8proc.o -o $@
+test/printproperty: test/printproperty.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/printproperty.c test/tests.o utf8proc.o -o $@
 
-test/valid: test/valid.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/valid.c utf8proc.o -o $@
+test/charwidth: test/charwidth.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/charwidth.c test/tests.o utf8proc.o -o $@
 
-test/iterate: test/iterate.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/iterate.c utf8proc.o -o $@
+test/valid: test/valid.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/valid.c test/tests.o utf8proc.o -o $@
 
-test/case: test/case.c utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/case.c utf8proc.o -o $@
+test/iterate: test/iterate.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/iterate.c test/tests.o utf8proc.o -o $@
+
+test/case: test/case.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/case.c test/tests.o utf8proc.o -o $@
 
 check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
