@@ -22,15 +22,21 @@ build_script:
   - cd ..\msvc_shared
   - cmake .. -DBUILD_SHARED_LIBS=ON
   - cmake --build .
+  - set PATH=C:\MinGW\bin;%PATH%
   - C:\MinGW\msys\1.0\bin\sh --login -c "
-      echo 'C:\MinGW\ /MinGW' > /etc/fstab;
-      cd /c/projects/utf8proc;
-      mkdir mingw_static;
-      cd mingw_static;
-      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -G'MSYS Makefiles';
-      make;
-      mkdir ../mingw_shared;
-      cd ../mingw_shared;
-      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON -G'MSYS Makefiles';
+      cd /c/projects/utf8proc &&
+      mkdir mingw_static &&
+      cd mingw_static &&
+      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -G'MSYS Makefiles' &&
+      make &&
+      mkdir ../mingw_shared &&
+      cd ../mingw_shared &&
+      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON -G'MSYS Makefiles' &&
       make
       "
+
+on_finish:
+  # Uncomment the following line for interactive debugging, which
+  # will print login data for a temporary remote session after the
+  # build. This requires an RDP version 6 client, e.g., FreeRDP.
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
