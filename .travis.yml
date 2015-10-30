@@ -10,7 +10,7 @@ before_install:
     - sudo apt-get update -qq -y
     - sudo apt-get install libpcre3-dev julia fontforge -y
 script:
-    - make prefix=`pwd`/local install
+    - make manifest && diff MANIFEST.new MANIFEST
     - make check
     - make data && diff data/utf8proc_data.c.new utf8proc_data.c
     - make clean && git status --ignored --porcelain && test -z "$(git status --ignored --porcelain)"

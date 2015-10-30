@@ -9,6 +9,7 @@
 *.dylib
 *.dSYM
 *.out
+*.new
 data/*.txt
 data/*.ttf
 data/*.sfd
@@ -18,9 +19,9 @@ bench/icu
 bench/unistring
 normtest
 graphemetest
-utf8proc_data.c.new
 printproperty
 charwidth
 valid
 iterate
 case
+/tmp/

@@ -5,6 +5,7 @@ MAKE=make
 AR?=ar
 CC?=gcc
 INSTALL=install
+FIND=find
 
 # compiler settings
 CFLAGS ?= -O2
@@ -17,7 +18,7 @@ UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS
 # from the utf8proc version number because it indicates ABI compatibility,
 # not API compatibility: MAJOR should be incremented whenever *binary*
 # compatibility is broken, even if the API is backward-compatible
-# Be sure to also update these in CMakeLists.txt!
+# Be sure to also update these in MANIFEST and CMakeLists.txt!
 MAJOR=1
 MINOR=3
 PATCH=0
@@ -38,7 +39,7 @@ includedir=$(prefix)/include
 
 # meta targets
 
-.PHONY: all, clean, update, data
+.PHONY: all clean data update manifest install
 
 all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
@@ -48,6 +49,7 @@ ifneq ($(OS),Darwin)
 	rm -f libutf8proc.so.$(MAJOR)
 endif
 	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case
+	rm -rf MANIFEST.new tmp
 	$(MAKE) -C bench clean
 	$(MAKE) -C data clean
 
@@ -55,6 +57,8 @@ data: data/utf8proc_data.c.new
 
 update: data/utf8proc_data.c.new
 	cp -f data/utf8proc_data.c.new utf8proc_data.c
+
+manifest: MANIFEST.new
 
 # real targets
 
@@ -92,6 +96,12 @@ install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT)
 ifneq ($(OS),Darwin)
 	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
 endif
+
+MANIFEST.new:
+	rm -rf tmp
+	$(MAKE) install prefix=/usr DESTDIR=$(PWD)/tmp
+	$(FIND) tmp/usr -mindepth 1 -type l -printf "%P -> %l\n" -or -type f -printf "%P\n" -or -type d -printf "%P/\n" | LC_ALL=C sort > $@
+	rm -rf tmp
 
 # Test programs
 
