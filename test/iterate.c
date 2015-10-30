@@ -8,7 +8,7 @@ static  int     error;
 #define CHECKVALID(pos, val, len) buf[pos] = val; testbytes(buf,len,len,__LINE__)
 #define CHECKINVALID(pos, val, len) buf[pos] = val; testbytes(buf,len,UTF8PROC_ERROR_INVALIDUTF8,__LINE__)
 
-void testbytes(unsigned char *buf, int len, utf8proc_ssize_t retval, int line)
+static void testbytes(unsigned char *buf, int len, utf8proc_ssize_t retval, int line)
 {
     utf8proc_int32_t out[16];
     utf8proc_ssize_t ret;
