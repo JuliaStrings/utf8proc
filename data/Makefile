@@ -12,10 +12,6 @@ JULIA=julia
 FONTFORGE=fontforge
 CURLFLAGS = --retry 5 --location
 
-# use JuliaLang caching (https://github.com/staticfloat/cache.julialang.org)
-# so that Travis builds do not depend on anyone's flaky servers but our own
-URLCACHE=https://cache.e.ip.saba.us/
-
 .PHONY: clean
 
 .DELETE_ON_ERROR:
@@ -27,10 +23,10 @@ utf8proc_data.c.new: data_generator.rb UnicodeData.txt GraphemeBreakProperty.txt
 UNIFONT_VERSION=8.0.01
 
 unifont.ttf:
-	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://unifoundry.com/pub/unifont-$(UNIFONT_VERSION)/font-builds/unifont-$(UNIFONT_VERSION).ttf
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)https://mirrors.kernel.org/gnu/unifont/unifont-$(UNIFONT_VERSION)/unifont-$(UNIFONT_VERSION).ttf
 
 unifont_upper.ttf:
-	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://unifoundry.com/pub/unifont-$(UNIFONT_VERSION)/font-builds/unifont_upper-$(UNIFONT_VERSION).ttf
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)https://mirrors.kernel.org/gnu/unifont/unifont-$(UNIFONT_VERSION)/unifont_upper-$(UNIFONT_VERSION).ttf
 
 %.sfd: %.ttf
 	$(FONTFORGE) -lang=ff -c "Open(\"$<\");Save(\"$@\");Quit(0);"
