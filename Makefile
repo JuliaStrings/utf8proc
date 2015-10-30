@@ -44,6 +44,9 @@ all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
 clean:
 	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT) test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate
+ifneq ($(OS),Darwin)
+	rm -f libutf8proc.so.$(MAJOR)
+endif
 	$(MAKE) -C bench clean
 	$(MAKE) -C data clean
 
@@ -84,10 +87,9 @@ install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT)
 	mkdir -m 755 -p $(DESTDIR)$(libdir)
 	$(INSTALL) -m 644 libutf8proc.a $(DESTDIR)$(libdir)
 	$(INSTALL) -m 755 libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)
-	ln -f -s $(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
+	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
 ifneq ($(OS),Darwin)
-	ln -f -s $(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
-	ln -f -s $(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR).$(MINOR)
+	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
 endif
 
 # Test programs
