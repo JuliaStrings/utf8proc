@@ -7,7 +7,7 @@ int main(int argc, char **argv)
      int i;
 
      for (i = 1; i < argc; ++i) {
-          int c;
+          unsigned int c;
           if (!strcmp(argv[i], "-V")) {
                printf("utf8proc version %s\n", utf8proc_version());
                continue;

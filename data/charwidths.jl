@@ -8,8 +8,14 @@
 
 #############################################################################
 # Julia 0.3/0.4 compatibility (taken from Compat package)
+if VERSION < v"0.4.0-dev+1387"
+    typealias AbstractString String
+end
 if VERSION < v"0.4.0-dev+1419"
-    const UInt16 = Uint16
+    const UInt32 = Uint32
+end
+if VERSION < v"0.4.0-dev+3874"
+    Base.parse{T<:Integer}(::Type{T}, s::AbstractString) = parseint(T, s)
 end
 
 CharWidths = Dict{Int,Int}()
@@ -52,7 +58,7 @@ end
 # Widths from GNU Unifont
 
 #Read sfdfile for character widths
-function parsesfd(filename::String, CharWidths::Dict{Int,Int}=Dict{Int,Int}())
+function parsesfd(filename::AbstractString, CharWidths::Dict{Int,Int}=Dict{Int,Int}())
     state=:seekchar
     lineno = 0
     codepoint = width = nothing
@@ -65,8 +71,8 @@ function parsesfd(filename::String, CharWidths::Dict{Int,Int}=Dict{Int,Int}())
                 state = :readdata
             end
         elseif state==:readdata #Encoding: 65538 -1 2, Width: 1024
-            contains(line, "Encoding:") && (codepoint = int(split(line)[3]))
-            contains(line, "Width:") && (width = int(split(line)[2]))
+            contains(line, "Encoding:") && (codepoint = parse(Int, split(line)[3]))
+            contains(line, "Width:") && (width = parse(Int, split(line)[2]))
             if codepoint!=nothing && width!=nothing && codepoint >= 0
                 w=div(width, 512) # 512 units to the en
                 if w > 0
@@ -100,8 +106,8 @@ for line in readlines(open("EastAsianWidth.txt"))
     width = strip(tokens[2])
     #Parse code point range into Julia UnitRange
     rangetokens = split(charrange, "..")
-    charstart = uint32("0x"*rangetokens[1])
-    charend = uint32("0x"*rangetokens[length(rangetokens)>1 ? 2 : 1])
+    charstart = parse(UInt32, "0x"*rangetokens[1])
+    charend = parse(UInt32, "0x"*rangetokens[length(rangetokens)>1 ? 2 : 1])
 
     #Assign widths
     for c in charstart:charend

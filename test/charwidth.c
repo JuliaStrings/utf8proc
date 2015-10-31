@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include <wchar.h>
 
-int my_isprint(int c) {
+static int my_isprint(int c) {
      int cat = utf8proc_get_property(c)->category;
      return (UTF8PROC_CATEGORY_LU <= cat && cat <= UTF8PROC_CATEGORY_ZS) ||
           (c == 0x0601 || c == 0x0602 || c == 0x0603 || c == 0x06dd);
