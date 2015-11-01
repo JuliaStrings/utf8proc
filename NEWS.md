@@ -1,5 +1,17 @@
 # utf8proc release history #
 
+## Version 1.3.1 ##
+
+2015-11-02:
+
+- Do not export symbol for internal function `unsafe_encode_char()` ([#55]).
+
+- Install relative symbolic links for shared libraries ([#58]).
+
+- Enable and fix compiler warnings ([#55], [#58]).
+
+- Add missing files to `make clean` ([#58]).
+
 ## Version 1.3 ##
 
 2015-07-06:
@@ -218,3 +230,5 @@ Release of version 1.0.1
 [#45]: https://github.com/JuliaLang/utf8proc/issues/45
 [#47]: https://github.com/JuliaLang/utf8proc/issues/47
 [#51]: https://github.com/JuliaLang/utf8proc/issues/51
+[#55]: https://github.com/JuliaLang/utf8proc/issues/55
+[#58]: https://github.com/JuliaLang/utf8proc/issues/58
