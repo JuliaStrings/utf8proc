@@ -9,7 +9,7 @@ project (utf8proc C)
 # Be sure to also update these in Makefile!
 set(SO_MAJOR 1)
 set(SO_MINOR 3)
-set(SO_PATCH 0)
+set(SO_PATCH 1)
 
 add_definitions (
   -DUTF8PROC_EXPORTS
