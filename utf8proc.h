@@ -132,6 +132,10 @@ extern "C" {
 #define SSIZE_MAX ((size_t)SIZE_MAX/2)
 #endif
 
+#ifndef UINT16_MAX
+#  define UINT16_MAX ~(utf8proc_uint16_t)0
+#endif
+
 /**
  * Option flags used by several functions in the library.
  */
@@ -238,8 +242,8 @@ typedef struct utf8proc_property_struct {
    * @see utf8proc_decomp_type_t.
    */
   utf8proc_propval_t decomp_type;
-  const utf8proc_int32_t *decomp_mapping;
-  const utf8proc_int32_t *casefold_mapping;
+  utf8proc_uint16_t decomp_mapping;
+  utf8proc_uint16_t casefold_mapping;
   utf8proc_int32_t uppercase_mapping;
   utf8proc_int32_t lowercase_mapping;
   utf8proc_int32_t titlecase_mapping;
