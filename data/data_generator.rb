@@ -116,13 +116,14 @@ def str2c(string, prefix)
   return "UTF8PROC_#{prefix}_#{string.upcase}"
 end
 def ary2c(array)
-  return "NULL" if array.nil?
+  return "UINT16_MAX" if array.nil?
   unless $int_array_indicies[array]
     $int_array_indicies[array] = $int_array.length
     array.each { |entry| $int_array << entry }
     $int_array << -1
   end
-  return "utf8proc_sequences + #{$int_array_indicies[array]}"
+  raise "Array index out of bound" if $int_array_indicies[array] >= 65535
+  return "#{$int_array_indicies[array]}"
 end
 
 class UnicodeChar
@@ -305,7 +306,7 @@ end
 $stdout << "};\n\n"
 
 $stdout << "const utf8proc_property_t utf8proc_properties[] = {\n"
-$stdout << "  {0, 0, 0, 0, NULL, NULL, -1, -1, -1, -1, -1, false,false,false,false, UTF8PROC_BOUNDCLASS_OTHER, 0},\n"
+$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, -1, -1, -1, -1, -1, false,false,false,false, UTF8PROC_BOUNDCLASS_OTHER, 0},\n"
 properties.each { |line|
   $stdout << line
 }
