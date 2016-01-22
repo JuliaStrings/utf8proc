@@ -13,14 +13,6 @@ set(SO_MAJOR 2)
 set(SO_MINOR 2)
 set(SO_PATCH 0)
 
-if (NOT MSVC)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=c99 -pedantic -Wall")
-endif ()
-
-add_definitions (
-  -DUTF8PROC_EXPORTS
-)
-
 add_library (utf8proc
   utf8proc.c
   utf8proc.h
@@ -36,7 +28,11 @@ else()
   endif()
 endif()
 
-target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
+set_target_properties(
+  utf8proc PROPERTIES
+  COMPILE_DEFINITIONS "UTF8PROC_EXPORTS"
+)
+
 if (NOT MSVC)
   set_target_properties(
     utf8proc PROPERTIES
