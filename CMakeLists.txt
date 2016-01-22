@@ -28,6 +28,8 @@ else()
   endif()
 endif()
 
+target_include_directories(utf8proc PUBLIC ../utf8proc)
+
 set_target_properties(
   utf8proc PROPERTIES
   COMPILE_DEFINITIONS "UTF8PROC_EXPORTS"
