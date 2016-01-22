@@ -17,6 +17,10 @@ if (NOT MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=c99 -pedantic -Wall")
 endif ()
 
+add_definitions (
+  -DUTF8PROC_EXPORTS
+)
+
 add_library (utf8proc
   utf8proc.c
   utf8proc.h
@@ -33,6 +37,12 @@ else()
 endif()
 
 target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
+if (NOT MSVC)
+  set_target_properties(
+    utf8proc PROPERTIES
+    COMPILE_FLAGS "-O2 -std=c99 -pedantic -Wall"
+  )
+endif ()
 
 set_target_properties (utf8proc PROPERTIES
   POSITION_INDEPENDENT_CODE ON
