@@ -11,13 +11,14 @@ set(SO_MAJOR 2)
 set(SO_MINOR 0)
 set(SO_PATCH 0)
 
-add_definitions (
-  -DUTF8PROC_EXPORTS
-)
-
 add_library (utf8proc
   utf8proc.c
   utf8proc.h
+)
+
+set_target_properties(
+  utf8proc PROPERTIES
+  COMPILE_DEFINITIONS "UTF8PROC_EXPORTS"
 )
 
 if (NOT MSVC)
