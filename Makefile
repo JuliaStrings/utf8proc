@@ -21,7 +21,7 @@ UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS
 # Be sure to also update these in MANIFEST and CMakeLists.txt!
 MAJOR=2
 MINOR=0
-PATCH=0
+PATCH=1
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
