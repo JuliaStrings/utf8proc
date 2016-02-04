@@ -13,11 +13,17 @@ static void testbytes(unsigned char *buf, int len, utf8proc_ssize_t retval, int 
     utf8proc_int32_t out[16];
     utf8proc_ssize_t ret;
 
+    /* Make a copy to ensure that memory is left uninitialized after "len"
+     * bytes. This way, Valgrind can detect overreads.
+     */
+    unsigned char tmp[16];
+    memcpy(tmp, buf, len);
+
     tests++;
-    if ((ret = utf8proc_iterate(buf, len, out)) != retval) {
+    if ((ret = utf8proc_iterate(tmp, len, out)) != retval) {
         fprintf(stderr, "Failed (%d):", line);
         for (int i = 0; i < len ; i++) {
-            fprintf(stderr, " 0x%02x", buf[i]);
+            fprintf(stderr, " 0x%02x", tmp[i]);
         }
         fprintf(stderr, " -> %zd\n", ret);
         error++;

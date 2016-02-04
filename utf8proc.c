@@ -128,7 +128,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate(
   if ((uc - 0xc2) > (0xf4-0xc2)) return UTF8PROC_ERROR_INVALIDUTF8;
   if (uc < 0xe0) {         // 2-byte sequence
      // Must have valid continuation character
-     if (!utf_cont(*str)) return UTF8PROC_ERROR_INVALIDUTF8;
+     if (str >= end || !utf_cont(*str)) return UTF8PROC_ERROR_INVALIDUTF8;
      *dst = ((uc & 0x1f)<<6) | (*str & 0x3f);
      return 2;
   }
