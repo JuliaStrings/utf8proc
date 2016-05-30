@@ -115,15 +115,16 @@ def str2c(string, prefix)
   return "0" if string.nil?
   return "UTF8PROC_#{prefix}_#{string.upcase}"
 end
-def ary2c(array)
-  return "UINT16_MAX" if array.nil?
+def ary2c(array,oldlen)
+  return "UINT16_MAX" if array.nil? || oldlen == 0
+  oldlen -= 1 #no sequence has len 0, so we encode len 1 as 0, len 2 as 1, ...
   unless $int_array_indicies[array]
     $int_array_indicies[array] = $int_array.length
+    $int_array << oldlen if oldlen >= 7 #we have only 3 bits for the length
     array.each { |entry| $int_array << entry }
-    $int_array << 0
   end
-  raise "Array index out of bound" if $int_array_indicies[array] >= 65535
-  return "#{$int_array_indicies[array]}"
+  raise "Array index out of bound" if $int_array_indicies[array] > 0x1FFF
+  return "#{$int_array_indicies[array] | ([7,oldlen].min << 13)}"
 end
 def cpary2c(array)
   return "UINT16_MAX" if array.nil?
@@ -135,7 +136,7 @@ def cpary2c(array)
       temp = cp - 0x10000
       [(temp >> 10) | 0b1101100000000000, (temp & 0b0000001111111111) | 0b1101110000000000]
     end
-  })
+  },array.length)
 end
 
 class UnicodeChar

@@ -293,10 +293,14 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t c) {
 }
 
 static utf8proc_ssize_t write_char_mapping_decomposed(utf8proc_uint16_t mapping, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, utf8proc_option_t options, int *last_boundclass) {
-     const utf8proc_uint16_t *entry;
      utf8proc_ssize_t written = 0;
-     for (entry = &utf8proc_sequences[mapping];
-         *entry > 0; entry++) {
+     const utf8proc_uint16_t *entry = &utf8proc_sequences[mapping & 0x1FFF];
+     int len = mapping >> 13;
+     if (len >= 7) {
+          len = *entry;
+          entry++;
+     }
+     for (; len >= 0; entry++, len--) {
           utf8proc_int32_t entry_cp = *entry;
           if ((entry_cp & 0xF800) == 0xD800) {
                entry++;
