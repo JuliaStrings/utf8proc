@@ -120,10 +120,22 @@ def ary2c(array)
   unless $int_array_indicies[array]
     $int_array_indicies[array] = $int_array.length
     array.each { |entry| $int_array << entry }
-    $int_array << -1
+    $int_array << 0
   end
   raise "Array index out of bound" if $int_array_indicies[array] >= 65535
   return "#{$int_array_indicies[array]}"
+end
+def cpary2c(array)
+  return "UINT16_MAX" if array.nil?
+  return ary2c(array.flat_map { |cp|
+    if (cp <= 0xFFFF)
+      raise "utf-16 code: #{cp}" if cp & 0b1111100000000000 == 0b1101100000000000
+      cp
+    else
+      temp = cp - 0x10000
+      [(temp >> 10) | 0b1101100000000000, (temp & 0b0000001111111111) | 0b1101110000000000]
+    end
+  })
 end
 
 class UnicodeChar
@@ -170,8 +182,8 @@ class UnicodeChar
     "{#{str2c category, 'CATEGORY'}, #{combining_class}, " <<
     "#{str2c bidi_class, 'BIDI_CLASS'}, " <<
     "#{str2c decomp_type, 'DECOMP_TYPE'}, " <<
-    "#{ary2c decomp_mapping}, " <<
-    "#{ary2c case_folding}, " <<
+    "#{cpary2c decomp_mapping}, " <<
+    "#{cpary2c case_folding}, " <<
     "#{uppercase_mapping or -1}, " <<
     "#{lowercase_mapping or -1}, " <<
     "#{titlecase_mapping or -1}, " <<
@@ -269,7 +281,7 @@ for code in 0...0x110000
   end
 end
 
-$stdout << "const utf8proc_int32_t utf8proc_sequences[] = {\n  "
+$stdout << "utf8proc_uint16_t utf8proc_sequences[] = {\n  "
 i = 0
 $int_array.each do |entry|
   i += 1

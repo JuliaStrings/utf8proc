@@ -292,6 +292,26 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t c) {
   return s[utf8proc_category(c)];
 }
 
+static utf8proc_ssize_t write_char_mapping_decomposed(utf8proc_uint16_t mapping, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, utf8proc_option_t options, int *last_boundclass) {
+     const utf8proc_uint16_t *entry;
+     utf8proc_ssize_t written = 0;
+     for (entry = &utf8proc_sequences[mapping];
+         *entry > 0; entry++) {
+          utf8proc_int32_t entry_cp = *entry;
+          if ((entry_cp & 0xF800) == 0xD800) {
+               entry++;
+               entry_cp = ((entry_cp & 0x03FF) << 10) | (*entry & 0x03FF);
+               entry_cp += 0x10000;
+          }
+       written += utf8proc_decompose_char(entry_cp, dst+written,
+         (bufsize > written) ? (bufsize - written) : 0, options,
+       last_boundclass);
+       if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
+     }
+     return written;
+
+}
+
 #define utf8proc_decompose_lump(replacement_uc) \
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
   options & ~UTF8PROC_LUMP, last_boundclass)
@@ -358,31 +378,13 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
   }
   if (options & UTF8PROC_CASEFOLD) {
     if (property->casefold_mapping != UINT16_MAX) {
-      const utf8proc_int32_t *casefold_entry;
-      utf8proc_ssize_t written = 0;
-      for (casefold_entry = &utf8proc_sequences[property->casefold_mapping];
-          *casefold_entry >= 0; casefold_entry++) {
-        written += utf8proc_decompose_char(*casefold_entry, dst+written,
-          (bufsize > written) ? (bufsize - written) : 0, options,
-          last_boundclass);
-        if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
-      }
-      return written;
+      return write_char_mapping_decomposed(property->casefold_mapping, dst, bufsize, options, last_boundclass);
     }
   }
   if (options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) {
     if (property->decomp_mapping != UINT16_MAX &&
         (!property->decomp_type || (options & UTF8PROC_COMPAT))) {
-      const utf8proc_int32_t *decomp_entry;
-      utf8proc_ssize_t written = 0;
-      for (decomp_entry = &utf8proc_sequences[property->decomp_mapping];
-          *decomp_entry >= 0; decomp_entry++) {
-        written += utf8proc_decompose_char(*decomp_entry, dst+written,
-          (bufsize > written) ? (bufsize - written) : 0, options,
-        last_boundclass);
-        if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
-      }
-      return written;
+      return write_char_mapping_decomposed(property->decomp_mapping, dst, bufsize, options, last_boundclass);
     }
   }
   if (options & UTF8PROC_CHARBOUND) {
