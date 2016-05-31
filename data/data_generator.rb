@@ -143,7 +143,9 @@ class UnicodeChar
   attr_accessor :code, :name, :category, :combining_class, :bidi_class,
                 :decomp_type, :decomp_mapping,
                 :bidi_mirrored,
-                :uppercase_mapping, :lowercase_mapping, :titlecase_mapping
+                :uppercase_mapping, :lowercase_mapping, :titlecase_mapping,
+                #caches:
+                :c_entry_index
   def initialize(line)
     raise "Could not parse input." unless line =~ /^
       ([0-9A-F]+);        # code
@@ -254,8 +256,10 @@ properties_indicies = {}
 properties = []
 chars.each do |char|
   c_entry = char.c_entry(comb1st_indicies, comb2nd_indicies)
-  unless properties_indicies[c_entry]
+  char.c_entry_index = properties_indicies[c_entry]
+  unless char.c_entry_index
     properties_indicies[c_entry] = properties.length
+    char.c_entry_index = properties.length
     properties << c_entry
   end
 end
@@ -267,8 +271,7 @@ for code in 0...0x110000
   stage2_entry = []
   for code2 in code...(code+0x100)
     if char_hash[code2]
-      stage2_entry << (properties_indicies[char_hash[code2].c_entry(
-        comb1st_indicies, comb2nd_indicies)] + 1)
+      stage2_entry << (char_hash[code2].c_entry_index + 1)
     else
       stage2_entry << 0
     end
