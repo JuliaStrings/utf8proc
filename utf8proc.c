@@ -564,13 +564,19 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
         if (!starter_property) {
           starter_property = unsafe_get_property(*starter);
         }
-        if (starter_property->comb1st_index >= 0 &&
-            current_property->comb2nd_index >= 0) {
-          composition = utf8proc_combinations[
-            starter_property->comb1st_index +
-            current_property->comb2nd_index
-          ];
-          if (composition >= 0 && (!(options & UTF8PROC_STABLE) ||
+        if (starter_property->comb1st_index != UINT16_MAX &&
+            current_property->comb2nd_index != UINT16_MAX) {
+          if (current_property->comb2nd_index & 0x8000) {
+            int idx = starter_property->comb1st_index
+                      + (current_property->comb2nd_index & 0x7FFF);
+            composition = (utf8proc_combinations[idx] << 16) | utf8proc_combinations[idx+1];
+          } else
+            composition = utf8proc_combinations[
+              starter_property->comb1st_index +
+              current_property->comb2nd_index
+            ];
+
+          if (composition > 0 && (!(options & UTF8PROC_STABLE) ||
               !(unsafe_get_property(composition)->comp_exclusion))) {
             *starter = composition;
             starter_property = NULL;

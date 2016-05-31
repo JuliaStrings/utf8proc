@@ -195,7 +195,7 @@ class UnicodeChar
   def case_folding
     $case_folding[code]
   end
-  def c_entry(comb1_indicies, comb2_indicies)
+  def c_entry(comb1_indicies, comb2_indicies, comb2nd_indicies_count, comb2nd_indicies_nonbasic )
     "  " <<
     "{#{str2c category, 'CATEGORY'}, #{combining_class}, " <<
     "#{str2c bidi_class, 'BIDI_CLASS'}, " <<
@@ -206,8 +206,8 @@ class UnicodeChar
     "#{singlecpmap lowercase_mapping }, " <<
     "#{singlecpmap titlecase_mapping }, " <<
     "#{comb1_indicies[code] ?
-       (comb1_indicies[code]*comb2_indicies.keys.length) : -1
-      }, #{comb2_indicies[code] or -1}, " <<
+       (comb1_indicies[code]*comb2nd_indicies_count) : 'UINT16_MAX'
+      }, #{comb2_indicies[code] ? (comb2nd_indicies_nonbasic[code] ? 0x8000 : 0 ) | comb2_indicies[code] : 'UINT16_MAX'}, " <<
     "#{bidi_mirrored}, " <<
     "#{$exclusions.include?(code) or $excl_version.include?(code)}, " <<
     "#{$ignorable.include?(code)}, " <<
@@ -244,7 +244,11 @@ while gets
 end
 
 comb1st_indicies = {}
+comb1st_indicies_min2nd = {}
+comb1st_indicies_max2nd = {}
 comb2nd_indicies = {}
+comb2nd_indicies_sorted_keys = []
+comb2nd_indicies_nonbasic = {}
 comb_array = []
 
 chars.each do |char|
@@ -252,28 +256,40 @@ chars.each do |char|
       char.decomp_mapping.length == 2 and !char_hash[char.decomp_mapping[0]].nil? and
       char_hash[char.decomp_mapping[0]].combining_class == 0 and
       not $exclusions.include?(char.code)
-    unless comb1st_indicies[char.decomp_mapping[0]]
-      comb1st_indicies[char.decomp_mapping[0]] = comb1st_indicies.keys.length
+
+    dm0 = char.decomp_mapping[0]
+    dm1 = char.decomp_mapping[1]
+    unless comb1st_indicies[dm0]
+      comb1st_indicies[dm0] = comb1st_indicies.keys.length
     end
-    unless comb2nd_indicies[char.decomp_mapping[1]]
-      comb2nd_indicies[char.decomp_mapping[1]] = comb2nd_indicies.keys.length
+    unless comb2nd_indicies[dm1]
+      comb2nd_indicies_sorted_keys << dm1
+      comb2nd_indicies[dm1] = comb2nd_indicies.keys.length 
     end
-    comb_array[comb1st_indicies[char.decomp_mapping[0]]] ||= []
-    raise "Duplicate canonical mapping" if
-      comb_array[comb1st_indicies[char.decomp_mapping[0]]][
-      comb2nd_indicies[char.decomp_mapping[1]]]
-    comb_array[comb1st_indicies[char.decomp_mapping[0]]][
-      comb2nd_indicies[char.decomp_mapping[1]]] = char.code
+    comb_array[comb1st_indicies[dm0]] ||= []
+    raise "Duplicate canonical mapping: #{char.code} #{dm0} #{dm1}" if comb_array[comb1st_indicies[dm0]][comb2nd_indicies[dm1]]
+    comb_array[comb1st_indicies[dm0]][comb2nd_indicies[dm1]] = char.code
+    
+    comb2nd_indicies_nonbasic[dm1] = true if char.code > 0xFFFF
+    
+    #comb1st_indicies_min2nd[] = {}
+    #comb1st_indicies_max2nd = {}
   end
-  
   char.c_decomp_mapping = cpary2c(char.decomp_mapping)
   char.c_case_folding = cpary2c(char.case_folding)
+end 
+
+comb2nd_indicies_count = comb2nd_indicies.keys.length + comb2nd_indicies_nonbasic.keys.length
+offset = 0
+comb2nd_indicies_sorted_keys.each do |dm1|
+  comb2nd_indicies[dm1] += offset
+  offset += 1 if comb2nd_indicies_nonbasic[dm1]
 end
 
 properties_indicies = {}
 properties = []
 chars.each do |char|
-  c_entry = char.c_entry(comb1st_indicies, comb2nd_indicies)
+  c_entry = char.c_entry(comb1st_indicies, comb2nd_indicies,comb2nd_indicies_count,  comb2nd_indicies_nonbasic)
   char.c_entry_index = properties_indicies[c_entry]
   unless char.c_entry_index
     properties_indicies[c_entry] = properties.length
@@ -346,17 +362,22 @@ properties.each { |line|
 }
 $stdout << "};\n\n"
 
-$stdout << "const utf8proc_int32_t utf8proc_combinations[] = {\n  "
+
+
+$stdout << "const utf8proc_uint16_t utf8proc_combinations[] = {\n  "
 i = 0
-comb1st_indicies.keys.sort.each_index do |a|
-  comb2nd_indicies.keys.sort.each_index do |b|
+comb1st_indicies.keys.each_index do |a|
+  comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
     i += 1
     if i == 8
       i = 0
       $stdout << "\n  "
     end
-    $stdout << ( comb_array[a][b] or -1 ) << ", "
+    v = comb_array[a][b] ? comb_array[a][b] : 0
+    $stdout << (( v & 0xFFFF0000 ) >> 16) << ", " if comb2nd_indicies_nonbasic[dm1]
+    $stdout << (v & 0xFFFF) << ", "
   end
+  $stdout  << "\n"
 end
 $stdout << "};\n\n"
 
