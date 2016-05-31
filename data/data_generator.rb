@@ -267,9 +267,6 @@ chars.each do |char|
     comb_array[comb1st_indicies[dm0]][comb2nd_indicies[dm1]] = char.code
     
     comb2nd_indicies_nonbasic[dm1] = true if char.code > 0xFFFF
-    
-    #comb1st_indicies_min2nd[] = {}
-    #comb1st_indicies_max2nd = {}
   end
   char.c_decomp_mapping = cpary2c(char.decomp_mapping)
   char.c_case_folding = cpary2c(char.case_folding)
@@ -278,7 +275,7 @@ end
 comb_indicies = {}
 comb1st_indicies.each do |dm0, index|
   raise "double index" if comb_indicies[dm0]
-  comb_indicies[dm0] = index * (comb2nd_indicies.keys.length + comb2nd_indicies_nonbasic.keys.length);
+  comb_indicies[dm0] = index * 3;
 end
 offset = 0
 comb2nd_indicies_sorted_keys.each do |dm1|
@@ -367,20 +364,54 @@ properties.each { |line|
 }
 $stdout << "};\n\n"
 
-
+$stdout << "const utf8proc_int16_t utf8proc_combinations_starts[] = {\n  "
+i = 0
+cumoffset = 0
+lastoffsets = []
+firstoffsets = []
+comb1st_indicies.keys.sort.each_index do |a|
+  i += 1
+  if i == 8
+    i = 0
+    $stdout << "\n  "
+  end
+  first = nil
+  last = nil
+  offset = 0
+  comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
+    if comb_array[a][b] 
+      first = offset unless first
+      last = offset
+      last += 1 if comb2nd_indicies_nonbasic[dm1]
+    end
+    offset += 1
+    offset += 1 if comb2nd_indicies_nonbasic[dm1]
+  end
+  firstoffsets << first
+  lastoffsets << last
+  $stdout << cumoffset << ", " << first << ", " << last - first << ", "
+  cumoffset += last - first + 1
+end
+$stdout <<  "};\n\n"
 
 $stdout << "const utf8proc_uint16_t utf8proc_combinations[] = {\n  "
 i = 0
 comb1st_indicies.keys.each_index do |a|
+  offset = 0
   comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
-    i += 1
-    if i == 8
-      i = 0
-      $stdout << "\n  "
+    break if offset > lastoffsets[a] 
+    if offset >= firstoffsets[a]
+      i += 1
+      if i == 8
+        i = 0
+        $stdout << "\n  "
+      end
+      v = comb_array[a][b] ? comb_array[a][b] : 0
+      $stdout << (( v & 0xFFFF0000 ) >> 16) << ", " if comb2nd_indicies_nonbasic[dm1]
+      $stdout << (v & 0xFFFF) << ", "
     end
-    v = comb_array[a][b] ? comb_array[a][b] : 0
-    $stdout << (( v & 0xFFFF0000 ) >> 16) << ", " if comb2nd_indicies_nonbasic[dm1]
-    $stdout << (v & 0xFFFF) << ", "
+    offset += 1
+    offset += 1 if comb2nd_indicies_nonbasic[dm1]    
   end
   $stdout  << "\n"
 end
