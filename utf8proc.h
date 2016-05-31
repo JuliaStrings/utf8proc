@@ -247,9 +247,7 @@ typedef struct utf8proc_property_struct {
   utf8proc_uint16_t uppercase_seqindex;
   utf8proc_uint16_t lowercase_seqindex;
   utf8proc_uint16_t titlecase_seqindex;
-  //utf8proc_uint16_t comb_index;
-  utf8proc_int32_t comb1st_index;
-  utf8proc_int32_t comb2nd_index;
+  utf8proc_uint16_t comb_index;
   unsigned bidi_mirrored:1;
   unsigned comp_exclusion:1;
   /**

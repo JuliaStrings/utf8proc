@@ -195,7 +195,7 @@ class UnicodeChar
   def case_folding
     $case_folding[code]
   end
-  def c_entry(comb1_indicies, comb2_indicies, comb2nd_indicies_count, comb2nd_indicies_nonbasic )
+  def c_entry(comb_indicies)
     "  " <<
     "{#{str2c category, 'CATEGORY'}, #{combining_class}, " <<
     "#{str2c bidi_class, 'BIDI_CLASS'}, " <<
@@ -205,9 +205,7 @@ class UnicodeChar
     "#{singlecpmap uppercase_mapping }, " <<
     "#{singlecpmap lowercase_mapping }, " <<
     "#{singlecpmap titlecase_mapping }, " <<
-    "#{comb1_indicies[code] ?
-       (comb1_indicies[code]*comb2nd_indicies_count) : 'UINT16_MAX'
-      }, #{comb2_indicies[code] ? (comb2nd_indicies_nonbasic[code] ? 0x8000 : 0 ) | comb2_indicies[code] : 'UINT16_MAX'}, " <<
+    "#{comb_indicies[code] ? comb_indicies[code]: 'UINT16_MAX'}, " <<
     "#{bidi_mirrored}, " <<
     "#{$exclusions.include?(code) or $excl_version.include?(code)}, " <<
     "#{$ignorable.include?(code)}, " <<
@@ -244,8 +242,6 @@ while gets
 end
 
 comb1st_indicies = {}
-comb1st_indicies_min2nd = {}
-comb1st_indicies_max2nd = {}
 comb2nd_indicies = {}
 comb2nd_indicies_sorted_keys = []
 comb2nd_indicies_nonbasic = {}
@@ -279,17 +275,26 @@ chars.each do |char|
   char.c_case_folding = cpary2c(char.case_folding)
 end 
 
-comb2nd_indicies_count = comb2nd_indicies.keys.length + comb2nd_indicies_nonbasic.keys.length
+comb_indicies = {}
+comb1st_indicies.each do |dm0, index|
+  raise "double index" if comb_indicies[dm0]
+  comb_indicies[dm0] = index * (comb2nd_indicies.keys.length + comb2nd_indicies_nonbasic.keys.length);
+end
 offset = 0
 comb2nd_indicies_sorted_keys.each do |dm1|
-  comb2nd_indicies[dm1] += offset
-  offset += 1 if comb2nd_indicies_nonbasic[dm1]
+  raise "double index" if comb_indicies[dm1]
+  comb_indicies[dm1] = 0x8000 | (comb2nd_indicies[dm1] + offset)
+  raise "too large comb index" if  comb2nd_indicies[dm1] + offset > 0x4000
+  if comb2nd_indicies_nonbasic[dm1]
+    comb_indicies[dm1] = comb_indicies[dm1] | 0x4000
+    offset += 1
+  end
 end
 
 properties_indicies = {}
 properties = []
 chars.each do |char|
-  c_entry = char.c_entry(comb1st_indicies, comb2nd_indicies,comb2nd_indicies_count,  comb2nd_indicies_nonbasic)
+  c_entry = char.c_entry(comb_indicies)
   char.c_entry_index = properties_indicies[c_entry]
   unless char.c_entry_index
     properties_indicies[c_entry] = properties.length
@@ -356,7 +361,7 @@ end
 $stdout << "};\n\n"
 
 $stdout << "const utf8proc_property_t utf8proc_properties[] = {\n"
-$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, -1, -1, -1, -1, -1, false,false,false,false, UTF8PROC_BOUNDCLASS_OTHER, 0},\n"
+$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, UTF8PROC_BOUNDCLASS_OTHER, 0},\n"
 properties.each { |line|
   $stdout << line
 }
