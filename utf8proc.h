@@ -242,11 +242,11 @@ typedef struct utf8proc_property_struct {
    * @see utf8proc_decomp_type_t.
    */
   utf8proc_propval_t decomp_type;
-  utf8proc_uint16_t decomp_mapping;
-  utf8proc_uint16_t casefold_mapping;
-  utf8proc_int32_t uppercase_mapping;
-  utf8proc_int32_t lowercase_mapping;
-  utf8proc_int32_t titlecase_mapping;
+  utf8proc_uint16_t decomp_seqindex;
+  utf8proc_uint16_t casefold_seqindex;
+  utf8proc_uint16_t uppercase_seqindex;
+  utf8proc_uint16_t lowercase_seqindex;
+  utf8proc_uint16_t titlecase_seqindex;
   utf8proc_int32_t comb1st_index;
   utf8proc_int32_t comb2nd_index;
   unsigned bidi_mirrored:1;
@@ -530,6 +530,13 @@ UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_tolower(utf8proc_int32_t c);
  * variant, or if `c` is not a valid codepoint) return `c`.
  */
 UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_toupper(utf8proc_int32_t c);
+
+/**
+ * Given a codepoint `c`, return the codepoint of the corresponding
+ * title-case character, if any; otherwise (if there is no title-case
+ * variant, or if `c` is not a valid codepoint) return `c`.
+ */
+UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_totitle(utf8proc_int32_t c);
 
 /**
  * Given a codepoint, return a character width analogous to `wcwidth(codepoint)`,

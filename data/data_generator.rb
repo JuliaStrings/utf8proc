@@ -115,28 +115,43 @@ def str2c(string, prefix)
   return "0" if string.nil?
   return "UTF8PROC_#{prefix}_#{string.upcase}"
 end
-def ary2c(array,oldlen)
-  return "UINT16_MAX" if array.nil? || oldlen == 0
-  oldlen -= 1 #no sequence has len 0, so we encode len 1 as 0, len 2 as 1, ...
-  unless $int_array_indicies[array]
+def pushary(array)
+  idx = $int_array_indicies[array]
+  unless idx
     $int_array_indicies[array] = $int_array.length
-    $int_array << oldlen if oldlen >= 7 #we have only 3 bits for the length
+    idx = $int_array.length
     array.each { |entry| $int_array << entry }
   end
-  raise "Array index out of bound" if $int_array_indicies[array] > 0x1FFF
-  return "#{$int_array_indicies[array] | ([7,oldlen].min << 13)}"
+  return idx
+end
+def cpary2utf16encoded(array)
+  return array.flat_map { |cp|
+      if (cp <= 0xFFFF)
+        raise "utf-16 code: #{cp}" if cp & 0b1111100000000000 == 0b1101100000000000
+        cp
+      else
+        temp = cp - 0x10000
+        [(temp >> 10) | 0b1101100000000000, (temp & 0b0000001111111111) | 0b1101110000000000]
+      end
+    }
 end
 def cpary2c(array)
-  return "UINT16_MAX" if array.nil?
-  return ary2c(array.flat_map { |cp|
-    if (cp <= 0xFFFF)
-      raise "utf-16 code: #{cp}" if cp & 0b1111100000000000 == 0b1101100000000000
-      cp
-    else
-      temp = cp - 0x10000
-      [(temp >> 10) | 0b1101100000000000, (temp & 0b0000001111111111) | 0b1101110000000000]
-    end
-  },array.length)
+  return "UINT16_MAX" if array.nil? || array.length == 0
+  lencode = array.length - 1 #no sequence has len 0, so we encode len 1 as 0, len 2 as 1, ... 
+  array = cpary2utf16encoded(array)
+  if lencode >= 7 #we have only 3 bits for the length (which is already cutting it close. might need to change it to 2 bits in future Unicode versions)
+    array = [lencode] + array 
+    lencode = 7
+  end  
+  idx = pushary(array) 
+  raise "Array index out of bound" if idx > 0x1FFF
+  return "#{idx | (lencode << 13)}"
+end
+def singlecpmap(cp)
+  return "UINT16_MAX" if cp == nil
+  idx = pushary(cpary2utf16encoded([cp]))
+  raise "Array index out of bound" if idx > 0xFFFF
+  return "#{idx}"
 end
 
 class UnicodeChar
@@ -145,7 +160,7 @@ class UnicodeChar
                 :bidi_mirrored,
                 :uppercase_mapping, :lowercase_mapping, :titlecase_mapping,
                 #caches:
-                :c_entry_index
+                :c_entry_index, :c_decomp_mapping, :c_case_folding
   def initialize(line)
     raise "Could not parse input." unless line =~ /^
       ([0-9A-F]+);        # code
@@ -185,11 +200,11 @@ class UnicodeChar
     "{#{str2c category, 'CATEGORY'}, #{combining_class}, " <<
     "#{str2c bidi_class, 'BIDI_CLASS'}, " <<
     "#{str2c decomp_type, 'DECOMP_TYPE'}, " <<
-    "#{cpary2c decomp_mapping}, " <<
-    "#{cpary2c case_folding}, " <<
-    "#{uppercase_mapping or -1}, " <<
-    "#{lowercase_mapping or -1}, " <<
-    "#{titlecase_mapping or -1}, " <<
+    "#{c_decomp_mapping}, " <<
+    "#{c_case_folding}, " <<
+    "#{singlecpmap uppercase_mapping }, " <<
+    "#{singlecpmap lowercase_mapping }, " <<
+    "#{singlecpmap titlecase_mapping }, " <<
     "#{comb1_indicies[code] ?
        (comb1_indicies[code]*comb2_indicies.keys.length) : -1
       }, #{comb2_indicies[code] or -1}, " <<
@@ -250,6 +265,9 @@ chars.each do |char|
     comb_array[comb1st_indicies[char.decomp_mapping[0]]][
       comb2nd_indicies[char.decomp_mapping[1]]] = char.code
   end
+  
+  char.c_decomp_mapping = cpary2c(char.decomp_mapping)
+  char.c_case_folding = cpary2c(char.case_folding)
 end
 
 properties_indicies = {}
