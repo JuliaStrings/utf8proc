@@ -273,10 +273,29 @@ chars.each do |char|
 end 
 
 comb_indicies = {}
+cumoffset = 0
+comb1st_indicies_lastoffsets = []
+comb1st_indicies_firstoffsets = []
 comb1st_indicies.each do |dm0, index|
+  first = nil
+  last = nil
+  offset = 0
+  comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
+    if comb_array[index][b] 
+      first = offset unless first
+      last = offset
+      last += 1 if comb2nd_indicies_nonbasic[dm1]
+    end
+    offset += 1
+    offset += 1 if comb2nd_indicies_nonbasic[dm1]
+  end
+  comb1st_indicies_firstoffsets[index] = first
+  comb1st_indicies_lastoffsets[index] = last
   raise "double index" if comb_indicies[dm0]
-  comb_indicies[dm0] = index * 3;
+  comb_indicies[dm0] = cumoffset
+  cumoffset += last - first + 1 + 2
 end
+
 offset = 0
 comb2nd_indicies_sorted_keys.each do |dm1|
   raise "double index" if comb_indicies[dm1]
@@ -364,43 +383,16 @@ properties.each { |line|
 }
 $stdout << "};\n\n"
 
-$stdout << "const utf8proc_int16_t utf8proc_combinations_starts[] = {\n  "
-i = 0
-cumoffset = 0
-lastoffsets = []
-firstoffsets = []
-comb1st_indicies.keys.sort.each_index do |a|
-  i += 1
-  if i == 8
-    i = 0
-    $stdout << "\n  "
-  end
-  first = nil
-  last = nil
-  offset = 0
-  comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
-    if comb_array[a][b] 
-      first = offset unless first
-      last = offset
-      last += 1 if comb2nd_indicies_nonbasic[dm1]
-    end
-    offset += 1
-    offset += 1 if comb2nd_indicies_nonbasic[dm1]
-  end
-  firstoffsets << first
-  lastoffsets << last
-  $stdout << cumoffset << ", " << first << ", " << last - first << ", "
-  cumoffset += last - first + 1
-end
-$stdout <<  "};\n\n"
+
 
 $stdout << "const utf8proc_uint16_t utf8proc_combinations[] = {\n  "
 i = 0
 comb1st_indicies.keys.each_index do |a|
   offset = 0
+  $stdout << comb1st_indicies_firstoffsets[a] << ", " << comb1st_indicies_lastoffsets[a] << ", "
   comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
-    break if offset > lastoffsets[a] 
-    if offset >= firstoffsets[a]
+    break if offset > comb1st_indicies_lastoffsets[a] 
+    if offset >= comb1st_indicies_firstoffsets[a]
       i += 1
       if i == 8
         i = 0

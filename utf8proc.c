@@ -568,9 +568,9 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
             current_property->comb_index != UINT16_MAX &&
             current_property->comb_index >= 0x8000) {
           int sidx = starter_property->comb_index;
-          int idx = (current_property->comb_index & 0x3FFF) - utf8proc_combinations_starts[sidx + 1];
-          if (idx >= 0 && idx <= utf8proc_combinations_starts[sidx + 2] ) {
-            idx += utf8proc_combinations_starts[sidx] ;
+          int idx = (current_property->comb_index & 0x3FFF) - utf8proc_combinations[sidx];
+          if (idx >= 0 && idx <= utf8proc_combinations[sidx + 1] ) {
+            idx += sidx + 2;
             if (current_property->comb_index & 0x4000) {
               composition = (utf8proc_combinations[idx] << 16) | utf8proc_combinations[idx+1];
             } else
