@@ -233,33 +233,56 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int
   return uc < 0 || uc >= 0x110000 ? utf8proc_properties : unsafe_get_property(uc);
 }
 
-/* return whether there is a grapheme break between boundclasses lbc and tbc */
+/* return whether there is a grapheme break between boundclasses lbc and tbc
+   (according to the definition of extended grapheme clusters)
+
+  Rule numbering refers to TR29 Version 29 (Unicode 9.0.0):
+  http://www.unicode.org/reports/tr29/tr29-29.html
+*/
 static utf8proc_bool grapheme_break(int lbc, int tbc) {
   return 
-    (lbc == UTF8PROC_BOUNDCLASS_START) ? true :
-    (lbc == UTF8PROC_BOUNDCLASS_CR &&
-     tbc == UTF8PROC_BOUNDCLASS_LF) ? false :
-    (lbc >= UTF8PROC_BOUNDCLASS_CR && lbc <= UTF8PROC_BOUNDCLASS_CONTROL) ? true :
-    (tbc >= UTF8PROC_BOUNDCLASS_CR && tbc <= UTF8PROC_BOUNDCLASS_CONTROL) ? true :
-    (tbc == UTF8PROC_BOUNDCLASS_EXTEND) ? false :
-    (lbc == UTF8PROC_BOUNDCLASS_L &&
-     (tbc == UTF8PROC_BOUNDCLASS_L ||
-      tbc == UTF8PROC_BOUNDCLASS_V ||
-      tbc == UTF8PROC_BOUNDCLASS_LV ||
-      tbc == UTF8PROC_BOUNDCLASS_LVT)) ? false :
-    ((lbc == UTF8PROC_BOUNDCLASS_LV ||
-      lbc == UTF8PROC_BOUNDCLASS_V) &&
-     (tbc == UTF8PROC_BOUNDCLASS_V ||
-      tbc == UTF8PROC_BOUNDCLASS_T)) ? false :
-    ((lbc == UTF8PROC_BOUNDCLASS_LVT ||
-      lbc == UTF8PROC_BOUNDCLASS_T) &&
-     tbc == UTF8PROC_BOUNDCLASS_T) ? false :
-    (lbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR &&
-     tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR) ? false :
-    (tbc != UTF8PROC_BOUNDCLASS_SPACINGMARK);
+    (lbc == UTF8PROC_BOUNDCLASS_START) ? true :       // GB1
+    (lbc == UTF8PROC_BOUNDCLASS_CR &&                 // GB3
+     tbc == UTF8PROC_BOUNDCLASS_LF) ? false :         // ---
+    (lbc >= UTF8PROC_BOUNDCLASS_CR && lbc <= UTF8PROC_BOUNDCLASS_CONTROL) ? true :  // GB4
+    (tbc >= UTF8PROC_BOUNDCLASS_CR && tbc <= UTF8PROC_BOUNDCLASS_CONTROL) ? true :  // GB5
+    (lbc == UTF8PROC_BOUNDCLASS_L &&                  // GB6
+     (tbc == UTF8PROC_BOUNDCLASS_L ||                 // ---
+      tbc == UTF8PROC_BOUNDCLASS_V ||                 // ---
+      tbc == UTF8PROC_BOUNDCLASS_LV ||                // ---
+      tbc == UTF8PROC_BOUNDCLASS_LVT)) ? false :      // ---
+    ((lbc == UTF8PROC_BOUNDCLASS_LV ||                // GB7
+      lbc == UTF8PROC_BOUNDCLASS_V) &&                // ---
+     (tbc == UTF8PROC_BOUNDCLASS_V ||                 // ---
+      tbc == UTF8PROC_BOUNDCLASS_T)) ? false :        // ---
+    ((lbc == UTF8PROC_BOUNDCLASS_LVT ||               // GB8
+      lbc == UTF8PROC_BOUNDCLASS_T) &&                // ---
+     tbc == UTF8PROC_BOUNDCLASS_T) ? false :          // ---
+    (tbc == UTF8PROC_BOUNDCLASS_EXTEND ||             // GB9
+     tbc == UTF8PROC_BOUNDCLASS_ZWJ ||                // ---
+     tbc == UTF8PROC_BOUNDCLASS_SPACINGMARK ||        // GB9a
+     lbc == UTF8PROC_BOUNDCLASS_PREPEND) ? false :    // GB9b
+    ((lbc == UTF8PROC_BOUNDCLASS_E_BASE ||            // GB10 (requires additional handling below)
+      lbc == UTF8PROC_BOUNDCLASS_E_BASE_GAZ) &&       // ----
+     tbc == UTF8PROC_BOUNDCLASS_E_MODIFIER) ? false : // ----
+    (lbc == UTF8PROC_BOUNDCLASS_ZWJ &&                         // GB11
+     (tbc == UTF8PROC_BOUNDCLASS_GLUE_AFTER_ZWJ ||             // ----
+      tbc == UTF8PROC_BOUNDCLASS_E_BASE_GAZ)) ? false :        // ----
+    (lbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR &&          // GB12/13 (requires additional handling below)
+     tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR) ? false :  // ----
+    true; // GB999
 }
 
-/* return whether there is a grapheme break between codepoints c1 and c2 */
+/* return whether there is a grapheme break between codepoints c1 and c2.
+
+  CAVEATS:
+   Please note that evaluation of GB10 (grapheme breaks between emoji zwj sequences)
+   and GB 12/13 (regional indicator code points) require knowledge of previous characters
+   and are thus not handled by this function. This may result in an incorrect break before
+   and E_Modifier class codepoint and an incorrectly missing break between two
+   REGIONAL_INDICATOR class code points if such support does not exist in the caller.
+   See the special support in utf8proc_decompose_char, for required bookkeeping by the caller.
+*/
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(utf8proc_int32_t c1, utf8proc_int32_t c2) {
   return grapheme_break(utf8proc_get_property(c1)->boundclass,
                         utf8proc_get_property(c2)->boundclass);
@@ -389,7 +412,21 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
     utf8proc_bool boundary;
     int tbc = property->boundclass;
     boundary = grapheme_break(*last_boundclass, tbc);
-    *last_boundclass = tbc;
+    // Special support for GB 12/13 made possible by GB999. After two RI
+    // class codepoints we want to force a break. Do this by resetting the
+    // second RI's bound class to UTF8PROC_BOUNDCLASS_OTHER, to force a break
+    // after that character according to GB999 (unless of course such a break is
+    // forbidden by a different rule such as GB9).
+    if (*last_boundclass == tbc && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
+      *last_boundclass = UTF8PROC_BOUNDCLASS_OTHER;
+    // Special support for GB10. Fold any EXTEND codepoints into the previous
+    // boundclass if we're dealing with an emoji base boundclass.
+    else if ((*last_boundclass == UTF8PROC_BOUNDCLASS_E_BASE      ||
+              *last_boundclass == UTF8PROC_BOUNDCLASS_E_BASE_GAZ) &&
+             tbc == UTF8PROC_BOUNDCLASS_EXTEND)
+      *last_boundclass = UTF8PROC_BOUNDCLASS_E_BASE;
+    else
+      *last_boundclass = tbc;
     if (boundary) {
       if (bufsize >= 1) dst[0] = 0xFFFF;
       if (bufsize >= 2) dst[1] = uc;

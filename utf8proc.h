@@ -259,13 +259,14 @@ typedef struct utf8proc_property_struct {
    */
   unsigned ignorable:1;
   unsigned control_boundary:1;
+  /** The width of the codepoint. */
+  unsigned charwidth:2;
+  unsigned pad:2;
   /**
    * Boundclass.
    * @see utf8proc_boundclass_t.
    */
-  unsigned boundclass:4;
-  /** The width of the codepoint. */
-  unsigned charwidth:2;
+  unsigned boundclass:8;
 } utf8proc_property_t;
 
 /** Unicode categories. */
@@ -349,7 +350,7 @@ typedef enum {
   UTF8PROC_DECOMP_TYPE_COMPAT   = 16, /**< Compat */
 } utf8proc_decomp_type_t;
 
-/** Boundclass property. */
+/** Boundclass property. (TR29) */
 typedef enum {
   UTF8PROC_BOUNDCLASS_START              =  0, /**< Start */
   UTF8PROC_BOUNDCLASS_OTHER              =  1, /**< Other */
@@ -364,6 +365,12 @@ typedef enum {
   UTF8PROC_BOUNDCLASS_LVT                = 10, /**< Lvt */
   UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR = 11, /**< Regional indicator */
   UTF8PROC_BOUNDCLASS_SPACINGMARK        = 12, /**< Spacingmark */
+  UTF8PROC_BOUNDCLASS_PREPEND            = 13, /**< Prepend */
+  UTF8PROC_BOUNDCLASS_ZWJ                = 14, /**< Zero Width Joiner */
+  UTF8PROC_BOUNDCLASS_E_BASE             = 15, /**< Emoji Base */
+  UTF8PROC_BOUNDCLASS_E_MODIFIER         = 16, /**< Emoji Modifier */
+  UTF8PROC_BOUNDCLASS_GLUE_AFTER_ZWJ     = 17, /**< Glue_After_ZWJ */
+  UTF8PROC_BOUNDCLASS_E_BASE_GAZ         = 18, /**< E_BASE + GLUE_AFTER_ZJW */
 } utf8proc_boundclass_t;
 
 /**
