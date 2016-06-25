@@ -238,9 +238,18 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int
 
   Rule numbering refers to TR29 Version 29 (Unicode 9.0.0):
   http://www.unicode.org/reports/tr29/tr29-29.html
+
+  CAVEATS:
+   Please note that evaluation of GB10 (grapheme breaks between emoji zwj sequences)
+   and GB 12/13 (regional indicator code points) require knowledge of previous characters
+   and are thus not handled by this function. This may result in an incorrect break before
+   an E_Modifier class codepoint and an incorrectly missing break between two
+   REGIONAL_INDICATOR class code points if such support does not exist in the caller.
+
+   See the special support in grapheme_break_extended, for required bookkeeping by the caller.
 */
-static utf8proc_bool grapheme_break(int lbc, int tbc) {
-  return 
+static utf8proc_bool grapheme_break_simple(int lbc, int tbc) {
+  return
     (lbc == UTF8PROC_BOUNDCLASS_START) ? true :       // GB1
     (lbc == UTF8PROC_BOUNDCLASS_CR &&                 // GB3
      tbc == UTF8PROC_BOUNDCLASS_LF) ? false :         // ---
@@ -273,19 +282,38 @@ static utf8proc_bool grapheme_break(int lbc, int tbc) {
     true; // GB999
 }
 
-/* return whether there is a grapheme break between codepoints c1 and c2.
+static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t *state)
+{
+  int lbc_override = lbc;
+  if (state && *state != UTF8PROC_BOUNDCLASS_START)
+    lbc_override = *state;
+  utf8proc_bool break_permitted = grapheme_break_simple(lbc, tbc);
+  if (state) {
+    // Special support for GB 12/13 made possible by GB999. After two RI
+    // class codepoints we want to force a break. Do this by resetting the
+    // second RI's bound class to UTF8PROC_BOUNDCLASS_OTHER, to force a break
+    // after that character according to GB999 (unless of course such a break is
+    // forbidden by a different rule such as GB9).
+    if (*state == tbc && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
+      *state = UTF8PROC_BOUNDCLASS_OTHER;
+    // Special support for GB10. Fold any EXTEND codepoints into the previous
+    // boundclass if we're dealing with an emoji base boundclass.
+    else if ((*state == UTF8PROC_BOUNDCLASS_E_BASE      ||
+              *state == UTF8PROC_BOUNDCLASS_E_BASE_GAZ) &&
+             tbc == UTF8PROC_BOUNDCLASS_EXTEND)
+      *state = UTF8PROC_BOUNDCLASS_E_BASE;
+    else
+      *state = tbc;
+  }
+  return break_permitted;
+}
 
-  CAVEATS:
-   Please note that evaluation of GB10 (grapheme breaks between emoji zwj sequences)
-   and GB 12/13 (regional indicator code points) require knowledge of previous characters
-   and are thus not handled by this function. This may result in an incorrect break before
-   and E_Modifier class codepoint and an incorrectly missing break between two
-   REGIONAL_INDICATOR class code points if such support does not exist in the caller.
-   See the special support in utf8proc_decompose_char, for required bookkeeping by the caller.
-*/
-UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(utf8proc_int32_t c1, utf8proc_int32_t c2) {
-  return grapheme_break(utf8proc_get_property(c1)->boundclass,
-                        utf8proc_get_property(c2)->boundclass);
+UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(
+    utf8proc_int32_t c1, utf8proc_int32_t c2, utf8proc_int32_t *state) {
+
+  return grapheme_break_extended(utf8proc_get_property(c1)->boundclass,
+                                 utf8proc_get_property(c2)->boundclass,
+                                 state);
 }
 
 UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_tolower(utf8proc_int32_t c)
@@ -411,22 +439,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
   if (options & UTF8PROC_CHARBOUND) {
     utf8proc_bool boundary;
     int tbc = property->boundclass;
-    boundary = grapheme_break(*last_boundclass, tbc);
-    // Special support for GB 12/13 made possible by GB999. After two RI
-    // class codepoints we want to force a break. Do this by resetting the
-    // second RI's bound class to UTF8PROC_BOUNDCLASS_OTHER, to force a break
-    // after that character according to GB999 (unless of course such a break is
-    // forbidden by a different rule such as GB9).
-    if (*last_boundclass == tbc && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
-      *last_boundclass = UTF8PROC_BOUNDCLASS_OTHER;
-    // Special support for GB10. Fold any EXTEND codepoints into the previous
-    // boundclass if we're dealing with an emoji base boundclass.
-    else if ((*last_boundclass == UTF8PROC_BOUNDCLASS_E_BASE      ||
-              *last_boundclass == UTF8PROC_BOUNDCLASS_E_BASE_GAZ) &&
-             tbc == UTF8PROC_BOUNDCLASS_EXTEND)
-      *last_boundclass = UTF8PROC_BOUNDCLASS_E_BASE;
-    else
-      *last_boundclass = tbc;
+    boundary = grapheme_break_extended(*last_boundclass, tbc, last_boundclass);
     if (boundary) {
       if (bufsize >= 1) dst[0] = 0xFFFF;
       if (bufsize >= 2) dst[1] = uc;

@@ -520,8 +520,19 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
 /**
  * Given a pair of consecutive codepoints, return whether a grapheme break is
  * permitted between them (as defined by the extended grapheme clusters in UAX#29).
+ *
+ * @param state Beginning with Version 29 (Unicode 9.0.0), this algorithm requires
+ *              state to break graphemes. This state can be passed in as a pointer
+ *              in the `state` argument and should initially be set to 0. If the
+ *              state is not passed in (i.e. a null pointer is passed), UAX#29 rules
+ *              GB10/12/13 which require this state will not be applied, essentially
+ *              matching the rules in Unicode 8.0.0.
+ *
+ * @warning If the state parameter is used, `utf8proc_grapheme_break` must be called
+ *          IN ORDER on ALL potential breaks in a string.
  */
-UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2);
+UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(
+    utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2, utf8proc_int32_t *state);
 
 
 /**
