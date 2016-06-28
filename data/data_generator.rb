@@ -182,8 +182,8 @@ class UnicodeChar
     "#{$exclusions.include?(code) or $excl_version.include?(code)}, " <<
     "#{$ignorable.include?(code)}, " <<
     "#{%W[Zl Zp Cc Cf].include?(category) and not [0x200C, 0x200D].include?(category)}, " <<
-    "#{$grapheme_boundclass[code]}, " <<
-    "#{$charwidth[code]}},\n"
+    "#{$charwidth[code]}, 0, " <<
+    "#{$grapheme_boundclass[code]}},\n"
   end
 end
 
@@ -306,7 +306,7 @@ end
 $stdout << "};\n\n"
 
 $stdout << "const utf8proc_property_t utf8proc_properties[] = {\n"
-$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, -1, -1, -1, -1, -1, false,false,false,false, UTF8PROC_BOUNDCLASS_OTHER, 0},\n"
+$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, -1, -1, -1, -1, -1, false,false,false,false,0,0,UTF8PROC_BOUNDCLASS_OTHER},\n"
 properties.each { |line|
   $stdout << line
 }

@@ -19,9 +19,9 @@ UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS
 # not API compatibility: MAJOR should be incremented whenever *binary*
 # compatibility is broken, even if the API is backward-compatible
 # Be sure to also update these in MANIFEST and CMakeLists.txt!
-MAJOR=2
+MAJOR=3
 MINOR=0
-PATCH=1
+PATCH=0
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
