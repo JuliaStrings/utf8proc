@@ -68,9 +68,9 @@
  */
 /** @{ */
 /** The MAJOR version number (increased when backwards API compatibility is broken). */
-#define UTF8PROC_VERSION_MAJOR 1
+#define UTF8PROC_VERSION_MAJOR 2
 /** The MINOR version number (increased when new functionality is added in a backwards-compatible manner). */
-#define UTF8PROC_VERSION_MINOR 3
+#define UTF8PROC_VERSION_MINOR 0
 /** The PATCH version (increased for fixes that do not change the API). */
 #define UTF8PROC_VERSION_PATCH 0
 /** @} */
@@ -258,13 +258,14 @@ typedef struct utf8proc_property_struct {
    */
   unsigned ignorable:1;
   unsigned control_boundary:1;
+  /** The width of the codepoint. */
+  unsigned charwidth:2;
+  unsigned pad:2;
   /**
    * Boundclass.
    * @see utf8proc_boundclass_t.
    */
-  unsigned boundclass:4;
-  /** The width of the codepoint. */
-  unsigned charwidth:2;
+  unsigned boundclass:8;
 } utf8proc_property_t;
 
 /** Unicode categories. */
@@ -348,7 +349,7 @@ typedef enum {
   UTF8PROC_DECOMP_TYPE_COMPAT   = 16, /**< Compat */
 } utf8proc_decomp_type_t;
 
-/** Boundclass property. */
+/** Boundclass property. (TR29) */
 typedef enum {
   UTF8PROC_BOUNDCLASS_START              =  0, /**< Start */
   UTF8PROC_BOUNDCLASS_OTHER              =  1, /**< Other */
@@ -363,6 +364,12 @@ typedef enum {
   UTF8PROC_BOUNDCLASS_LVT                = 10, /**< Lvt */
   UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR = 11, /**< Regional indicator */
   UTF8PROC_BOUNDCLASS_SPACINGMARK        = 12, /**< Spacingmark */
+  UTF8PROC_BOUNDCLASS_PREPEND            = 13, /**< Prepend */
+  UTF8PROC_BOUNDCLASS_ZWJ                = 14, /**< Zero Width Joiner */
+  UTF8PROC_BOUNDCLASS_E_BASE             = 15, /**< Emoji Base */
+  UTF8PROC_BOUNDCLASS_E_MODIFIER         = 16, /**< Emoji Modifier */
+  UTF8PROC_BOUNDCLASS_GLUE_AFTER_ZWJ     = 17, /**< Glue_After_ZWJ */
+  UTF8PROC_BOUNDCLASS_E_BASE_GAZ         = 18, /**< E_BASE + GLUE_AFTER_ZJW */
 } utf8proc_boundclass_t;
 
 /**
@@ -512,8 +519,19 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
 /**
  * Given a pair of consecutive codepoints, return whether a grapheme break is
  * permitted between them (as defined by the extended grapheme clusters in UAX#29).
+ *
+ * @param state Beginning with Version 29 (Unicode 9.0.0), this algorithm requires
+ *              state to break graphemes. This state can be passed in as a pointer
+ *              in the `state` argument and should initially be set to 0. If the
+ *              state is not passed in (i.e. a null pointer is passed), UAX#29 rules
+ *              GB10/12/13 which require this state will not be applied, essentially
+ *              matching the rules in Unicode 8.0.0.
+ *
+ * @warning If the state parameter is used, `utf8proc_grapheme_break` must be called
+ *          IN ORDER on ALL potential breaks in a string.
  */
-UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2);
+UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(
+    utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2, utf8proc_int32_t *state);
 
 
 /**
