@@ -340,7 +340,7 @@ for code in 0...0x110000
   end
 end
 
-$stdout << "utf8proc_uint16_t utf8proc_sequences[] = {\n  "
+$stdout << "const utf8proc_uint16_t utf8proc_sequences[] = {\n  "
 i = 0
 $int_array.each do |entry|
   i += 1
