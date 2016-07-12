@@ -20,7 +20,7 @@ utf8proc_data.c.new: data_generator.rb UnicodeData.txt GraphemeBreakProperty.txt
 	$(RUBY) data_generator.rb < UnicodeData.txt > $@
 
 # GNU Unifont version for font metric calculations:
-UNIFONT_VERSION=8.0.01
+UNIFONT_VERSION=9.0.01
 
 unifont.ttf:
 	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)https://mirrors.kernel.org/gnu/unifont/unifont-$(UNIFONT_VERSION)/unifont-$(UNIFONT_VERSION).ttf
