@@ -115,22 +115,52 @@ def str2c(string, prefix)
   return "0" if string.nil?
   return "UTF8PROC_#{prefix}_#{string.upcase}"
 end
-def ary2c(array)
-  return "UINT16_MAX" if array.nil?
-  unless $int_array_indicies[array]
+def pushary(array)
+  idx = $int_array_indicies[array]
+  unless idx
     $int_array_indicies[array] = $int_array.length
+    idx = $int_array.length
     array.each { |entry| $int_array << entry }
-    $int_array << -1
   end
-  raise "Array index out of bound" if $int_array_indicies[array] >= 65535
-  return "#{$int_array_indicies[array]}"
+  return idx
+end
+def cpary2utf16encoded(array)
+  return array.flat_map { |cp|
+      if (cp <= 0xFFFF)
+        raise "utf-16 code: #{cp}" if cp & 0b1111100000000000 == 0b1101100000000000
+        cp
+      else
+        temp = cp - 0x10000
+        [(temp >> 10) | 0b1101100000000000, (temp & 0b0000001111111111) | 0b1101110000000000]
+      end
+    }
+end
+def cpary2c(array)
+  return "UINT16_MAX" if array.nil? || array.length == 0
+  lencode = array.length - 1 #no sequence has len 0, so we encode len 1 as 0, len 2 as 1, ... 
+  array = cpary2utf16encoded(array)
+  if lencode >= 7 #we have only 3 bits for the length (which is already cutting it close. might need to change it to 2 bits in future Unicode versions)
+    array = [lencode] + array 
+    lencode = 7
+  end  
+  idx = pushary(array) 
+  raise "Array index out of bound" if idx > 0x1FFF
+  return "#{idx | (lencode << 13)}"
+end
+def singlecpmap(cp)
+  return "UINT16_MAX" if cp == nil
+  idx = pushary(cpary2utf16encoded([cp]))
+  raise "Array index out of bound" if idx > 0xFFFF
+  return "#{idx}"
 end
 
 class UnicodeChar
   attr_accessor :code, :name, :category, :combining_class, :bidi_class,
                 :decomp_type, :decomp_mapping,
                 :bidi_mirrored,
-                :uppercase_mapping, :lowercase_mapping, :titlecase_mapping
+                :uppercase_mapping, :lowercase_mapping, :titlecase_mapping,
+                #caches:
+                :c_entry_index, :c_decomp_mapping, :c_case_folding
   def initialize(line)
     raise "Could not parse input." unless line =~ /^
       ([0-9A-F]+);        # code
@@ -165,19 +195,17 @@ class UnicodeChar
   def case_folding
     $case_folding[code]
   end
-  def c_entry(comb1_indicies, comb2_indicies)
+  def c_entry(comb_indicies)
     "  " <<
     "{#{str2c category, 'CATEGORY'}, #{combining_class}, " <<
     "#{str2c bidi_class, 'BIDI_CLASS'}, " <<
     "#{str2c decomp_type, 'DECOMP_TYPE'}, " <<
-    "#{ary2c decomp_mapping}, " <<
-    "#{ary2c case_folding}, " <<
-    "#{uppercase_mapping or -1}, " <<
-    "#{lowercase_mapping or -1}, " <<
-    "#{titlecase_mapping or -1}, " <<
-    "#{comb1_indicies[code] ?
-       (comb1_indicies[code]*comb2_indicies.keys.length) : -1
-      }, #{comb2_indicies[code] or -1}, " <<
+    "#{c_decomp_mapping}, " <<
+    "#{c_case_folding}, " <<
+    "#{singlecpmap uppercase_mapping }, " <<
+    "#{singlecpmap lowercase_mapping }, " <<
+    "#{singlecpmap titlecase_mapping }, " <<
+    "#{comb_indicies[code] ? comb_indicies[code]: 'UINT16_MAX'}, " <<
     "#{bidi_mirrored}, " <<
     "#{$exclusions.include?(code) or $excl_version.include?(code)}, " <<
     "#{$ignorable.include?(code)}, " <<
@@ -215,6 +243,8 @@ end
 
 comb1st_indicies = {}
 comb2nd_indicies = {}
+comb2nd_indicies_sorted_keys = []
+comb2nd_indicies_nonbasic = {}
 comb_array = []
 
 chars.each do |char|
@@ -222,27 +252,69 @@ chars.each do |char|
       char.decomp_mapping.length == 2 and !char_hash[char.decomp_mapping[0]].nil? and
       char_hash[char.decomp_mapping[0]].combining_class == 0 and
       not $exclusions.include?(char.code)
-    unless comb1st_indicies[char.decomp_mapping[0]]
-      comb1st_indicies[char.decomp_mapping[0]] = comb1st_indicies.keys.length
+
+    dm0 = char.decomp_mapping[0]
+    dm1 = char.decomp_mapping[1]
+    unless comb1st_indicies[dm0]
+      comb1st_indicies[dm0] = comb1st_indicies.keys.length
     end
-    unless comb2nd_indicies[char.decomp_mapping[1]]
-      comb2nd_indicies[char.decomp_mapping[1]] = comb2nd_indicies.keys.length
+    unless comb2nd_indicies[dm1]
+      comb2nd_indicies_sorted_keys << dm1
+      comb2nd_indicies[dm1] = comb2nd_indicies.keys.length 
     end
-    comb_array[comb1st_indicies[char.decomp_mapping[0]]] ||= []
-    raise "Duplicate canonical mapping" if
-      comb_array[comb1st_indicies[char.decomp_mapping[0]]][
-      comb2nd_indicies[char.decomp_mapping[1]]]
-    comb_array[comb1st_indicies[char.decomp_mapping[0]]][
-      comb2nd_indicies[char.decomp_mapping[1]]] = char.code
+    comb_array[comb1st_indicies[dm0]] ||= []
+    raise "Duplicate canonical mapping: #{char.code} #{dm0} #{dm1}" if comb_array[comb1st_indicies[dm0]][comb2nd_indicies[dm1]]
+    comb_array[comb1st_indicies[dm0]][comb2nd_indicies[dm1]] = char.code
+    
+    comb2nd_indicies_nonbasic[dm1] = true if char.code > 0xFFFF
+  end
+  char.c_decomp_mapping = cpary2c(char.decomp_mapping)
+  char.c_case_folding = cpary2c(char.case_folding)
+end 
+
+comb_indicies = {}
+cumoffset = 0
+comb1st_indicies_lastoffsets = []
+comb1st_indicies_firstoffsets = []
+comb1st_indicies.each do |dm0, index|
+  first = nil
+  last = nil
+  offset = 0
+  comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
+    if comb_array[index][b] 
+      first = offset unless first
+      last = offset
+      last += 1 if comb2nd_indicies_nonbasic[dm1]
+    end
+    offset += 1
+    offset += 1 if comb2nd_indicies_nonbasic[dm1]
+  end
+  comb1st_indicies_firstoffsets[index] = first
+  comb1st_indicies_lastoffsets[index] = last
+  raise "double index" if comb_indicies[dm0]
+  comb_indicies[dm0] = cumoffset
+  cumoffset += last - first + 1 + 2
+end
+
+offset = 0
+comb2nd_indicies_sorted_keys.each do |dm1|
+  raise "double index" if comb_indicies[dm1]
+  comb_indicies[dm1] = 0x8000 | (comb2nd_indicies[dm1] + offset)
+  raise "too large comb index" if  comb2nd_indicies[dm1] + offset > 0x4000
+  if comb2nd_indicies_nonbasic[dm1]
+    comb_indicies[dm1] = comb_indicies[dm1] | 0x4000
+    offset += 1
   end
 end
 
 properties_indicies = {}
 properties = []
 chars.each do |char|
-  c_entry = char.c_entry(comb1st_indicies, comb2nd_indicies)
-  unless properties_indicies[c_entry]
+  c_entry = char.c_entry(comb_indicies)
+  char.c_entry_index = properties_indicies[c_entry]
+  unless char.c_entry_index
     properties_indicies[c_entry] = properties.length
+    char.c_entry_index = properties.length
     properties << c_entry
   end
 end
@@ -254,8 +326,7 @@ for code in 0...0x110000
   stage2_entry = []
   for code2 in code...(code+0x100)
     if char_hash[code2]
-      stage2_entry << (properties_indicies[char_hash[code2].c_entry(
-        comb1st_indicies, comb2nd_indicies)] + 1)
+      stage2_entry << (char_hash[code2].c_entry_index + 1)
     else
       stage2_entry << 0
     end
@@ -269,7 +340,7 @@ for code in 0...0x110000
   end
 end
 
-$stdout << "const utf8proc_int32_t utf8proc_sequences[] = {\n  "
+$stdout << "const utf8proc_uint16_t utf8proc_sequences[] = {\n  "
 i = 0
 $int_array.each do |entry|
   i += 1
@@ -306,23 +377,35 @@ end
 $stdout << "};\n\n"
 
 $stdout << "const utf8proc_property_t utf8proc_properties[] = {\n"
-$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, -1, -1, -1, -1, -1, false,false,false,false,0,0,UTF8PROC_BOUNDCLASS_OTHER},\n"
+$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 0, 0, UTF8PROC_BOUNDCLASS_OTHER},\n"
 properties.each { |line|
   $stdout << line
 }
 $stdout << "};\n\n"
 
-$stdout << "const utf8proc_int32_t utf8proc_combinations[] = {\n  "
+
+
+$stdout << "const utf8proc_uint16_t utf8proc_combinations[] = {\n  "
 i = 0
-comb1st_indicies.keys.sort.each_index do |a|
-  comb2nd_indicies.keys.sort.each_index do |b|
-    i += 1
-    if i == 8
-      i = 0
-      $stdout << "\n  "
+comb1st_indicies.keys.each_index do |a|
+  offset = 0
+  $stdout << comb1st_indicies_firstoffsets[a] << ", " << comb1st_indicies_lastoffsets[a] << ", "
+  comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
+    break if offset > comb1st_indicies_lastoffsets[a] 
+    if offset >= comb1st_indicies_firstoffsets[a]
+      i += 1
+      if i == 8
+        i = 0
+        $stdout << "\n  "
+      end
+      v = comb_array[a][b] ? comb_array[a][b] : 0
+      $stdout << (( v & 0xFFFF0000 ) >> 16) << ", " if comb2nd_indicies_nonbasic[dm1]
+      $stdout << (v & 0xFFFF) << ", "
     end
-    $stdout << ( comb_array[a][b] or -1 ) << ", "
+    offset += 1
+    offset += 1 if comb2nd_indicies_nonbasic[dm1]    
   end
+  $stdout  << "\n"
 end
 $stdout << "};\n\n"
 

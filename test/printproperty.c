@@ -22,8 +22,7 @@ int main(int argc, char **argv)
                  "  uppercase_mapping = %x\n"
                  "  lowercase_mapping = %x\n"
                  "  titlecase_mapping = %x\n"
-                 "  comb1st_index = %d\n"
-                 "  comb2nd_index = %d\n"
+                 "  comb_index = %d\n"
                  "  bidi_mirrored = %d\n"
                  "  comp_exclusion = %d\n"
                  "  ignorable = %d\n"
@@ -35,11 +34,10 @@ int main(int argc, char **argv)
                  p->combining_class,
                  p->bidi_class,
                  p->decomp_type,
-                 p->uppercase_mapping,
-                 p->lowercase_mapping,
-                 p->titlecase_mapping,
-                 p->comb1st_index,
-                 p->comb2nd_index,
+                 utf8proc_toupper(c),
+                 utf8proc_tolower(c),
+                 utf8proc_totitle(c),
+                 p->comb_index,
                  p->bidi_mirrored,
                  p->comp_exclusion,
                  p->ignorable,

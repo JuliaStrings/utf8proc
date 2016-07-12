@@ -316,16 +316,58 @@ UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(
                                  state);
 }
 
+static utf8proc_int32_t seqindex_decode_entry(const utf8proc_uint16_t **entry)
+{
+  utf8proc_int32_t entry_cp = **entry;
+  if ((entry_cp & 0xF800) == 0xD800) {
+    *entry = *entry + 1;
+    entry_cp = ((entry_cp & 0x03FF) << 10) | (**entry & 0x03FF);
+    entry_cp += 0x10000;
+  }
+  return entry_cp;
+}
+
+static utf8proc_int32_t seqindex_decode_index(const utf8proc_uint32_t seqindex)
+{
+  const utf8proc_uint16_t *entry = &utf8proc_sequences[seqindex];
+  return seqindex_decode_entry(&entry);
+}
+
+static utf8proc_ssize_t seqindex_write_char_decomposed(utf8proc_uint16_t seqindex, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, utf8proc_option_t options, int *last_boundclass) {
+  utf8proc_ssize_t written = 0;
+  const utf8proc_uint16_t *entry = &utf8proc_sequences[seqindex & 0x1FFF];
+  int len = seqindex >> 13;
+  if (len >= 7) {
+    len = *entry;
+    entry++;
+  }
+  for (; len >= 0; entry++, len--) {
+    utf8proc_int32_t entry_cp = seqindex_decode_entry(&entry);
+
+    written += utf8proc_decompose_char(entry_cp, dst+written,
+      (bufsize > written) ? (bufsize - written) : 0, options,
+    last_boundclass);
+    if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
+  }
+  return written;
+}
+
 UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_tolower(utf8proc_int32_t c)
 {
-  utf8proc_int32_t cl = utf8proc_get_property(c)->lowercase_mapping;
-  return cl >= 0 ? cl : c;
+  utf8proc_int32_t cl = utf8proc_get_property(c)->lowercase_seqindex;
+  return cl != UINT16_MAX ? seqindex_decode_index(cl) : c;
 }
 
 UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_toupper(utf8proc_int32_t c)
 {
-  utf8proc_int32_t cu = utf8proc_get_property(c)->uppercase_mapping;
-  return cu >= 0 ? cu : c;
+  utf8proc_int32_t cu = utf8proc_get_property(c)->uppercase_seqindex;
+  return cu != UINT16_MAX ? seqindex_decode_index(cu) : c;
+}
+
+UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_totitle(utf8proc_int32_t c)
+{
+  utf8proc_int32_t cu = utf8proc_get_property(c)->titlecase_seqindex;
+  return cu != UINT16_MAX ? seqindex_decode_index(cu) : c;
 }
 
 /* return a character width analogous to wcwidth (except portable and
@@ -342,6 +384,8 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t c) {
   static const char s[][3] = {"Cn","Lu","Ll","Lt","Lm","Lo","Mn","Mc","Me","Nd","Nl","No","Pc","Pd","Ps","Pe","Pi","Pf","Po","Sm","Sc","Sk","So","Zs","Zl","Zp","Cc","Cf","Cs","Co"};
   return s[utf8proc_category(c)];
 }
+
+
 
 #define utf8proc_decompose_lump(replacement_uc) \
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
@@ -408,32 +452,14 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
       category == UTF8PROC_CATEGORY_ME) return 0;
   }
   if (options & UTF8PROC_CASEFOLD) {
-    if (property->casefold_mapping != UINT16_MAX) {
-      const utf8proc_int32_t *casefold_entry;
-      utf8proc_ssize_t written = 0;
-      for (casefold_entry = &utf8proc_sequences[property->casefold_mapping];
-          *casefold_entry >= 0; casefold_entry++) {
-        written += utf8proc_decompose_char(*casefold_entry, dst+written,
-          (bufsize > written) ? (bufsize - written) : 0, options,
-          last_boundclass);
-        if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
-      }
-      return written;
+    if (property->casefold_seqindex != UINT16_MAX) {
+      return seqindex_write_char_decomposed(property->casefold_seqindex, dst, bufsize, options, last_boundclass);
     }
   }
   if (options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) {
-    if (property->decomp_mapping != UINT16_MAX &&
+    if (property->decomp_seqindex != UINT16_MAX &&
         (!property->decomp_type || (options & UTF8PROC_COMPAT))) {
-      const utf8proc_int32_t *decomp_entry;
-      utf8proc_ssize_t written = 0;
-      for (decomp_entry = &utf8proc_sequences[property->decomp_mapping];
-          *decomp_entry >= 0; decomp_entry++) {
-        written += utf8proc_decompose_char(*decomp_entry, dst+written,
-          (bufsize > written) ? (bufsize - written) : 0, options,
-        last_boundclass);
-        if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
-      }
-      return written;
+      return seqindex_write_char_decomposed(property->decomp_seqindex, dst, bufsize, options, last_boundclass);
     }
   }
   if (options & UTF8PROC_CHARBOUND) {
@@ -588,17 +614,24 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
         if (!starter_property) {
           starter_property = unsafe_get_property(*starter);
         }
-        if (starter_property->comb1st_index >= 0 &&
-            current_property->comb2nd_index >= 0) {
-          composition = utf8proc_combinations[
-            starter_property->comb1st_index +
-            current_property->comb2nd_index
-          ];
-          if (composition >= 0 && (!(options & UTF8PROC_STABLE) ||
-              !(unsafe_get_property(composition)->comp_exclusion))) {
-            *starter = composition;
-            starter_property = NULL;
-            continue;
+        if (starter_property->comb_index < 0x8000 &&
+            current_property->comb_index != UINT16_MAX &&
+            current_property->comb_index >= 0x8000) {
+          int sidx = starter_property->comb_index;
+          int idx = (current_property->comb_index & 0x3FFF) - utf8proc_combinations[sidx];
+          if (idx >= 0 && idx <= utf8proc_combinations[sidx + 1] ) {
+            idx += sidx + 2;
+            if (current_property->comb_index & 0x4000) {
+              composition = (utf8proc_combinations[idx] << 16) | utf8proc_combinations[idx+1];
+            } else
+              composition = utf8proc_combinations[idx];
+
+            if (composition > 0 && (!(options & UTF8PROC_STABLE) ||
+                !(unsafe_get_property(composition)->comp_exclusion))) {
+              *starter = composition;
+              starter_property = NULL;
+              continue;
+            }
           }
         }
       }
