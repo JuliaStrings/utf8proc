@@ -46,6 +46,19 @@ the included <a href="https://github.com/JuliaLang/utf8proc/blob/master/LICENSE.
 
 <li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v2.0">utf8proc v2.0</a> (2016-07-13):
 
+  <ul>
+    <li><p>Updated for Unicode 9.0 (<a href="https://github.com/JuliaLang/utf8proc/issues/70">#70</a>).</p></li>
+    <li><p>New <code>utf8proc_grapheme_break_stateful</code> to handle the complicated
+        grapheme-breaking rules in Unicode 9.  The old <code>utf8proc_grapheme_break</code>
+        is still provided, but may incorrectly identify grapheme breaks
+        in some Unicode-9 sequences.</p></li>
+    <li><p>Smaller Unicode tables (<a href="https://github.com/JuliaLang/utf8proc/issues/62">#62</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/68">#68</a>).  This required changes
+        in the <code>utf8proc_property_t</code> structure, which breaks backward
+        compatibility if you access this <code>struct</code> directly.  The
+        functions in the API remain backward-compatible, however.</p></li>
+    <li><p>Buffer overrun fix (<a href="https://github.com/JuliaLang/utf8proc/issues/66">#66</a>).</p></li>
+  </ul>
+
 <li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.3">utf8proc v1.3</a> (2015-07-06):
 
 <ul>
