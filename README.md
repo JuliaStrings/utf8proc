@@ -1,5 +1,7 @@
 # utf8proc
-[![Build Status](https://travis-ci.org/JuliaLang/utf8proc.png)](https://travis-ci.org/JuliaLang/utf8proc)
+[![Travis CI Status](https://travis-ci.org/JuliaLang/utf8proc.png)](https://travis-ci.org/JuliaLang/utf8proc)
+[![AppVeyor Status](https://ci.appveyor.com/api/projects/status/aou20lfkyhj8xbwq/branch/master?svg=true)](https://ci.appveyor.com/project/tkelman/utf8proc/branch/master)
+
 
 [utf8proc](http://julialang.org/utf8proc/) is a small, clean C
 library that provides Unicode normalization, case-folding, and other
