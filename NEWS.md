@@ -6,6 +6,9 @@
 
 - Bug fix in `utf8proc_grapheme_break_stateful` ([#77]).
 
+- Tests now use versioned Unicode files, so they will no longer
+  break when a new version of Unicode is released ([#78]).
+
 ## Version 2.0 ##
 
 2016-07-13:
@@ -261,3 +264,4 @@ Release of version 1.0.1
 [#68]: https://github.com/JuliaLang/utf8proc/issues/68
 [#70]: https://github.com/JuliaLang/utf8proc/issues/70
 [#77]: https://github.com/JuliaLang/utf8proc/issues/77
+[#78]: https://github.com/JuliaLang/utf8proc/issues/78
