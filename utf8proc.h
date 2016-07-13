@@ -527,11 +527,18 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
  *              GB10/12/13 which require this state will not be applied, essentially
  *              matching the rules in Unicode 8.0.0.
  *
- * @warning If the state parameter is used, `utf8proc_grapheme_break` must be called
- *          IN ORDER on ALL potential breaks in a string.
+ * @warning If the state parameter is used, `utf8proc_grapheme_break_stateful` must
+ *          be called IN ORDER on ALL potential breaks in a string.
+ */
+UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break_stateful(
+    utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2, utf8proc_int32_t *state);
+
+/**
+ * Same as @ref utf8proc_grapheme_break_stateful, except without support for the
+ * Unicode 9 additions to the algorithm. Supported for legacy reasons.
  */
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(
-    utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2, utf8proc_int32_t *state);
+    utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2);
 
 
 /**

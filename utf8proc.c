@@ -308,12 +308,18 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t 
   return break_permitted;
 }
 
-UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(
+UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break_stateful(
     utf8proc_int32_t c1, utf8proc_int32_t c2, utf8proc_int32_t *state) {
 
   return grapheme_break_extended(utf8proc_get_property(c1)->boundclass,
                                  utf8proc_get_property(c2)->boundclass,
                                  state);
+}
+
+
+UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(
+    utf8proc_int32_t c1, utf8proc_int32_t c2) {
+  return utf8proc_grapheme_break_stateful(c1, c2, NULL);
 }
 
 static utf8proc_int32_t seqindex_decode_entry(const utf8proc_uint16_t **entry)
