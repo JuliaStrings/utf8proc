@@ -1,5 +1,11 @@
 # utf8proc release history #
 
+## Version 2.0.1 ##
+
+2016-07-13:
+
+- Bug fix in `utf8proc_grapheme_break_stateful` ([#77]).
+
 ## Version 2.0 ##
 
 2016-07-13:
@@ -254,3 +260,4 @@ Release of version 1.0.1
 [#66]: https://github.com/JuliaLang/utf8proc/issues/66
 [#68]: https://github.com/JuliaLang/utf8proc/issues/68
 [#70]: https://github.com/JuliaLang/utf8proc/issues/70
+[#77]: https://github.com/JuliaLang/utf8proc/issues/77
