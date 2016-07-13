@@ -34,29 +34,32 @@ unifont_upper.ttf:
 CharWidths.txt: charwidths.jl unifont.sfd unifont_upper.sfd EastAsianWidth.txt
 	$(JULIA) charwidths.jl > $@
 
+# Unicode data version
+UNICODE_VERSION=9.0.0
+
 UnicodeData.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/UNIDATA/UnicodeData.txt
+	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/UnicodeData.txt
 
 EastAsianWidth.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/UNIDATA/EastAsianWidth.txt
+	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/EastAsianWidth.txt
 
 GraphemeBreakProperty.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakProperty.txt
+	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/auxiliary/GraphemeBreakProperty.txt
 
 DerivedCoreProperties.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt
+	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/DerivedCoreProperties.txt
 
 CompositionExclusions.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt
+	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/CompositionExclusions.txt
 
 CaseFolding.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/UNIDATA/CaseFolding.txt
+	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/CaseFolding.txt
 
 NormalizationTest.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
+	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/NormalizationTest.txt
 
 GraphemeBreakTest.txt:
-	$(CURL) $(CURLFLAGS) $(URLCACHE)http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakTest.txt | $(PERL) -pe 's,÷,/,g;s,×,+,g' > $@
+	$(CURL) $(CURLFLAGS) $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/auxiliary/GraphemeBreakTest.txt | $(PERL) -pe 's,÷,/,g;s,×,+,g' > $@
 
 clean:
 	rm -f UnicodeData.txt EastAsianWidth.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt GraphemeBreakTest.txt CharWidths.txt unifont*.ttf unifont*.sfd
