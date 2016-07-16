@@ -11,7 +11,7 @@ FIND=find
 CFLAGS ?= -O2
 PICFLAG = -fPIC
 C99FLAG = -std=c99
-WCFLAGS = -Wall -Wmissing-prototypes -pedantic
+WCFLAGS = -Wall -pedantic
 UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS
 
 # shared-library version MAJOR.MINOR.PATCH ... this may be *different*
