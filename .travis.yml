@@ -19,4 +19,4 @@ script:
 env:
     # use JuliaLang caching (https://github.com/staticfloat/cache.julialang.org)
     # so that Travis builds do not depend on anyone's flaky servers but our own
-    - URLCACHE=https://cache.julialang.org/ CFLAGS="-O2 -Werror"
+    - URLCACHE=https://cache.julialang.org/ CFLAGS="-O2 -Werror -Wmissing-prototypes"
