@@ -1,5 +1,17 @@
 # utf8proc release history #
 
+## Version 2.0.2 ##
+
+2016-07-26:
+
+- Move `-Wmissing-prototypes` warning flag from `Makefile` to `.travis.yml`
+  since MSVC does not understand this flag and it is occasionally useful to
+  build using MSVC through the `Makefile` ([#79]).
+
+- Use a different variable name for a nested loop in `bench/bench.c`, and
+  declare it in a C89 way rather than inside the `for` to avoid "error:
+  'for' loop initial declarations are only allowed in C99 mode" ([#80]).
+
 ## Version 2.0.1 ##
 
 2016-07-13:
