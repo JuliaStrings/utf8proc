@@ -6,10 +6,10 @@ disallow_intree_builds()
 
 project (utf8proc C)
 
-# Be sure to also update these in Makefile!
+# Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 2)
 set(SO_MINOR 0)
-set(SO_PATCH 1)
+set(SO_PATCH 2)
 
 add_definitions (
   -DUTF8PROC_EXPORTS
