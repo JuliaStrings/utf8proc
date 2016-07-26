@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv)
 {
-	 int i;
+	 int i, j;
 	 int options = 0;
 	 
 	 for (i = 1; i < argc; ++i) {
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 		  }
 		  uint8_t *dest;
 		  mytime start = gettime();
-		  for (int i = 0; i < 100; ++i) {
+		  for (j = 0; j < 100; ++j) {
 			   utf8proc_map(src, len, &dest, options);
 			   free(dest);
 		  }
