@@ -21,8 +21,8 @@
           <h1 id="project_title"><a href="http://julialang.org/utf8proc">utf8proc</a> releases</h1>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.0.1.zip">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.0.1.tar.gz">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.0.2.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.0.2.tar.gz">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -44,6 +44,13 @@ the included <a href="https://github.com/JuliaLang/utf8proc/blob/master/LICENSE.
 
 <ul>
 
+<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v2.0.2">utf8proc v2.0.2</a> (2016-07-27):
+
+  <ul>
+    <li><p>Move <code>-Wmissing-prototypes</code> warning flag from <code>Makefile</code> to <code>.travis.yml</code> since MSVC does not understand this flag and it is occasionally useful to build using MSVC through the <code>Makefile</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/79">#79</a>).</p></li>
+    <li><p>Use a different variable name for a nested loop in <code>bench/bench.c</code>, and declare it in a C89 way rather than inside the <code>for</code> to avoid "error: 'for' loop initial declarations are only allowed in C99 mode" (<a href="https://github.com/JuliaLang/utf8proc/issues/80">#80</a>).</p></li>
+    </ul>
+  
 <li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v2.0.1">utf8proc v2.0.1</a> (2016-07-13):
 
   <ul>
