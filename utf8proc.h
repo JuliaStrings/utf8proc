@@ -22,7 +22,7 @@
  */
 
 
-/** 
+/**
  * @mainpage
  *
  * utf8proc is a free/open-source (MIT/expat licensed) C library
@@ -54,7 +54,7 @@
 #define UTF8PROC_H
 
 /** @name API version
- *  
+ *
  * The utf8proc API version MAJOR.MINOR.PATCH, following
  * semantic-versioning rules (http://semver.org) based on API
  * compatibility.
@@ -63,7 +63,8 @@
  * runtime version may append a string like "-dev" to the version number
  * for prerelease versions.
  *
- * @note The shared-library version number in the Makefile may be different,
+ * @note The shared-library version number in the Makefile
+ *       (and CMakeLists.txt, and MANIFEST) may be different,
  *       being based on ABI compatibility rather than API compatibility.
  */
 /** @{ */
@@ -72,7 +73,7 @@
 /** The MINOR version number (increased when new functionality is added in a backwards-compatible manner). */
 #define UTF8PROC_VERSION_MINOR 0
 /** The PATCH version (increased for fixes that do not change the API). */
-#define UTF8PROC_VERSION_PATCH 1
+#define UTF8PROC_VERSION_PATCH 2
 /** @} */
 
 #include <stdlib.h>

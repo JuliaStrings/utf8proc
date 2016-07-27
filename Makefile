@@ -17,11 +17,12 @@ UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS
 # shared-library version MAJOR.MINOR.PATCH ... this may be *different*
 # from the utf8proc version number because it indicates ABI compatibility,
 # not API compatibility: MAJOR should be incremented whenever *binary*
-# compatibility is broken, even if the API is backward-compatible
-# Be sure to also update these in MANIFEST and CMakeLists.txt!
+# compatibility is broken, even if the API is backward-compatible.
+# The API version number is defined in utf8proc.h.
+# Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
 MAJOR=2
 MINOR=0
-PATCH=1
+PATCH=2
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
