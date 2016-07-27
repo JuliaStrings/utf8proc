@@ -277,3 +277,5 @@ Release of version 1.0.1
 [#70]: https://github.com/JuliaLang/utf8proc/issues/70
 [#77]: https://github.com/JuliaLang/utf8proc/issues/77
 [#78]: https://github.com/JuliaLang/utf8proc/issues/78
+[#79]: https://github.com/JuliaLang/utf8proc/issues/79
+[#80]: https://github.com/JuliaLang/utf8proc/issues/80
