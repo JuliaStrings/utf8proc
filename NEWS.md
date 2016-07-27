@@ -2,7 +2,7 @@
 
 ## Version 2.0.2 ##
 
-2016-07-26:
+2016-07-27:
 
 - Move `-Wmissing-prototypes` warning flag from `Makefile` to `.travis.yml`
   since MSVC does not understand this flag and it is occasionally useful to
