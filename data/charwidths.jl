@@ -113,7 +113,9 @@ for line in readlines(open("EastAsianWidth.txt"))
     for c in charstart:charend
         if width=="W" || width=="F" # wide or full
             CharWidths[c]=2
-        elseif width=="N" || width=="Na" || width=="H" # narrow or half
+        elseif width=="Na" || width=="H" # narrow or half
+            CharWidths[c]=1
+        elseif width=="N" && haskey(CharWidths, c)
             CharWidths[c]=1
         end
     end
