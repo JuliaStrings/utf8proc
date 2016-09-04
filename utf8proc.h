@@ -134,7 +134,7 @@ extern "C" {
 #endif
 
 #ifndef UINT16_MAX
-#  define UINT16_MAX ~(utf8proc_uint16_t)0
+#  define UINT16_MAX 65535U
 #endif
 
 /**
