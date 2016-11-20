@@ -491,8 +491,8 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
 );
 
 /**
- * Reencodes the sequence of `length` codepoints pointed to by `buffer`
- * UTF-8 data in-place (i.e., the result is also stored in `buffer`).
+ * Normalizes the sequence of `length` codepoints pointed to by `buffer`
+ * in-place (i.e., the result is also stored in `buffer`).
  *
  * @param buffer the (native-endian UTF-32) unicode codepoints to re-encode.
  * @param length the length (in codepoints) of the buffer.
@@ -507,8 +507,35 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
  *                           the unicode versioning stability
  *
  * @return
- * In case of success, the length (in bytes) of the resulting UTF-8 string is
+ * In case of success, the length (in codepoints) of the normalized UTF-32 string is
  * returned; otherwise, a negative error code is returned (@ref utf8proc_errmsg).
+ *
+ * @warning The entries of the array pointed to by `str` have to be in the
+ *          range `0x0000` to `0x10FFFF`. Otherwise, the program might crash!
+ */
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *buffer, utf8proc_ssize_t length, utf8proc_option_t options);
+
+/**
+ * Reencodes the sequence of `length` codepoints pointed to by `buffer`
+ * UTF-8 data in-place (i.e., the result is also stored in `buffer`).
+ * Can optionally normalize the UTF-32 sequence prior to UTF-8 conversion.
+ *
+ * @param buffer the (native-endian UTF-32) unicode codepoints to re-encode.
+ * @param length the length (in codepoints) of the buffer.
+ * @param options a bitwise or (`|`) of one or more of the following flags:
+ * - @ref UTF8PROC_NLF2LS  - convert LF, CRLF, CR and NEL into LS
+ * - @ref UTF8PROC_NLF2PS  - convert LF, CRLF, CR and NEL into PS
+ * - @ref UTF8PROC_NLF2LF  - convert LF, CRLF, CR and NEL into LF
+ * - @ref UTF8PROC_STRIPCC - strip or convert all non-affected control characters
+ * - @ref UTF8PROC_COMPOSE - try to combine decomposed codepoints into composite
+ *                           codepoints
+ * - @ref UTF8PROC_STABLE  - prohibit combining characters that would violate
+ *                           the unicode versioning stability
+ *
+ * @return
+ * In case of success, the length (in bytes) of the resulting nul-terminated
+ * UTF-8 string is returned; otherwise, a negative error code is returned
+ * (@ref utf8proc_errmsg).
  *
  * @warning The amount of free space pointed to by `buffer` must
  *          exceed the amount of the input data by one byte, and the
