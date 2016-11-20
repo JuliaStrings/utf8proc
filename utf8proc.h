@@ -531,6 +531,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
  *                           codepoints
  * - @ref UTF8PROC_STABLE  - prohibit combining characters that would violate
  *                           the unicode versioning stability
+ * - @ref UTF8PROC_CHARBOUND - insert 0xFF bytes before each grapheme cluster
  *
  * @return
  * In case of success, the length (in bytes) of the resulting nul-terminated
