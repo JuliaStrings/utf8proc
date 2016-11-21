@@ -545,9 +545,8 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
   return wpos;
 }
 
-UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, utf8proc_ssize_t length, utf8proc_option_t options) {
-  /* UTF8PROC_NULLTERM option will be ignored, 'length' is never ignored
-     ASSERT: 'buffer' has one spare byte of free space at the end! */
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *buffer, utf8proc_ssize_t length, utf8proc_option_t options) {
+  /* UTF8PROC_NULLTERM option will be ignored, 'length' is never ignored */
   if (options & (UTF8PROC_NLF2LS | UTF8PROC_NLF2PS | UTF8PROC_STRIPCC)) {
     utf8proc_ssize_t rpos;
     utf8proc_ssize_t wpos = 0;
@@ -655,6 +654,14 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
     }
     length = wpos;
   }
+  return length;
+}
+
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, utf8proc_ssize_t length, utf8proc_option_t options) {
+  /* UTF8PROC_NULLTERM option will be ignored, 'length' is never ignored
+     ASSERT: 'buffer' has one spare byte of free space at the end! */
+  length = utf8proc_normalize_utf32(buffer, length, options);
+  if (length < 0) return length;
   {
     utf8proc_ssize_t rpos, wpos = 0;
     utf8proc_int32_t uc;
