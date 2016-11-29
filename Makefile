@@ -21,8 +21,8 @@ UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS
 # The API version number is defined in utf8proc.h.
 # Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
 MAJOR=2
-MINOR=0
-PATCH=2
+MINOR=1
+PATCH=0
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
