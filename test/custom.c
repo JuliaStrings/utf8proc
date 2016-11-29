@@ -1,8 +1,8 @@
 #include "tests.h"
 
-int thunk_test = 1;
+static int thunk_test = 1;
 
-utf8proc_int32_t custom(utf8proc_int32_t codepoint, void *thunk)
+static utf8proc_int32_t custom(utf8proc_int32_t codepoint, void *thunk)
 {
     check(((int *) thunk) == &thunk_test, "unexpected thunk passed");
     if (codepoint == 'a')
