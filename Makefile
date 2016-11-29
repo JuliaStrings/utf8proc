@@ -49,7 +49,7 @@ clean:
 ifneq ($(OS),Darwin)
 	rm -f libutf8proc.so.$(MAJOR)
 endif
-	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case
+	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case test/custom
 	rm -rf MANIFEST.new tmp
 	$(MAKE) -C bench clean
 	$(MAKE) -C data clean
@@ -136,7 +136,10 @@ test/iterate: test/iterate.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 test/case: test/case.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) test/case.c test/tests.o utf8proc.o -o $@
 
-check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
+test/custom: test/custom.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/custom.c test/tests.o utf8proc.o -o $@
+
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/custom test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
@@ -144,3 +147,4 @@ check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeB
 	test/valid
 	test/iterate
 	test/case
+	test/custom

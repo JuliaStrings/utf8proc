@@ -374,6 +374,13 @@ typedef enum {
 } utf8proc_boundclass_t;
 
 /**
+ * Function pointer type passed to @ref utf8proc_map_custom and
+ * @ref utf8proc_decompose_custom, which is used to specify a user-defined
+ * mapping of codepoints to be applied in conjunction with other mappings.
+ */
+typedef utf8proc_int32_t (*utf8proc_custom_func)(utf8proc_int32_t codepoint, void *data);
+
+/**
  * Array containing the byte lengths of a UTF-8 encoded codepoint based
  * on the first byte.
  */
@@ -480,6 +487,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(
  * `buffer` (which must contain at least `bufsize` entries).  In case of
  * success, the number of codepoints written is returned; in case of an
  * error, a negative error code is returned (@ref utf8proc_errmsg).
+ * See @ref utf8proc_decompose_custom to supply additional transformations.
  *
  * If the number of written codepoints would be bigger than `bufsize`, the
  * required buffer size is returned, while the buffer will be overwritten with
@@ -488,6 +496,18 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
   const utf8proc_uint8_t *str, utf8proc_ssize_t strlen,
   utf8proc_int32_t *buffer, utf8proc_ssize_t bufsize, utf8proc_option_t options
+);
+
+/**
+ * The same as @ref utf8proc_decompose, but also takes a `custom_func` mapping function
+ * that is called on each codepoint in `str` before any other transformations
+ * (along with a `custom_data` pointer that is passed through to `custom_func`).
+ * The `custom_func` argument is ignored if it is `NULL`.  See also @ref utf8proc_map_custom.
+ */
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
+  const utf8proc_uint8_t *str, utf8proc_ssize_t strlen,
+  utf8proc_int32_t *buffer, utf8proc_ssize_t bufsize, utf8proc_option_t options,
+  utf8proc_custom_func custom_func, void *custom_data
 );
 
 /**
@@ -595,7 +615,7 @@ UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_totitle(utf8proc_int32_t c);
  * Given a codepoint, return a character width analogous to `wcwidth(codepoint)`,
  * except that a width of 0 is returned for non-printable codepoints
  * instead of -1 as in `wcwidth`.
- * 
+ *
  * @note
  * If you want to check for particular types of non-printable characters,
  * (analogous to `isprint` or `iscntrl`), use @ref utf8proc_category. */
@@ -623,7 +643,8 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t codepoi
  * in any case the result will be NULL terminated (though it might
  * contain NULL characters with the string if `str` contained NULL
  * characters). Other flags in the `options` field are passed to the
- * functions defined above, and regarded as described.
+ * functions defined above, and regarded as described.  See also
+ * @ref utfproc_map_custom to supply a custom codepoint transformation.
  *
  * In case of success the length of the new string is returned,
  * otherwise a negative error code is returned.
@@ -633,6 +654,17 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t codepoi
  */
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map(
   const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_uint8_t **dstptr, utf8proc_option_t options
+);
+
+/**
+ * Like @ref utf8proc_map, but also takes a `custom_func` mapping function
+ * that is called on each codepoint in `str` before any other transformations
+ * (along with a `custom_data` pointer that is passed through to `custom_func`).
+ * The `custom_func` argument is ignored if it is `NULL`.
+ */
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
+  const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_uint8_t **dstptr, utf8proc_option_t options,
+  utf8proc_custom_func custom_func, void *custom_data
 );
 
 /** @name Unicode normalization
@@ -658,4 +690,3 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC(const utf8proc_uint8_t *str);
 #endif
 
 #endif
-
