@@ -105,6 +105,7 @@ typedef unsigned char utf8proc_bool;
 typedef bool utf8proc_bool;
 #  endif
 #else
+#  include <stddef.h>
 #  include <stdbool.h>
 #  include <inttypes.h>
 typedef int8_t utf8proc_int8_t;
