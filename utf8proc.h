@@ -114,7 +114,7 @@ typedef uint16_t utf8proc_uint16_t;
 typedef int32_t utf8proc_int32_t;
 typedef uint32_t utf8proc_uint32_t;
 typedef size_t utf8proc_size_t;
-typedef ssize_t utf8proc_ssize_t;
+typedef ptrdiff_t utf8proc_ssize_t;
 typedef bool utf8proc_bool;
 #endif
 #include <limits.h>
