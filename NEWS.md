@@ -12,6 +12,10 @@
 - Fixed stack overflow that could occur due to incorrect definition
   of `UINT16_MAX` with some compilers ([#84]).
 
+- Fixed conflict with `stdbool.h` in Visual Studio ([#90]).
+
+- Updated font metrics to use Unifont 9.0.04.
+
 ## Version 2.0.2 ##
 
 2016-07-27:
@@ -294,3 +298,4 @@ Release of version 1.0.1
 [#84]: https://github.com/JuliaLang/utf8proc/pull/84
 [#88]: https://github.com/JuliaLang/utf8proc/pull/88
 [#89]: https://github.com/JuliaLang/utf8proc/pull/89
+[#90]: https://github.com/JuliaLang/utf8proc/issues/90
