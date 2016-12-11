@@ -78,7 +78,8 @@
 
 #include <stdlib.h>
 #include <sys/types.h>
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && _MSC_VER < 1800
+// MSVC prior to 2013 lacked stdbool.h and inttypes.h
 typedef signed char utf8proc_int8_t;
 typedef unsigned char utf8proc_uint8_t;
 typedef short utf8proc_int16_t;
@@ -93,8 +94,13 @@ typedef int utf8proc_ssize_t;
 typedef unsigned int utf8proc_size_t;
 #  endif
 #  ifndef __cplusplus
+// emulate C99 bool
 typedef unsigned char utf8proc_bool;
-enum {false, true};
+#    ifndef __bool_true_false_are_defined
+#      define false 0
+#      define true 1
+#      define __bool_true_false_are_defined 1
+#    endif
 #  else
 typedef bool utf8proc_bool;
 #  endif
