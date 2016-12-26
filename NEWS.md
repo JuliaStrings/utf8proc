@@ -1,6 +1,8 @@
 # utf8proc release history #
 
-## Version 2.1 (not yet released) ##
+## Version 2.1 ##
+
+2016-12-16:
 
 - New functions `utf8proc_map_custom` and `utf8proc_decompose_custom`
   to allow user-supplied transformations of codepoints, in conjunction
