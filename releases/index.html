@@ -21,8 +21,8 @@
           <h1 id="project_title"><a href="http://julialang.org/utf8proc">utf8proc</a> releases</h1>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.0.2.zip">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.0.2.tar.gz">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.1.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.1.tar.gz">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -43,6 +43,20 @@ license</a>); please see
 the included <a href="https://github.com/JuliaLang/utf8proc/blob/master/LICENSE.md">LICENSE.md</a> file for more detailed information.</p>
 
 <ul>
+
+<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v2.1">utf8proc v2.1</a> (2016-12-26):
+
+    <ul>
+      <li><p>New functions <code>utf8proc_map_custom</code> and <code>utf8proc_decompose_custom</code>
+          to allow user-supplied transformations of codepoints, in conjunction
+          with other transformations (<a href="https://github.com/JuliaLang/utf8proc/pull/89">#89</a>).</p></li>
+      <li><p>New function <code>utf8proc_normalize_utf32</code> to apply normalizations
+          directly to UTF-32 data (not just UTF-8) (<a href="https://github.com/JuliaLang/utf8proc/pull/88">#88</a>).</p></li>
+      <li><p>Fixed stack overflow that could occur due to incorrect definition
+          of <code>UINT16_MAX</code> with some compilers (<a href="https://github.com/JuliaLang/utf8proc/pull/84">#84</a>).</p></li>
+      <li><p>Fixed conflict with <code>stdbool.h</code> in Visual Studio (<a href="https://github.com/JuliaLang/utf8proc/issues/90">#90</a>).</p></li>
+      <li><p>Updated font metrics to use Unifont 9.0.04.</p></li>
+    </ul>
 
 <li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v2.0.2">utf8proc v2.0.2</a> (2016-07-27):
 
