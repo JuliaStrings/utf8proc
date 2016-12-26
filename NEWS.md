@@ -2,7 +2,7 @@
 
 ## Version 2.1 ##
 
-2016-12-16:
+2016-12-26:
 
 - New functions `utf8proc_map_custom` and `utf8proc_decompose_custom`
   to allow user-supplied transformations of codepoints, in conjunction
