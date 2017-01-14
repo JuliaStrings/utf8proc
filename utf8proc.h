@@ -77,7 +77,7 @@
 /** @} */
 
 #include <stdlib.h>
-#include <sys/types.h>
+
 #if defined(_MSC_VER) && _MSC_VER < 1800
 // MSVC prior to 2013 lacked stdbool.h and inttypes.h
 typedef signed char utf8proc_int8_t;
