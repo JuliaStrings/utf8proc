@@ -1,7 +1,6 @@
 # libutf8proc Makefile
 
 # programs
-MAKE=make
 AR?=ar
 CC?=gcc
 INSTALL=install
