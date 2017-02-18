@@ -340,7 +340,7 @@ for code in 0...0x110000
   end
 end
 
-$stdout << "const utf8proc_uint16_t utf8proc_sequences[] = {\n  "
+$stdout << "static const utf8proc_uint16_t utf8proc_sequences[] = {\n  "
 i = 0
 $int_array.each do |entry|
   i += 1
@@ -352,7 +352,7 @@ $int_array.each do |entry|
 end
 $stdout << "};\n\n"
 
-$stdout << "const utf8proc_uint16_t utf8proc_stage1table[] = {\n  "
+$stdout << "static const utf8proc_uint16_t utf8proc_stage1table[] = {\n  "
 i = 0
 stage1.each do |entry|
   i += 1
@@ -364,7 +364,7 @@ stage1.each do |entry|
 end
 $stdout << "};\n\n"
 
-$stdout << "const utf8proc_uint16_t utf8proc_stage2table[] = {\n  "
+$stdout << "static const utf8proc_uint16_t utf8proc_stage2table[] = {\n  "
 i = 0
 stage2.flatten.each do |entry|
   i += 1
@@ -376,7 +376,7 @@ stage2.flatten.each do |entry|
 end
 $stdout << "};\n\n"
 
-$stdout << "const utf8proc_property_t utf8proc_properties[] = {\n"
+$stdout << "static const utf8proc_property_t utf8proc_properties[] = {\n"
 $stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 0, 0, UTF8PROC_BOUNDCLASS_OTHER},\n"
 properties.each { |line|
   $stdout << line
@@ -385,7 +385,7 @@ $stdout << "};\n\n"
 
 
 
-$stdout << "const utf8proc_uint16_t utf8proc_combinations[] = {\n  "
+$stdout << "static const utf8proc_uint16_t utf8proc_combinations[] = {\n  "
 i = 0
 comb1st_indicies.keys.each_index do |a|
   offset = 0
