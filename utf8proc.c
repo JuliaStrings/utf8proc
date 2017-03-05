@@ -421,7 +421,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
     if (!category) return UTF8PROC_ERROR_NOTASSIGNED;
   }
   if (options & UTF8PROC_IGNORE) {
-    if (property->ignorable) return 0;
+    if (!category || property->ignorable) return 0;
   }
   if (options & UTF8PROC_LUMP) {
     if (category == UTF8PROC_CATEGORY_ZS) utf8proc_decompose_lump(0x0020);

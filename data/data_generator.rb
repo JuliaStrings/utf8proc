@@ -104,7 +104,7 @@ $excl_version = $excl_version.chomp.split("\n").collect { |e| e.hex }
 $case_folding_string = File.open("CaseFolding.txt", :encoding => 'utf-8').read
 $case_folding = {}
 $case_folding_string.chomp.split("\n").each do |line|
-  next unless line =~ /([0-9A-F]+); [CFS]; ([0-9A-F ]+);/i
+  next unless line =~ /([0-9A-F]+); [CF]; ([0-9A-F ]+);/i
   $case_folding[$1.hex] = $2.split(" ").collect { |e| e.hex }
 end
 
