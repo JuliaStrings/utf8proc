@@ -753,3 +753,10 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC(const utf8proc_uint8_t *str) 
     UTF8PROC_COMPOSE | UTF8PROC_COMPAT);
   return retval;
 }
+
+UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_CF(const utf8proc_uint8_t *str) {
+  utf8proc_uint8_t *retval;
+  utf8proc_map(str, 0, &retval, UTF8PROC_NULLTERM | UTF8PROC_STABLE |
+    UTF8PROC_COMPOSE | UTF8PROC_COMPAT | UTF8PROC_CASEFOLD | UTF8PROC_IGNORE);
+  return retval;
+}
