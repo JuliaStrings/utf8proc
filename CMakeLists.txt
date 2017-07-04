@@ -6,10 +6,6 @@ disallow_intree_builds()
 
 project (utf8proc C)
 
-if (NOT CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX /usr/local)
-endif()
-
 set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Installation director for libraries.")
 set(INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "Installation directory for headers.")
 set(INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_PREFIX}/share/pkgconfig" CACHE PATH "Installation dirctory for pkgconfig file.")
@@ -29,7 +25,7 @@ if (NOT MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=c99 -pedantic -Wall")
 endif ()
 
-add_library (utf8proc
+add_library (utf8proc SHARED
   utf8proc.c
   utf8proc.h
 )
@@ -44,5 +40,16 @@ set_target_properties (utf8proc PROPERTIES
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utf8proc.pc.cmakein
                ${CMAKE_CURRENT_SOURCE_DIR}/utf8proc.pc @ONLY)
-               
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake.cmakein
+               ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}-config.cmake @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}-config-version.cmake.cmakein
+               ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}-config-version.cmake @ONLY)
+
 install(FILES utf8proc.pc DESTINATION "${INSTALL_PKGCONFIG_DIR}")
+install(FILES utf8proc.h DESTINATION "${INSTALL_INC_DIR}")
+install(TARGETS utf8proc
+        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
+        LIBRARY DESTINATION "${INSTALL_LIB_DIR}")
+  
+install(FILES ${PROJECT_NAME}-config.cmake ${PROJECT_NAME}-config-version.cmake
+        DESTINATION "${INSTALL_LIB_DIR}/${PROJECT_NAME}") 
