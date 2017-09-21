@@ -284,9 +284,8 @@ static utf8proc_bool grapheme_break_simple(int lbc, int tbc) {
 
 static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t *state)
 {
-  int lbc_override = lbc;
-  if (state && *state != UTF8PROC_BOUNDCLASS_START)
-    lbc_override = *state;
+  int lbc_override = ((state && *state != UTF8PROC_BOUNDCLASS_START)
+                      ? *state : lbc);
   utf8proc_bool break_permitted = grapheme_break_simple(lbc_override, tbc);
   if (state) {
     // Special support for GB 12/13 made possible by GB999. After two RI
