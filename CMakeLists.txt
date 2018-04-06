@@ -26,6 +26,13 @@ add_library (utf8proc
   utf8proc.h
 )
 
+if (BUILD_SHARED_LIBS)
+  # Building shared library
+else()
+  # Building static library
+  target_compile_definitions(utf8proc PUBLIC "UTF8PROC_STATIC")
+endif()
+
 set_target_properties (utf8proc PROPERTIES
   POSITION_INDEPENDENT_CODE ON
   VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
