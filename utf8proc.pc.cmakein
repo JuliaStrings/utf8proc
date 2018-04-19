@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=@INSTALL_LIB_DIR@
+includedir=@INSTALL_INC_DIR@
+
+Name: utf8proc
+Description: C Library for processing UTF-8 Unicode data
+Version: @UTF8PROC_FULL_VERSION@
+
+Requires:
+Libs: -L${libdir} -lutf8proc
+Cflags: -I${includedir}
