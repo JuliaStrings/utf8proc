@@ -120,16 +120,24 @@ typedef bool utf8proc_bool;
 #endif
 #include <limits.h>
 
-#ifdef _WIN32
-#  ifdef UTF8PROC_EXPORTS
-#    define UTF8PROC_DLLEXPORT __declspec(dllexport)
+#ifndef UTF8PROC_BUILD_AS_LIB
+#  ifdef _WIN32
+#    ifdef UTF8PROC_EXPORTS
+#      define UTF8PROC_DLLEXPORT __declspec(dllexport)
+#    else
+#      define UTF8PROC_DLLEXPORT __declspec(dllimport)
+#    endif
+#  elif defined(__GNUC__) && __GNUC__ >= 4
+#    define UTF8PROC_DLLEXPORT __attribute__ ((visibility("default")))
 #  else
-#    define UTF8PROC_DLLEXPORT __declspec(dllimport)
+#    define UTF8PROC_DLLEXPORT
 #  endif
-#elif __GNUC__ >= 4
-#  define UTF8PROC_DLLEXPORT __attribute__ ((visibility("default")))
 #else
-#  define UTF8PROC_DLLEXPORT
+#  if defined(__GNUC__) && __GNUC__ >= 4
+#    define UTF8PROC_DLLEXPORT __attribute__ ((visibility("hidden")))
+#  else
+#    define UTF8PROC_DLLEXPORT
+#  endif
 #endif
 
 #ifdef __cplusplus
