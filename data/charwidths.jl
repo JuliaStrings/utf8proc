@@ -7,17 +7,6 @@
 # Requires Julia (obviously) and FontForge.
 
 #############################################################################
-# Julia 0.3/0.4 compatibility (taken from Compat package)
-if VERSION < v"0.4.0-dev+1387"
-    typealias AbstractString String
-end
-if VERSION < v"0.4.0-dev+1419"
-    const UInt32 = Uint32
-end
-if VERSION < v"0.4.0-dev+3874"
-    Base.parse{T<:Integer}(::Type{T}, s::AbstractString) = parseint(T, s)
-end
-
 CharWidths = Dict{Int,Int}()
 
 #############################################################################
@@ -97,7 +86,7 @@ CharWidths=parsesfd("unifont_upper.sfd", CharWidths)
 
 for line in readlines(open("EastAsianWidth.txt"))
     #Strip comments
-    line[1] == '#' && continue
+    (isempty(line) || line[1] == '#') && continue
     precomment = split(line, '#')[1]
     #Parse code point range and width code
     tokens = split(precomment, ';')
