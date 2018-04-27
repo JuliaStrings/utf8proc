@@ -1,5 +1,13 @@
 # utf8proc release history #
 
+## Version 2.1.1 ##
+
+2018-04-27
+
+- Fixed composition bug ([#128]).
+
+- Minor build fixes ([#94], [#99], [#113], [#125]).
+
 ## Version 2.1 ##
 
 2016-12-26:
@@ -297,7 +305,12 @@ Release of version 1.0.1
 [#78]: https://github.com/JuliaLang/utf8proc/issues/78
 [#79]: https://github.com/JuliaLang/utf8proc/issues/79
 [#80]: https://github.com/JuliaLang/utf8proc/issues/80
-[#84]: https://github.com/JuliaLang/utf8proc/pull/84
-[#88]: https://github.com/JuliaLang/utf8proc/pull/88
-[#89]: https://github.com/JuliaLang/utf8proc/pull/89
+[#84]: https://github.com/JuliaLang/utf8proc/issues/84
+[#88]: https://github.com/JuliaLang/utf8proc/issues/88
+[#89]: https://github.com/JuliaLang/utf8proc/issues/89
 [#90]: https://github.com/JuliaLang/utf8proc/issues/90
+[#94]: https://github.com/JuliaLang/utf8proc/issues/94
+[#99]: https://github.com/JuliaLang/utf8proc/issues/99
+[#113]: https://github.com/JuliaLang/utf8proc/issues/113
+[#125]: https://github.com/JuliaLang/utf8proc/issues/125
+[#128]: https://github.com/JuliaLang/utf8proc/issues/128
