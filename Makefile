@@ -138,11 +138,15 @@ test/case: test/case.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 test/custom: test/custom.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) test/custom.c test/tests.o utf8proc.o -o $@
 
-check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/custom test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
+test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/misc.c test/tests.o utf8proc.o -o $@
+
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
 	test/charwidth
+	test/misc
 	test/valid
 	test/iterate
 	test/case
