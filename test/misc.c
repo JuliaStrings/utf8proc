@@ -22,4 +22,6 @@ static void issue128(void) /* #128 */
 int main(void)
 {
     issue128();
+    printf("Misc tests SUCCEEDED.\n");
+    return 0;
 }
