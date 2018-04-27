@@ -48,7 +48,7 @@ clean:
 ifneq ($(OS),Darwin)
 	rm -f libutf8proc.so.$(MAJOR)
 endif
-	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case test/custom
+	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case test/custom test/misc
 	rm -rf MANIFEST.new tmp
 	$(MAKE) -C bench clean
 	$(MAKE) -C data clean
