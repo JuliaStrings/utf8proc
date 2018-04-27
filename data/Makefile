@@ -20,7 +20,7 @@ utf8proc_data.c.new: data_generator.rb UnicodeData.txt GraphemeBreakProperty.txt
 	$(RUBY) data_generator.rb < UnicodeData.txt > $@
 
 # GNU Unifont version for font metric calculations:
-UNIFONT_VERSION=9.0.04
+UNIFONT_VERSION=10.0.07
 
 unifont.ttf:
 	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)https://mirrors.kernel.org/gnu/unifont/unifont-$(UNIFONT_VERSION)/unifont-$(UNIFONT_VERSION).ttf
@@ -35,7 +35,7 @@ CharWidths.txt: charwidths.jl unifont.sfd unifont_upper.sfd EastAsianWidth.txt
 	$(JULIA) charwidths.jl > $@
 
 # Unicode data version
-UNICODE_VERSION=9.0.0
+UNICODE_VERSION=10.0.0
 
 UnicodeData.txt:
 	$(CURL) $(CURLFLAGS) -o $@ -O http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/UnicodeData.txt
