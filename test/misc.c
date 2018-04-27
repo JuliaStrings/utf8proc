@@ -2,7 +2,7 @@
 
 #include "tests.h"
 
-void issue128(void) /* #128 */
+static void issue128(void) /* #128 */
 {
     utf8proc_uint8_t input[] = {0x72, 0xcc, 0x87, 0xcc, 0xa3, 0x00}; /* "r\u0307\u0323" */
     utf8proc_uint8_t nfc[] = {0xe1, 0xb9, 0x9b, 0xcc, 0x87, 0x00}; /* "\u1E5B\u0307" */
