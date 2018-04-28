@@ -21,7 +21,7 @@ UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PR
 # Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
 MAJOR=2
 MINOR=1
-PATCH=0
+PATCH=1
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
@@ -48,7 +48,7 @@ clean:
 ifneq ($(OS),Darwin)
 	rm -f libutf8proc.so.$(MAJOR)
 endif
-	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case test/custom
+	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case test/custom test/misc
 	rm -rf MANIFEST.new tmp
 	$(MAKE) -C bench clean
 	$(MAKE) -C data clean
@@ -81,7 +81,7 @@ libutf8proc.so: libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH)
 	ln -f -s libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH) $@.$(MAJOR)
 
 libutf8proc.$(MAJOR).dylib: utf8proc.o
-	$(CC) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
+	$(CC) $(LDFLAGS) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
 
 libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 	ln -f -s libutf8proc.$(MAJOR).dylib $@
@@ -138,11 +138,15 @@ test/case: test/case.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 test/custom: test/custom.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) test/custom.c test/tests.o utf8proc.o -o $@
 
-check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/custom test/charwidth test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
+test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) test/misc.c test/tests.o utf8proc.o -o $@
+
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
 	test/charwidth
+	test/misc
 	test/valid
 	test/iterate
 	test/case
