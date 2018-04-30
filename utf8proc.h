@@ -701,7 +701,7 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKD(const utf8proc_uint8_t *str);
 UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC(const utf8proc_uint8_t *str);
 /**
  * NFKC_Casefold normalization (@ref UTF8PROC_COMPOSE and @ref UTF8PROC_COMPAT
- * and @ref UTF8PROC_CASEFOLD and @ref UTF8PROC_IGNORE and @ref UTF8PROC_STRIPNA).
+ * and @ref UTF8PROC_CASEFOLD and @ref UTF8PROC_IGNORE).
  **/
 UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_Casefold(const utf8proc_uint8_t *str);
 /** @} */
