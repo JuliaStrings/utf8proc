@@ -11,7 +11,7 @@ CFLAGS ?= -O2
 PICFLAG = -fPIC
 C99FLAG = -std=c99
 WCFLAGS = -Wall -pedantic
-UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS
+UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PROC_DEFINES)
 
 # shared-library version MAJOR.MINOR.PATCH ... this may be *different*
 # from the utf8proc version number because it indicates ABI compatibility,

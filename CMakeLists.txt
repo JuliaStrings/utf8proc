@@ -22,6 +22,13 @@ add_library (utf8proc
   utf8proc.h
 )
 
+if (BUILD_SHARED_LIBS)
+  # Building shared library
+else()
+  # Building static library
+  target_compile_definitions(utf8proc PUBLIC "UTF8PROC_STATIC")
+endif()
+
 target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
 
 set_target_properties (utf8proc PROPERTIES
