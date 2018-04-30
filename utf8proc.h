@@ -162,7 +162,10 @@ typedef enum {
   UTF8PROC_COMPOSE   = (1<<3),
   /** Return a result with decomposed characters. */
   UTF8PROC_DECOMPOSE = (1<<4),
-  /** Strip "default ignorable characters" such as SOFT-HYPHEN or ZERO-WIDTH-SPACE. */
+  /**
+   * Strip "default ignorable characters" such as SOFT-HYPHEN or
+   * ZERO-WIDTH-SPACE, along with unassigned codepoints.
+   */
   UTF8PROC_IGNORE    = (1<<5),
   /** Return an error, if the input contains unassigned codepoints. */
   UTF8PROC_REJECTNA  = (1<<6),
@@ -680,8 +683,8 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
 
 /** @name Unicode normalization
  *
- * Returns a pointer to newly allocated memory of a NFD, NFC, NFKD or NFKC
- * normalized version of the null-terminated string `str`.  These
+ * Returns a pointer to newly allocated memory of a NFD, NFC, NFKD, NFKC or
+ * NFKC_Casefold normalized version of the null-terminated string `str`.  These
  * are shortcuts to calling @ref utf8proc_map with @ref UTF8PROC_NULLTERM
  * combined with @ref UTF8PROC_STABLE and flags indicating the normalization.
  */
@@ -694,6 +697,11 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFC(const utf8proc_uint8_t *str);
 UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKD(const utf8proc_uint8_t *str);
 /** NFKC normalization (@ref UTF8PROC_COMPOSE and @ref UTF8PROC_COMPAT). */
 UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC(const utf8proc_uint8_t *str);
+/**
+ * NFKC_Casefold normalization (@ref UTF8PROC_COMPOSE and @ref UTF8PROC_COMPAT
+ * and @ref UTF8PROC_CASEFOLD and @ref UTF8PROC_IGNORE).
+ **/
+UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_CF(const utf8proc_uint8_t *str);
 /** @} */
 
 #ifdef __cplusplus
