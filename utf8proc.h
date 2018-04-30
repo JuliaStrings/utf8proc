@@ -162,10 +162,7 @@ typedef enum {
   UTF8PROC_COMPOSE   = (1<<3),
   /** Return a result with decomposed characters. */
   UTF8PROC_DECOMPOSE = (1<<4),
-  /**
-   * Strip "default ignorable characters" such as SOFT-HYPHEN or
-   * ZERO-WIDTH-SPACE, along with unassigned codepoints.
-   */
+  /** Strip "default ignorable characters" such as SOFT-HYPHEN or ZERO-WIDTH-SPACE. */
   UTF8PROC_IGNORE    = (1<<5),
   /** Return an error, if the input contains unassigned codepoints. */
   UTF8PROC_REJECTNA  = (1<<6),
@@ -216,6 +213,10 @@ typedef enum {
    *       @ref UTF8PROC_DECOMPOSE
    */
   UTF8PROC_STRIPMARK = (1<<13),
+  /**
+   * Strip unassigned codepoints.
+   */
+  UTF8PROC_STRIPNA    = (1<<14),
 } utf8proc_option_t;
 
 /** @name Error codes
@@ -472,6 +473,7 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int
  * - @ref UTF8PROC_CHARBOUND - insert 0xFF bytes before each grapheme cluster
  * - @ref UTF8PROC_LUMP      - lump certain different codepoints together
  * - @ref UTF8PROC_STRIPMARK - remove all character marks
+ * - @ref UTF8PROC_STRIPNA   - remove unassigned codepoints
  * @param last_boundclass
  * Pointer to an integer variable containing
  * the previous codepoint's boundary class if the @ref UTF8PROC_CHARBOUND
@@ -699,9 +701,9 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKD(const utf8proc_uint8_t *str);
 UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC(const utf8proc_uint8_t *str);
 /**
  * NFKC_Casefold normalization (@ref UTF8PROC_COMPOSE and @ref UTF8PROC_COMPAT
- * and @ref UTF8PROC_CASEFOLD and @ref UTF8PROC_IGNORE).
+ * and @ref UTF8PROC_CASEFOLD and @ref UTF8PROC_IGNORE and @ref UTF8PROC_STRIPNA).
  **/
-UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_CF(const utf8proc_uint8_t *str);
+UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_Casefold(const utf8proc_uint8_t *str);
 /** @} */
 
 #ifdef __cplusplus

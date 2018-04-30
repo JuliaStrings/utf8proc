@@ -19,9 +19,22 @@ static void issue128(void) /* #128 */
     free(nfd_out); free(nfc_out);
 }
 
+static void issue102(void) /* #128 */
+{
+    utf8proc_uint8_t input[] = {0x58, 0xe2, 0x81, 0xa5, 0x45, 0xcc, 0x80, 0xc2, 0xad, 0xe1, 0xb4, 0xac, 0x00}; /* "X\u2065E\u0300\u00ad\u1d2c" */
+    utf8proc_uint8_t correct[] = {0x78, 0xc3, 0xa8, 0x61, 0x00}; /* "x\u00e8a" */
+    utf8proc_uint8_t *output;
+    output = utf8proc_NFKC_Casefold(input);
+    printf("NFKC_Casefold \"%s\" -> \"%s\" vs. \"%s\"\n", (char*)input, (char*)output, (char*)correct);
+    check(strlen((char*) output) == 4, "incorrect NFKC_Casefold length");
+    check(!memcmp(correct, output, 5), "incorrect NFKC_Casefold data");
+    free(output);
+}
+
 int main(void)
 {
     issue128();
+    issue102();
     printf("Misc tests SUCCEEDED.\n");
     return 0;
 }
