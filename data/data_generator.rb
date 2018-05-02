@@ -137,13 +137,13 @@ def cpary2utf16encoded(array)
 end
 def cpary2c(array)
   return "UINT16_MAX" if array.nil? || array.length == 0
-  lencode = array.length - 1 #no sequence has len 0, so we encode len 1 as 0, len 2 as 1, ... 
+  lencode = array.length - 1 #no sequence has len 0, so we encode len 1 as 0, len 2 as 1, ...
   array = cpary2utf16encoded(array)
   if lencode >= 7 #we have only 3 bits for the length (which is already cutting it close. might need to change it to 2 bits in future Unicode versions)
-    array = [lencode] + array 
+    array = [lencode] + array
     lencode = 7
-  end  
-  idx = pushary(array) 
+  end
+  idx = pushary(array)
   raise "Array index out of bound" if idx > 0x1FFF
   return "#{idx | (lencode << 13)}"
 end
@@ -188,9 +188,10 @@ class UnicodeChar
     @decomp_mapping    = ($8=='') ? nil :
                          $8.split.collect { |element| element.hex }
     @bidi_mirrored     = ($13=='Y') ? true : false
-    @uppercase_mapping = ($16=='') ? nil : $16.hex
+    # issue #130: use nonstandard uppercase ß -> ẞ
+    @uppercase_mapping = ($16=='') ? (code==0x00df ? 0x1e9e : nil) : $16.hex
     @lowercase_mapping = ($17=='') ? nil : $17.hex
-    @titlecase_mapping = ($18=='') ? nil : $18.hex
+    @titlecase_mapping = ($18=='') ? (code==0x00df ? 0x1e9e : nil) : $18.hex
   end
   def case_folding
     $case_folding[code]
@@ -260,17 +261,17 @@ chars.each do |char|
     end
     unless comb2nd_indicies[dm1]
       comb2nd_indicies_sorted_keys << dm1
-      comb2nd_indicies[dm1] = comb2nd_indicies.keys.length 
+      comb2nd_indicies[dm1] = comb2nd_indicies.keys.length
     end
     comb_array[comb1st_indicies[dm0]] ||= []
     raise "Duplicate canonical mapping: #{char.code} #{dm0} #{dm1}" if comb_array[comb1st_indicies[dm0]][comb2nd_indicies[dm1]]
     comb_array[comb1st_indicies[dm0]][comb2nd_indicies[dm1]] = char.code
-    
+
     comb2nd_indicies_nonbasic[dm1] = true if char.code > 0xFFFF
   end
   char.c_decomp_mapping = cpary2c(char.decomp_mapping)
   char.c_case_folding = cpary2c(char.case_folding)
-end 
+end
 
 comb_indicies = {}
 cumoffset = 0
@@ -281,7 +282,7 @@ comb1st_indicies.each do |dm0, index|
   last = nil
   offset = 0
   comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
-    if comb_array[index][b] 
+    if comb_array[index][b]
       first = offset unless first
       last = offset
       last += 1 if comb2nd_indicies_nonbasic[dm1]
@@ -391,7 +392,7 @@ comb1st_indicies.keys.each_index do |a|
   offset = 0
   $stdout << comb1st_indicies_firstoffsets[a] << ", " << comb1st_indicies_lastoffsets[a] << ", "
   comb2nd_indicies_sorted_keys.each_with_index do |dm1, b|
-    break if offset > comb1st_indicies_lastoffsets[a] 
+    break if offset > comb1st_indicies_lastoffsets[a]
     if offset >= comb1st_indicies_firstoffsets[a]
       i += 1
       if i == 8
@@ -403,9 +404,8 @@ comb1st_indicies.keys.each_index do |a|
       $stdout << (v & 0xFFFF) << ", "
     end
     offset += 1
-    offset += 1 if comb2nd_indicies_nonbasic[dm1]    
+    offset += 1 if comb2nd_indicies_nonbasic[dm1]
   end
   $stdout  << "\n"
 end
 $stdout << "};\n\n"
-
