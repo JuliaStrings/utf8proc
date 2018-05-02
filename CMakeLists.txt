@@ -10,8 +10,8 @@ project (utf8proc C)
 # API version number (defined in utf8proc.h).
 # Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 2)
-set(SO_MINOR 1)
-set(SO_PATCH 1)
+set(SO_MINOR 2)
+set(SO_PATCH 0)
 
 if (NOT MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=c99 -pedantic -Wall")

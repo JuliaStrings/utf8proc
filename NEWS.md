@@ -1,5 +1,19 @@
 # utf8proc release history #
 
+## Version 2.2 alpha ##
+
+- Unicode 10 support ([#132]).
+
+- `utf8proc_NFKC_Casefold` convenience function for `NFKC_Casefold`
+  normalization ([#133]).
+
+- `UTF8PROC_STRIPNA` option to strip unassigned codepoints ([#133]).
+
+- Support building static libraries on Windows (callers need to
+  `#define UTF8PROC_STATIC`) ([#123]).
+
+- `cmake` fix to avoid defining `UTF8PROC_EXPORTS` globally ([#121]).
+
 ## Version 2.1.1 ##
 
 2018-04-27
@@ -312,5 +326,9 @@ Release of version 1.0.1
 [#94]: https://github.com/JuliaLang/utf8proc/issues/94
 [#99]: https://github.com/JuliaLang/utf8proc/issues/99
 [#113]: https://github.com/JuliaLang/utf8proc/issues/113
+[#121]: https://github.com/JuliaLang/utf8proc/issues/121
+[#123]: https://github.com/JuliaLang/utf8proc/issues/123
 [#125]: https://github.com/JuliaLang/utf8proc/issues/125
 [#128]: https://github.com/JuliaLang/utf8proc/issues/128
+[#132]: https://github.com/JuliaLang/utf8proc/issues/132
+[#133]: https://github.com/JuliaLang/utf8proc/issues/133
