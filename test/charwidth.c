@@ -28,28 +28,35 @@ int main(int argc, char **argv)
           if ((cat == UTF8PROC_CATEGORY_MN || cat == UTF8PROC_CATEGORY_ME) &&
               w > 0) {
                fprintf(stderr, "nonzero width %d for combining char %x\n", w, c);
-               error = 1;
+               error += 1;
           }
           if (w == 0 &&
 			  ((cat >= UTF8PROC_CATEGORY_LU && cat <= UTF8PROC_CATEGORY_LO) ||
 			   (cat >= UTF8PROC_CATEGORY_ND && cat <= UTF8PROC_CATEGORY_SC) ||
 			   (cat >= UTF8PROC_CATEGORY_SO && cat <= UTF8PROC_CATEGORY_ZS))) {
                fprintf(stderr, "zero width for symbol-like char %x\n", c);
-               error = 1;
+               error += 1;
           }
           if (c <= 127 && ((!isprint(c) && w > 0) ||
                            (isprint(c) && wcwidth(c) != w))) {
                fprintf(stderr, "wcwidth %d mismatch %d for %s ASCII %x\n",
                        wcwidth(c), w,
                        isprint(c) ? "printable" : "non-printable", c);
-               error = 1;
+               error += 1;
           }
           if (!my_isprint(c) && w > 0) {
                fprintf(stderr, "non-printing %x had width %d\n", c, w);
-               error = 1;
+               error += 1;
           }
+          if (my_unassigned(c) && w != 1) {
+            fprintf(stderr, "unexpected width %d for unassigned char %x\n", w, c);
+            error += 1;
+       }
      }
-     check(!error, "utf8proc_charwidth FAILED tests.");
+     check(!error, "utf8proc_charwidth FAILED %d tests.", error);
+
+     check(utf8proc_charwidth(0x00ad) == 1, "incorrect width for U+00AD (soft hyphen)");
+     check(utf8proc_charwidth(0xe000) == 1, "incorrect width for U+e000 (PUA)");
 
      /* print some other information by compariing with system wcwidth */
      printf("Mismatches with system wcwidth (not necessarily errors):\n");
