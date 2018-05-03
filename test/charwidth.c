@@ -2,6 +2,11 @@
 #include <ctype.h>
 #include <wchar.h>
 
+static int my_unassigned(int c) {
+     int cat = utf8proc_get_property(c)->category;
+     return (cat == UTF8PROC_CATEGORY_CN) || (cat == UTF8PROC_CATEGORY_CO);
+}
+
 static int my_isprint(int c) {
      int cat = utf8proc_get_property(c)->category;
      return (UTF8PROC_CATEGORY_LU <= cat && cat <= UTF8PROC_CATEGORY_ZS) ||
@@ -53,7 +58,7 @@ int main(int argc, char **argv)
           int wc = wcwidth(c);
           if (sizeof(wchar_t) == 2 && c >= (1<<16)) continue;
           /* lots of these errors for out-of-date system unicode tables */
-          if (wc == -1 && my_isprint(c) && w > 0) {
+          if (wc == -1 && my_isprint(c) && !my_unassigned(c) && w > 0) {
 			   updates += 1;
 #if 0
                printf("  wcwidth(%x) = -1 for printable char\n", c);
