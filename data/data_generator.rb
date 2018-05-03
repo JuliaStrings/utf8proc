@@ -378,7 +378,7 @@ end
 $stdout << "};\n\n"
 
 $stdout << "static const utf8proc_property_t utf8proc_properties[] = {\n"
-$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 0, 0, UTF8PROC_BOUNDCLASS_OTHER},\n"
+$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 1, 0, UTF8PROC_BOUNDCLASS_OTHER},\n"
 properties.each { |line|
   $stdout << line
 }

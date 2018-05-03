@@ -20,12 +20,12 @@ import Base.UTF8proc
 
 #############################################################################
 # Use a default width of 1 for all character categories that are
-# letter/symbol/number-like.  This can be overriden by Unifont or UAX 11
+# letter/symbol/number-like, as well as for unassigned/private-use chars.
+# This can be overriden by Unifont or UAX 11
 # below, but provides a useful nonzero fallback for new codepoints when
 # a new Unicode version has been released but Unifont hasn't been updated yet.
 
 zerowidth = Set{Int}() # categories that may contain zero-width chars
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CN)
 push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_MN)
 push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_MC)
 push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ME)
@@ -36,7 +36,6 @@ push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ZP)
 push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CC)
 push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CF)
 push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CS)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CO)
 for c in 0x0000:0x110000
     if catcode(c) ∉ zerowidth
         CharWidths[c] = 1
@@ -102,7 +101,7 @@ for line in readlines(open("EastAsianWidth.txt"))
     for c in charstart:charend
         if width=="W" || width=="F" # wide or full
             CharWidths[c]=2
-        elseif width=="Na"|| width=="H" # narrow or half
+        elseif width=="Na"|| width=="H"
             CharWidths[c]=1
         end
     end
@@ -128,11 +127,12 @@ for c in keys(CharWidths)
         CharWidths[c]=0
     end
 
-    # We also assign width of zero to unassigned and private-use
+    # We also assign width of one to unassigned and private-use
     # codepoints (Unifont includes ConScript Unicode Registry PUA fonts,
-    # but since these are nonstandard it seems questionable to recognize them).
+    # but since these are nonstandard it seems questionable to use Unifont metrics;
+    # if they are printed as the replacement character U+FFFD they will have width 1).
     if cat==UTF8proc.UTF8PROC_CATEGORY_CO || cat==UTF8proc.UTF8PROC_CATEGORY_CN
-        CharWidths[c]=0
+        CharWidths[c]=1
     end
 
     # for some reason, Unifont has width-2 glyphs for ASCII control chars
@@ -140,6 +140,9 @@ for c in keys(CharWidths)
         CharWidths[c]=0
     end
 end
+
+#Soft hyphen is typically printed as a hyphen (-) in terminals.
+CharWidths[0x00ad]=1
 
 #By definition, should have zero width (on the same line)
 #0x002028 ' ' category: Zl name: LINE SEPARATOR/
@@ -158,8 +161,8 @@ CharWidths[0x2001]=2
 CharWidths[0x2003]=2
 
 #############################################################################
-# Output (to a file or pipe) for processing by data_generator.rb
-# ... don't bother to output zero widths since that will be the default.
+# Output (to a file or pipe) for processing by data_generator.rb,
+# encoded as a sequence of intervals.
 
 firstc = 0x000000
 lastv = 0

@@ -5,7 +5,8 @@
 static int my_isprint(int c) {
      int cat = utf8proc_get_property(c)->category;
      return (UTF8PROC_CATEGORY_LU <= cat && cat <= UTF8PROC_CATEGORY_ZS) ||
-          (c == 0x0601 || c == 0x0602 || c == 0x0603 || c == 0x06dd);
+          (c == 0x0601 || c == 0x0602 || c == 0x0603 || c == 0x06dd || c == 0x00ad) ||
+          (cat == UTF8PROC_CATEGORY_CN) || (cat == UTF8PROC_CATEGORY_CO);
 }
 
 int main(int argc, char **argv)
@@ -34,7 +35,7 @@ int main(int argc, char **argv)
           if (c <= 127 && ((!isprint(c) && w > 0) ||
                            (isprint(c) && wcwidth(c) != w))) {
                fprintf(stderr, "wcwidth %d mismatch %d for %s ASCII %x\n",
-                       wcwidth(c), w, 
+                       wcwidth(c), w,
                        isprint(c) ? "printable" : "non-printable", c);
                error = 1;
           }
