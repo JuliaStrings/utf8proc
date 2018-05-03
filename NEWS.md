@@ -17,6 +17,9 @@
 - `toupper` of ß (U+00df) now yields ẞ (U+1E9E) ([#134]), similar to musl;
   case-folding still yields the standard "ss" mapping.
 
+- `utf8proc_charwidth` now returns `1` for U+00AD (soft hyphen) and
+  for unassigned/PUA codepoints ([#135]).
+
 ## Version 2.1.1 ##
 
 2018-04-27
@@ -336,3 +339,4 @@ Release of version 1.0.1
 [#132]: https://github.com/JuliaLang/utf8proc/issues/132
 [#133]: https://github.com/JuliaLang/utf8proc/issues/133
 [#134]: https://github.com/JuliaLang/utf8proc/issues/134
+[#135]: https://github.com/JuliaLang/utf8proc/issues/135
