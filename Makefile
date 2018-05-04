@@ -33,9 +33,17 @@ else # GNU/Linux, at least (Windows should probably use cmake)
 endif
 
 # installation directories (for 'make install')
-prefix=/usr/local
-libdir=$(prefix)/lib
-includedir=$(prefix)/include
+DESTDIR     ?=
+# directory variables : GNU conventions prefer lowercase
+# see https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
+# support both lower and uppercase (BSD), use uppercase in script
+prefix      ?= /usr/local
+PREFIX      ?= $(prefix)
+exec_prefix ?= $(PREFIX)
+libdir      ?= $(exec_prefix)/lib
+LIBDIR      ?= $(libdir)
+includedir  ?= $(PREFIX)/include
+INCLUDEDIR  ?= $(includedir)
 
 # meta targets
 
