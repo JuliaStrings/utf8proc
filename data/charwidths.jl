@@ -114,9 +114,11 @@ end
 for c in keys(CharWidths)
     cat = catcode(c)
 
-    # make sure format control character (category Cf) have width 0,
-    # except for the Arabic characters 0x06xx (see unicode std 6.2, sec. 8.2)
-    if cat==UTF8proc.UTF8PROC_CATEGORY_CF && c ∉ [0x0601,0x0602,0x0603,0x06dd]
+    # make sure format control character (category Cf) have width 0
+    # (some of these, like U+0601, can have a width in some cases
+    #  but normally act like prepended combining marks.  U+fff9 etc
+    #  are also odd, but have zero width in typical terminal contexts)
+    if cat==UTF8proc.UTF8PROC_CATEGORY_CF
         CharWidths[c]=0
     end
 
