@@ -27,6 +27,9 @@ if (BUILD_SHARED_LIBS)
 else()
   # Building static library
   target_compile_definitions(utf8proc PUBLIC "UTF8PROC_STATIC")
+  if (MSVC)
+    set_target_properties(utf8proc PROPERTIES OUTPUT_NAME "utf8proc_static")
+  endif()
 endif()
 
 target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
