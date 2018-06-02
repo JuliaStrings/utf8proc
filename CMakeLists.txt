@@ -39,3 +39,13 @@ set_target_properties (utf8proc PROPERTIES
   VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
   SOVERSION ${SO_MAJOR}
 )
+
+install(TARGETS utf8proc
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
+
+install(
+  FILES
+    "${PROJECT_SOURCE_DIR}/utf8proc.h"
+  DESTINATION include)
