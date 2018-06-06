@@ -27,6 +27,9 @@ if (BUILD_SHARED_LIBS)
 else()
   # Building static library
   target_compile_definitions(utf8proc PUBLIC "UTF8PROC_STATIC")
+  if (MSVC)
+    set_target_properties(utf8proc PROPERTIES OUTPUT_NAME "utf8proc_static")
+  endif()
 endif()
 
 target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
@@ -36,3 +39,13 @@ set_target_properties (utf8proc PROPERTIES
   VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
   SOVERSION ${SO_MAJOR}
 )
+
+install(TARGETS utf8proc
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
+
+install(
+  FILES
+    "${PROJECT_SOURCE_DIR}/utf8proc.h"
+  DESTINATION include)
