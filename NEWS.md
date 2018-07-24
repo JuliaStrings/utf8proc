@@ -1,6 +1,8 @@
 # utf8proc release history #
 
-## Version 2.2 alpha ##
+## Version 2.2 ##
+
+2018-07-24
 
 - Unicode 11 support ([#132] and [#140]).
 
