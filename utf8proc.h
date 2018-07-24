@@ -140,14 +140,6 @@ typedef bool utf8proc_bool;
 extern "C" {
 #endif
 
-#ifndef SSIZE_MAX
-#define SSIZE_MAX ((size_t)SIZE_MAX/2)
-#endif
-
-#ifndef UINT16_MAX
-#  define UINT16_MAX 65535U
-#endif
-
 /**
  * Option flags used by several functions in the library.
  */
@@ -593,6 +585,8 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
  * Given a pair of consecutive codepoints, return whether a grapheme break is
  * permitted between them (as defined by the extended grapheme clusters in UAX#29).
  *
+ * @param codepoint1 The first codepoint.
+ * @param codepoint2 The second codepoint, occurring consecutively after `codepoint1`.
  * @param state Beginning with Version 29 (Unicode 9.0.0), this algorithm requires
  *              state to break graphemes. This state can be passed in as a pointer
  *              in the `state` argument and should initially be set to 0. If the
@@ -668,7 +662,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t codepoi
  * contain NULL characters with the string if `str` contained NULL
  * characters). Other flags in the `options` field are passed to the
  * functions defined above, and regarded as described.  See also
- * @ref utfproc_map_custom to supply a custom codepoint transformation.
+ * @ref utf8proc_map_custom to supply a custom codepoint transformation.
  *
  * In case of success the length of the new string is returned,
  * otherwise a negative error code is returned.

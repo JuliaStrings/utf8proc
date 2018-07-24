@@ -42,6 +42,14 @@
 
 
 #include "utf8proc.h"
+
+#ifndef SSIZE_MAX
+#define SSIZE_MAX ((size_t)SIZE_MAX/2)
+#endif
+#ifndef UINT16_MAX
+#  define UINT16_MAX 65535U
+#endif
+
 #include "utf8proc_data.c"
 
 
