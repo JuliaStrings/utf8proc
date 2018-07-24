@@ -2,7 +2,7 @@
 
 ## Version 2.2 alpha ##
 
-- Unicode 10 support ([#132]).
+- Unicode 11 support ([#132] and [#140]).
 
 - `utf8proc_NFKC_Casefold` convenience function for `NFKC_Casefold`
   normalization ([#133]).
@@ -340,3 +340,4 @@ Release of version 1.0.1
 [#133]: https://github.com/JuliaLang/utf8proc/issues/133
 [#134]: https://github.com/JuliaLang/utf8proc/issues/134
 [#135]: https://github.com/JuliaLang/utf8proc/issues/135
+[#140]: https://github.com/JuliaLang/utf8proc/issues/140
