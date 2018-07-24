@@ -271,12 +271,8 @@ static utf8proc_bool grapheme_break_simple(int lbc, int tbc) {
      tbc == UTF8PROC_BOUNDCLASS_ZWJ ||                // ---
      tbc == UTF8PROC_BOUNDCLASS_SPACINGMARK ||        // GB9a
      lbc == UTF8PROC_BOUNDCLASS_PREPEND) ? false :    // GB9b
-    ((lbc == UTF8PROC_BOUNDCLASS_E_BASE ||            // GB10 (requires additional handling below)
-      lbc == UTF8PROC_BOUNDCLASS_E_BASE_GAZ) &&       // ----
-     tbc == UTF8PROC_BOUNDCLASS_E_MODIFIER) ? false : // ----
-    (lbc == UTF8PROC_BOUNDCLASS_ZWJ &&                         // GB11
-     (tbc == UTF8PROC_BOUNDCLASS_GLUE_AFTER_ZWJ ||             // ----
-      tbc == UTF8PROC_BOUNDCLASS_E_BASE_GAZ)) ? false :        // ----
+    (lbc == UTF8PROC_BOUNDCLASS_E_ZWG &&              // GB11 (requires additional handling below)
+     tbc == UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC) ? false : // ----
     (lbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR &&          // GB12/13 (requires additional handling below)
      tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR) ? false :  // ----
     true; // GB999
@@ -295,12 +291,15 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t 
     // forbidden by a different rule such as GB9).
     if (*state == tbc && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
       *state = UTF8PROC_BOUNDCLASS_OTHER;
-    // Special support for GB10. Fold any EXTEND codepoints into the previous
-    // boundclass if we're dealing with an emoji base boundclass.
-    else if ((*state == UTF8PROC_BOUNDCLASS_E_BASE      ||
-              *state == UTF8PROC_BOUNDCLASS_E_BASE_GAZ) &&
-             tbc == UTF8PROC_BOUNDCLASS_EXTEND)
-      *state = UTF8PROC_BOUNDCLASS_E_BASE;
+    // Special support for GB11 (emoji extend* zwj / emoji)
+    else if (*state == UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC) {
+      if (tbc == UTF8PROC_BOUNDCLASS_EXTEND) // fold EXTEND codepoints into emoji
+        *state = UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC;
+      else if (tbc == UTF8PROC_BOUNDCLASS_ZWJ)
+        *state = UTF8PROC_BOUNDCLASS_E_ZWG; // state to record emoji+zwg combo
+      else
+        *state = tbc;
+    }
     else
       *state = tbc;
   }

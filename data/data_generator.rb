@@ -87,6 +87,19 @@ $grapheme_boundclass_list.each_line do |entry|
   end
 end
 
+$emoji_data_list = File.read("emoji-data.txt")
+$emoji_data_list.each_line do |entry|
+  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)\s*;\s*Extended_Pictographic\W/
+    $1.hex.upto($2.hex) { |e2| $grapheme_boundclass[e2] = "UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC" }
+  elsif entry =~ /^([0-9A-F]+)\s*;\s*Extended_Pictographic\W/
+    $grapheme_boundclass[$1.hex] = "UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC"
+  elsif entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)\s*;\s*Emoji_Modifier\W/
+    $1.hex.upto($2.hex) { |e2| $grapheme_boundclass[e2] = "UTF8PROC_BOUNDCLASS_EXTEND" }
+  elsif entry =~ /^([0-9A-F]+)\s*;\s*Emoji_Modifier\W/
+    $grapheme_boundclass[$1.hex] = "UTF8PROC_BOUNDCLASS_EXTEND"
+  end
+end
+
 $charwidth_list = File.read("CharWidths.txt")
 $charwidth = Hash.new(0)
 $charwidth_list.each_line do |entry|
