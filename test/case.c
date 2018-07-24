@@ -19,7 +19,9 @@ int main(int argc, char **argv)
           check(u == c || utf8proc_codepoint_valid(u), "invalid toupper");
           check(t == c || utf8proc_codepoint_valid(t), "invalid totitle");
 
-          if (utf8proc_codepoint_valid(c) && (l == u) != (l == t)) {
+          if (utf8proc_codepoint_valid(c) && (l == u) != (l == t) &&
+              /* Unicode 11: Georgian Mkhedruli chars have uppercase but no titlecase. */
+              !(((c >= 0x10d0 && c <= 0x10fa) || c >= (0x10fd && c <= 0x10ff)) && l != u)) {
                fprintf(stderr, "unexpected titlecase %x for lowercase %x / uppercase %x\n", t, l, c);
                ++error;
           }
