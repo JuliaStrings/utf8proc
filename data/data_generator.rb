@@ -6,6 +6,8 @@
 #  production use.
 
 
+#  Copyright (c) 2018 Steven G. Johnson, Tony Kelman, Keno Fischer,
+#                Benito van der Zander, Michaël Meyer, and other contributors.
 #  Copyright (c) 2009 Public Software Group e. V., Berlin, Germany
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a
