@@ -16,13 +16,13 @@
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/JuliaLang/utf8proc">View on GitHub</a>
+          <a id="forkme_banner" href="https://github.com/JuliaStrings/utf8proc">View on GitHub</a>
 
           <h1 id="project_title"><a href="http://julialang.org/utf8proc">utf8proc</a> releases</h1>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.0.1.zip">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JuliaLang/utf8proc/archive/v2.0.1.tar.gz">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/JuliaStrings/utf8proc/archive/v2.2.0.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/JuliaStrings/utf8proc/archive/v2.2.0.tar.gz">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -33,98 +33,178 @@
         <h1>
 <a id="utf8proc" class="anchor" href="#utf8proc" aria-hidden="true"><span class="octicon octicon-link"></span></a>utf8proc</h1>
 
-<p>The following are the current and past releases of the <a href="http://julialang.org/utf8proc">utf8proc library</a>.   See also the <a href="https://github.com/JuliaLang/utf8proc">development version of utf8proc on Github.</a> 
+<p>The following are the current and past releases of the <a href="http://julialang.org/utf8proc">utf8proc library</a>.   See also the <a href="https://github.com/JuliaStrings/utf8proc">development version of utf8proc on Github.</a> 
 
 <p>The utf8proc package is licensed under the
 free/open-source <a href="http://opensource.org/licenses/MIT">MIT "expat"
 license</a> (plus certain Unicode
 data governed by the similarly permissive <a href="http://www.unicode.org/copyright.html#Exhibit1">Unicode data
 license</a>); please see
-the included <a href="https://github.com/JuliaLang/utf8proc/blob/master/LICENSE.md">LICENSE.md</a> file for more detailed information.</p>
+the included <a href="https://github.com/JuliaStrings/utf8proc/blob/master/LICENSE.md">LICENSE.md</a> file for more detailed information.</p>
 
 <ul>
 
-<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v2.0.1">utf8proc v2.0.1</a> (2016-07-13):
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.2.0">utf8proc 2.2.0</a> (2018-07-24):
+<ul>
+<li>
+<p>Unicode 11 support (<a href="https://github.com/JuliaLang/utf8proc/issues/132">#132</a> and <a href="https://github.com/JuliaLang/utf8proc/issues/140">#140</a>).</p>
+</li>
+<li>
+<p><code>utf8proc_NFKC_Casefold</code> convenience function for <code>NFKC_Casefold</code>
+normalization (<a href="https://github.com/JuliaLang/utf8proc/issues/133">#133</a>).</p>
+</li>
+<li>
+<p><code>UTF8PROC_STRIPNA</code> option to strip unassigned codepoints (<a href="https://github.com/JuliaLang/utf8proc/issues/133">#133</a>).</p>
+</li>
+<li>
+<p>Support building static libraries on Windows (callers need to
+<code>#define UTF8PROC_STATIC</code>) (<a href="https://github.com/JuliaLang/utf8proc/issues/123">#123</a>).</p>
+</li>
+<li>
+<p><code>cmake</code> fix to avoid defining <code>UTF8PROC_EXPORTS</code> globally (<a href="https://github.com/JuliaLang/utf8proc/issues/121">#121</a>).</p>
+</li>
+<li>
+<p><code>toupper</code> of ß (U+00df) now yields ẞ (U+1E9E) (<a href="https://github.com/JuliaLang/utf8proc/issues/134">#134</a>), similar to musl;
+case-folding still yields the standard "ss" mapping.</p>
+</li>
+<li>
+<p><code>utf8proc_charwidth</code> now returns <code>1</code> for U+00AD (soft hyphen) and
+for unassigned/PUA codepoints (<a href="https://github.com/JuliaLang/utf8proc/issues/135">#135</a>).</p>
+</li>
+</ul>
+</li>
+
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.1.1">utf8proc 2.1.1</a> (2018-04-27):
+<ul>
+<li>
+<p>Fixed composition bug (<a href="https://github.com/JuliaLang/utf8proc/issues/128">#128</a>).</p>
+</li>
+<li>
+<p>Minor build fixes (<a href="https://github.com/JuliaLang/utf8proc/issues/94">#94</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/99">#99</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/113">#113</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/125">#125</a>).</p>
+</li>
+</ul>    
+</li>    
+
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.1.0">utf8proc v2.1.0</a> (2016-12-26):
+<ul>
+<li>
+<p>New functions <code>utf8proc_map_custom</code> and <code>utf8proc_decompose_custom</code>
+to allow user-supplied transformations of codepoints, in conjunction
+with other transformations (<a href="https://github.com/JuliaLang/utf8proc/issues/89">#89</a>).</p>
+</li>
+<li>
+<p>New function <code>utf8proc_normalize_utf32</code> to apply normalizations
+directly to UTF-32 data (not just UTF-8) (<a href="https://github.com/JuliaLang/utf8proc/issues/88">#88</a>).</p>
+</li>
+<li>
+<p>Fixed stack overflow that could occur due to incorrect definition
+of <code>UINT16_MAX</code> with some compilers (<a href="https://github.com/JuliaLang/utf8proc/issues/84">#84</a>).</p>
+</li>
+<li>
+<p>Fixed conflict with <code>stdbool.h</code> in Visual Studio (<a href="https://github.com/JuliaLang/utf8proc/issues/90">#90</a>).</p>
+</li>
+<li>
+<p>Updated font metrics to use Unifont 9.0.04.</p>
+</li>
+</ul>
+</li>
+
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.0.2">utf8proc v2.0.2</a> (2016-07-27):
+<ul>
+<li>
+<p>Move <code>-Wmissing-prototypes</code> warning flag from <code>Makefile</code> to <code>.travis.yml</code>
+since MSVC does not understand this flag and it is occasionally useful to
+build using MSVC through the <code>Makefile</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/79">#79</a>).</p>
+</li>
+<li>
+<p>Use a different variable name for a nested loop in <code>bench/bench.c</code>, and
+declare it in a C89 way rather than inside the <code>for</code> to avoid "error:
+'for' loop initial declarations are only allowed in C99 mode" (<a href="https://github.com/JuliaLang/utf8proc/issues/80">#80</a>).</p>
+</li>
+</ul>
+</li>  
+
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.0.1">utf8proc v2.0.1</a> (2016-07-13):
 
   <ul>
-    <li><p>Bug fix in <code>utf8proc_grapheme_break_stateful</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/77">#77</a>).</p></li>
+    <li><p>Bug fix in <code>utf8proc_grapheme_break_stateful</code> (<a href="https://github.com/JuliaStrings/utf8proc/issues/77">#77</a>).</p></li>
     <li><p>Tests now use versioned Unicode files, so they will no longer
-        break when a new version of Unicode is released (<a href="https://github.com/JuliaLang/utf8proc/issues/78">#78</a>).</p></li>
+        break when a new version of Unicode is released (<a href="https://github.com/JuliaStrings/utf8proc/issues/78">#78</a>).</p></li>
   </ul>
 
-<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v2.0">utf8proc v2.0</a> (2016-07-13):
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.0">utf8proc v2.0</a> (2016-07-13):
 
   <ul>
-    <li><p>Updated for Unicode 9.0 (<a href="https://github.com/JuliaLang/utf8proc/issues/70">#70</a>).</p></li>
+    <li><p>Updated for Unicode 9.0 (<a href="https://github.com/JuliaStrings/utf8proc/issues/70">#70</a>).</p></li>
     <li><p>New <code>utf8proc_grapheme_break_stateful</code> to handle the complicated
         grapheme-breaking rules in Unicode 9.  The old <code>utf8proc_grapheme_break</code>
         is still provided, but may incorrectly identify grapheme breaks
         in some Unicode-9 sequences.</p></li>
-    <li><p>Smaller Unicode tables (<a href="https://github.com/JuliaLang/utf8proc/issues/62">#62</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/68">#68</a>).  This required changes
+    <li><p>Smaller Unicode tables (<a href="https://github.com/JuliaStrings/utf8proc/issues/62">#62</a>, <a href="https://github.com/JuliaStrings/utf8proc/issues/68">#68</a>).  This required changes
         in the <code>utf8proc_property_t</code> structure, which breaks backward
         compatibility if you access this <code>struct</code> directly.  The
         functions in the API remain backward-compatible, however.</p></li>
-    <li><p>Buffer overrun fix (<a href="https://github.com/JuliaLang/utf8proc/issues/66">#66</a>).</p></li>
+    <li><p>Buffer overrun fix (<a href="https://github.com/JuliaStrings/utf8proc/issues/66">#66</a>).</p></li>
   </ul>
 
-<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.3.1">utf8proc v1.3.1</a> (2015-11-02):
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v1.3.1">utf8proc v1.3.1</a> (2015-11-02):
   
   <ul>
-    <li><p>Do not export symbol for internal function <code>unsafe_encode_char()</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/55">#55</a>).</p></li>
-    <li><p>Install relative symbolic links for shared libraries (<a href="https://github.com/JuliaLang/utf8proc/issues/58">#58</a>).</p></li>
-    <li><p>Enable and fix compiler warnings (<a href="https://github.com/JuliaLang/utf8proc/issues/55">#55</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/58">#58</a>).</p></li>
-    <li><p>Add missing files to <code>make clean</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/58">#58</a>).</p></li>
+    <li><p>Do not export symbol for internal function <code>unsafe_encode_char()</code> (<a href="https://github.com/JuliaStrings/utf8proc/issues/55">#55</a>).</p></li>
+    <li><p>Install relative symbolic links for shared libraries (<a href="https://github.com/JuliaStrings/utf8proc/issues/58">#58</a>).</p></li>
+    <li><p>Enable and fix compiler warnings (<a href="https://github.com/JuliaStrings/utf8proc/issues/55">#55</a>, <a href="https://github.com/JuliaStrings/utf8proc/issues/58">#58</a>).</p></li>
+    <li><p>Add missing files to <code>make clean</code> (<a href="https://github.com/JuliaStrings/utf8proc/issues/58">#58</a>).</p></li>
   </ul>
 
-<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.3">utf8proc v1.3</a> (2015-07-06):
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v1.3">utf8proc v1.3</a> (2015-07-06):
 
 <ul>
-<li><p>Updated for Unicode 8.0 (<a href="https://github.com/JuliaLang/utf8proc/issues/45">#45</a>).</p></li>
+<li><p>Updated for Unicode 8.0 (<a href="https://github.com/JuliaStrings/utf8proc/issues/45">#45</a>).</p></li>
 <li><p>New <code>utf8proc_tolower</code> and <code>utf8proc_toupper</code> functions, portable
-replacements for <code>towlower</code> and <code>towupper</code> in the C library (<a href="https://github.com/JuliaLang/utf8proc/issues/40">#40</a>).</p></li>
+replacements for <code>towlower</code> and <code>towupper</code> in the C library (<a href="https://github.com/JuliaStrings/utf8proc/issues/40">#40</a>).</p></li>
 <li><p>Don't treat Unicode "non-characters" as invalid, and improved
-validity checking in general (<a href="https://github.com/JuliaLang/utf8proc/issues/35">#35</a>).</p></li>
+validity checking in general (<a href="https://github.com/JuliaStrings/utf8proc/issues/35">#35</a>).</p></li>
 <li><p>Prefix all typedefs with <code>utf8proc_</code>, e.g. <code>utf8proc_int32_t</code>,
-to avoid collisions with other libraries (<a href="https://github.com/JuliaLang/utf8proc/issues/32">#32</a>).</p></li>
+to avoid collisions with other libraries (<a href="https://github.com/JuliaStrings/utf8proc/issues/32">#32</a>).</p></li>
 <li><p>Rename <code>DLLEXPORT</code> to <code>UTF8PROC_DLLEXPORT</code> to prevent collisions.</p></li>
 <li><p>Fix build breakage in the benchmark routines.</p></li>
 <li><p>More fine-grained Makefile variables (<code>PICFLAG</code> etcetera), so that
 compilation flags can be selectively overridden, and in particular
 so that <code>CFLAGS</code> can be changed without accidentally eliminating
-necessary flags like <code>-fPIC</code> and <code>-std=c99</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/43">#43</a>).</p></li>
-<li><p>Updated character-width tables based on Unifont 8.0.01 (<a href="https://github.com/JuliaLang/utf8proc/issues/51">#51</a>) and
-the Unicode 8 character categories (<a href="https://github.com/JuliaLang/utf8proc/issues/47">#47</a>).</p></li>
+necessary flags like <code>-fPIC</code> and <code>-std=c99</code> (<a href="https://github.com/JuliaStrings/utf8proc/issues/43">#43</a>).</p></li>
+<li><p>Updated character-width tables based on Unifont 8.0.01 (<a href="https://github.com/JuliaStrings/utf8proc/issues/51">#51</a>) and
+the Unicode 8 character categories (<a href="https://github.com/JuliaStrings/utf8proc/issues/47">#47</a>).</p></li>
 </ul>
 
-<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.2">utf8proc v1.2</a> (2015-03-28):
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v1.2">utf8proc v1.2</a> (2015-03-28):
 
 <ul class="task-list">
-<li><p>Updated for Unicode 7.0 (<a href="https://github.com/JuliaLang/utf8proc/issues/6">#6</a>).</p></li>
+<li><p>Updated for Unicode 7.0 (<a href="https://github.com/JuliaStrings/utf8proc/issues/6">#6</a>).</p></li>
 <li><p>New function <code>utf8proc_grapheme_break(c1,c2)</code> that returns whether
-there is a grapheme break between <code>c1</code> and <code>c2</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/20">#20</a>).</p></li>
+there is a grapheme break between <code>c1</code> and <code>c2</code> (<a href="https://github.com/JuliaStrings/utf8proc/issues/20">#20</a>).</p></li>
 <li><p>New function <code>utf8proc_charwidth(c)</code> that returns the number of
 column-positions that should be required for <code>c</code>; essentially a
-portable replacment for <code>wcwidth(c)</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/27">#27</a>).</p></li>
+portable replacment for <code>wcwidth(c)</code> (<a href="https://github.com/JuliaStrings/utf8proc/issues/27">#27</a>).</p></li>
 <li><p>New function <code>utf8proc_category(c)</code> that returns the Unicode
 category of <code>c</code> (as one of the constants <code>UTF8PROC_CATEGORY_xx</code>).
 Also, a function <code>utf8proc_category_string(c)</code> that returns the Unicode
 category of <code>c</code> as a two-character string.</p></li>
 <li><p><code>cmake</code> script <code>CMakeLists.txt</code>, in addition to <code>Makefile</code>, for
-easier compilation on Windows (<a href="https://github.com/JuliaLang/utf8proc/issues/28">#28</a>).</p></li>
+easier compilation on Windows (<a href="https://github.com/JuliaStrings/utf8proc/issues/28">#28</a>).</p></li>
 <li><p>Various <code>Makefile</code> improvements: a <code>make check</code> target to perform
-tests (<a href="https://github.com/JuliaLang/utf8proc/issues/13">#13</a>), <code>make install</code>, a rule to automate updating the Unicode
+tests (<a href="https://github.com/JuliaStrings/utf8proc/issues/13">#13</a>), <code>make install</code>, a rule to automate updating the Unicode
 tables, etcetera.</p></li>
-<li><p>The shared library is now versioned (e.g. has a soname on GNU/Linux) (<a href="https://github.com/JuliaLang/utf8proc/issues/24">#24</a>).</p></li>
-<li><p>C++/MSVC compatibility (<a href="https://github.com/JuliaLang/utf8proc/issues/17">#17</a>).</p></li>
-<li><p>Most <code>#defined</code> constants are now <code>enums</code> (<a href="https://github.com/JuliaLang/utf8proc/issues/29">#29</a>).</p></li>
+<li><p>The shared library is now versioned (e.g. has a soname on GNU/Linux) (<a href="https://github.com/JuliaStrings/utf8proc/issues/24">#24</a>).</p></li>
+<li><p>C++/MSVC compatibility (<a href="https://github.com/JuliaStrings/utf8proc/issues/17">#17</a>).</p></li>
+<li><p>Most <code>#defined</code> constants are now <code>enums</code> (<a href="https://github.com/JuliaStrings/utf8proc/issues/29">#29</a>).</p></li>
 <li><p>New preprocessor constants <code>UTF8PROC_VERSION_MAJOR</code>,
 <code>UTF8PROC_VERSION_MINOR</code>, and <code>UTF8PROC_VERSION_PATCH</code> for compile-time
 detection of the API version.</p></li>
-<li><p>Doxygen-formatted documentation (<a href="https://github.com/JuliaLang/utf8proc/issues/29">#29</a>).</p></li>
-<li><p>The Ruby and PostgreSQL plugins have been removed due to lack of testing (<a href="https://github.com/JuliaLang/utf8proc/issues/22">#22</a>).</p></li>
+<li><p>Doxygen-formatted documentation (<a href="https://github.com/JuliaStrings/utf8proc/issues/29">#29</a>).</p></li>
+<li><p>The Ruby and PostgreSQL plugins have been removed due to lack of testing (<a href="https://github.com/JuliaStrings/utf8proc/issues/22">#22</a>).</p></li>
 </ul>
 
-<li><a href="https://github.com/JuliaLang/utf8proc/releases/tag/v1.1.6">utf8proc v1.1.6</a> (2013-11-27):
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v1.1.6">utf8proc v1.1.6</a> (2013-11-27):
 <ul> 
    <li>PostgreSQL 9.2 and 9.3 compatibility (lower case 'c' language name)
 </ul>
@@ -219,7 +299,7 @@ detection of the API version.</p></li>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">utf8proc maintained by <a href="https://github.com/JuliaLang">JuliaLang</a></p>
+        <p class="copyright">utf8proc maintained by <a href="https://github.com/JuliaStrings">JuliaStrings</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>

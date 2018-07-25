@@ -102,5 +102,6 @@ var searchData=
   ['utf8proc_5frejectna',['UTF8PROC_REJECTNA',['../utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da2a859023b185dd905e25a27b99936ab2',1,'utf8proc.h']]],
   ['utf8proc_5fstable',['UTF8PROC_STABLE',['../utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da8c31c338d15484be9d134a15b425c188',1,'utf8proc.h']]],
   ['utf8proc_5fstripcc',['UTF8PROC_STRIPCC',['../utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da4774c3852ae41262e7b09a1653abf258',1,'utf8proc.h']]],
-  ['utf8proc_5fstripmark',['UTF8PROC_STRIPMARK',['../utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2dafb45e5eb12be6e2ca1391d288e177d25',1,'utf8proc.h']]]
+  ['utf8proc_5fstripmark',['UTF8PROC_STRIPMARK',['../utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2dafb45e5eb12be6e2ca1391d288e177d25',1,'utf8proc.h']]],
+  ['utf8proc_5fstripna',['UTF8PROC_STRIPNA',['../utf8proc_8h.html#a0a18a541ba5bedeb5c3e150024063c2da75ce31e975dfa704979881c516602f7b',1,'utf8proc.h']]]
 ];
