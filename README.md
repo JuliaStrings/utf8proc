@@ -29,9 +29,21 @@ data governed by the similarly permissive [Unicode data
 license](http://www.unicode.org/copyright.html#Exhibit1)); please see
 the included `LICENSE.md` file for more detailed information.
 
-## Quick Start
+## Installation
 
-For compilation of the C library run `make`.
+```
+make            # compilation of the C library
+make install    # this command may require root access
+```
+
+utf8proc's `Makefile` supports standard [Makefile conventions],
+including [staged installs], [redirection], or [command redefinition].
+It is compatible with parallel builds (`-j#`).
+
+[Makefile conventions]: https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
+[staged installs]: https://www.gnu.org/prep/standards/html_node/DESTDIR.html
+[redirection]: https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
+[command redefinition]: https://www.gnu.org/prep/standards/html_node/Utilities-in-Makefiles.html
 
 ## General Information
 
