@@ -38,6 +38,9 @@ libdir=$(prefix)/lib
 includedir=$(prefix)/include
 pkgconfigdir=$(libdir)/pkgconfig
 
+pkglibdir=$(libdir:$(prefix)/%=%)
+pkgincludedir=$(includedir:$(prefix)/%=%)
+
 # meta targets
 
 .PHONY: all clean data update manifest install
@@ -91,8 +94,8 @@ libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 libutf8proc.pc: libutf8proc.pc.in
 	sed \
 		-e 's#PREFIX#$(prefix)#' \
-		-e 's#LIBDIR#lib#' \
-		-e 's#INCLUDEDIR#include#' \
+		-e 's#LIBDIR#$(pkglibdir)#' \
+		-e 's#INCLUDEDIR#$(pkgincludedir)#' \
 		-e 's#VERSION#$(MAJOR).$(MINOR).$(PATCH)#' \
 		libutf8proc.pc.in > libutf8proc.pc
 
