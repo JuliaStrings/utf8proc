@@ -34,8 +34,8 @@ endif
 
 # installation directories (for 'make install')
 prefix=/usr/local
-libdir=lib
-includedir=include
+libdir=$(prefix)/lib
+includedir=$(prefix)/include
 pkgconfigdir=$(libdir)/pkgconfig
 
 # meta targets
@@ -83,7 +83,7 @@ libutf8proc.so: libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH)
 	ln -f -s libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH) $@.$(MAJOR)
 
 libutf8proc.$(MAJOR).dylib: utf8proc.o
-	$(CC) $(LDFLAGS) -dynamiclib -o $@ $^ -install_name $(prefix)/$(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
+	$(CC) $(LDFLAGS) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
 
 libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 	ln -f -s libutf8proc.$(MAJOR).dylib $@
@@ -91,22 +91,22 @@ libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 libutf8proc.pc: libutf8proc.pc.in
 	sed \
 		-e 's#PREFIX#$(prefix)#' \
-		-e 's#LIBDIR#$(libdir)#' \
-		-e 's#INCLUDEDIR#$(includedir)#' \
+		-e 's#LIBDIR#lib#' \
+		-e 's#INCLUDEDIR#include#' \
 		-e 's#VERSION#$(MAJOR).$(MINOR).$(PATCH)#' \
 		libutf8proc.pc.in > libutf8proc.pc
 
 install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.pc
-	mkdir -m 755 -p $(DESTDIR)$(prefix)/$(includedir)
-	$(INSTALL) -m 644 utf8proc.h $(DESTDIR)$(prefix)/$(includedir)
-	mkdir -m 755 -p $(DESTDIR)$(prefix)/$(libdir)
-	$(INSTALL) -m 644 libutf8proc.a $(DESTDIR)$(prefix)/$(libdir)
-	$(INSTALL) -m 755 libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(prefix)/$(libdir)
-	mkdir -m 755 -p $(DESTDIR)$(prefix)/$(pkgconfigdir)
-	$(INSTALL) -m 644 libutf8proc.pc $(DESTDIR)$(prefix)/$(pkgconfigdir)/libutf8proc.pc
-	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(prefix)/$(libdir)/libutf8proc.$(SHLIB_EXT)
+	mkdir -m 755 -p $(DESTDIR)$(includedir)
+	$(INSTALL) -m 644 utf8proc.h $(DESTDIR)$(includedir)
+	mkdir -m 755 -p $(DESTDIR)$(libdir)
+	$(INSTALL) -m 644 libutf8proc.a $(DESTDIR)$(libdir)
+	$(INSTALL) -m 755 libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)
+	mkdir -m 755 -p $(DESTDIR)$(pkgconfigdir)
+	$(INSTALL) -m 644 libutf8proc.pc $(DESTDIR)$(pkgconfigdir)/libutf8proc.pc
+	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
 ifneq ($(OS),Darwin)
-	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(prefix)/$(libdir)/libutf8proc.so.$(MAJOR)
+	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
 endif
 
 MANIFEST.new:
