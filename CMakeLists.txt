@@ -22,16 +22,19 @@ set(UTF8PROC_FILES
   utf8proc.h
 )
 
+if (BUILD_SHARED_LIBS AND MSVC)
+  set(UTF8PROC_WINDLL_SRCS
+    win32/utf8proc.rc
+  )
+  add_definitions(
+    -DUTF8PROC_VERSION="${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
+  )
+endif ()
+
+add_library (utf8proc ${UTF8PROC_FILES} ${UTF8PROC_WINDLL_SRCS})
+
 if (BUILD_SHARED_LIBS)
   # Building shared library
-  if (MSVC)
-    set(UTF8PROC_WINDLL_SRCS
-      win32/utf8proc.rc
-    )
-    add_definitions(
-      -DUTF8PROC_VERSION="${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
-    )
-  endif ()
 else()
   # Building static library
   target_compile_definitions(utf8proc PUBLIC "UTF8PROC_STATIC")
@@ -39,8 +42,6 @@ else()
     set_target_properties(utf8proc PROPERTIES OUTPUT_NAME "utf8proc_static")
   endif()
 endif()
-
-add_library (utf8proc ${UTF8PROC_FILES} ${UTF8PROC_WINDLL_SRCS})
 
 target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
 
