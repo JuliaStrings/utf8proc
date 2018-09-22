@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8.12)
 
 include (utils.cmake)
 
@@ -10,12 +10,8 @@ project (utf8proc C)
 # API version number (defined in utf8proc.h).
 # Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 2)
-set(SO_MINOR 1)
+set(SO_MINOR 2)
 set(SO_PATCH 0)
-
-add_definitions (
-  -DUTF8PROC_EXPORTS
-)
 
 if (NOT MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=c99 -pedantic -Wall")
@@ -26,19 +22,40 @@ set(UTF8PROC_FILES
   utf8proc.h
 )
 
-if (BUILD_SHARED_LIBS AND MSVC)
-  set(UTF8PROC_WINDLL_SRCS
-    win32/utf8proc.rc
-  )
-  add_definitions(
-    -DUTF8PROC_VERSION="${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
-  )
-endif ()
+if (BUILD_SHARED_LIBS)
+  # Building shared library
+  if (MSVC)
+    set(UTF8PROC_WINDLL_SRCS
+      win32/utf8proc.rc
+    )
+    add_definitions(
+      -DUTF8PROC_VERSION="${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
+    )
+  endif ()
+else()
+  # Building static library
+  target_compile_definitions(utf8proc PUBLIC "UTF8PROC_STATIC")
+  if (MSVC)
+    set_target_properties(utf8proc PROPERTIES OUTPUT_NAME "utf8proc_static")
+  endif()
+endif()
 
 add_library (utf8proc ${UTF8PROC_FILES} ${UTF8PROC_WINDLL_SRCS})
+
+target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
 
 set_target_properties (utf8proc PROPERTIES
   POSITION_INDEPENDENT_CODE ON
   VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
   SOVERSION ${SO_MAJOR}
 )
+
+install(TARGETS utf8proc
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
+
+install(
+  FILES
+    "${PROJECT_SOURCE_DIR}/utf8proc.h"
+  DESTINATION include)
