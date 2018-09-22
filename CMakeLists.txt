@@ -2,12 +2,6 @@ cmake_minimum_required (VERSION 2.8)
 
 include (utils.cmake)
 
-set(HASCMAKEHELPERS EXISTS "${CMAKE_SOURCE_DIR}/../CMakeHelpers/generate_product_version.cmake")
-
-if(${HASCMAKEHELPERS})
-  include ("${CMAKE_SOURCE_DIR}/../CMakeHelpers/generate_product_version.cmake")
-endif ()
-
 disallow_intree_builds()
 
 project (utf8proc C)
@@ -27,20 +21,21 @@ if (NOT MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=c99 -pedantic -Wall")
 endif ()
 
-if(${HASCMAKEHELPERS})
-  generate_product_version(ProductVersionFiles
-    NAME utf8proc
-    VERSION_MAJOR ${SO_MAJOR}
-    VERSION_MINOR ${SO_MINOR}
-    VERSION_PATCH ${SO_PATCH}
-    COMPANY_NAME julialang.org)
-endif ()
-
-add_library (utf8proc
+set(UTF8PROC_FILES
   utf8proc.c
   utf8proc.h
-  ${ProductVersionFiles}
 )
+
+if (BUILD_SHARED_LIBS AND MSVC)
+  set(UTF8PROC_WINDLL_SRCS
+    win32/utf8proc.rc
+  )
+  add_definitions(
+    -DUTF8PROC_VERSION="${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
+  )
+endif ()
+
+add_library (utf8proc ${UTF8PROC_FILES} ${UTF8PROC_WINDLL_SRCS})
 
 set_target_properties (utf8proc PROPERTIES
   POSITION_INDEPENDENT_CODE ON
