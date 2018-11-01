@@ -14,9 +14,37 @@ CharWidths = Dict{Int,Int}()
 # to minimize bootstrapping complexity when a new version of Unicode comes out.
 catcode(c) = ccall((:utf8proc_category,"../libutf8proc"), Cint, (Int32,), c)
 
-# use Base.UTF8proc module to get category codes constants, since
-# we won't change these in utf8proc.
-import Base.UTF8proc
+# utf8proc category constants (must match h)
+const UTF8PROC_CATEGORY_CN = 0
+const UTF8PROC_CATEGORY_LU = 1
+const UTF8PROC_CATEGORY_LL = 2
+const UTF8PROC_CATEGORY_LT = 3
+const UTF8PROC_CATEGORY_LM = 4
+const UTF8PROC_CATEGORY_LO = 5
+const UTF8PROC_CATEGORY_MN = 6
+const UTF8PROC_CATEGORY_MC = 7
+const UTF8PROC_CATEGORY_ME = 8
+const UTF8PROC_CATEGORY_ND = 9
+const UTF8PROC_CATEGORY_NL = 10
+const UTF8PROC_CATEGORY_NO = 11
+const UTF8PROC_CATEGORY_PC = 12
+const UTF8PROC_CATEGORY_PD = 13
+const UTF8PROC_CATEGORY_PS = 14
+const UTF8PROC_CATEGORY_PE = 15
+const UTF8PROC_CATEGORY_PI = 16
+const UTF8PROC_CATEGORY_PF = 17
+const UTF8PROC_CATEGORY_PO = 18
+const UTF8PROC_CATEGORY_SM = 19
+const UTF8PROC_CATEGORY_SC = 20
+const UTF8PROC_CATEGORY_SK = 21
+const UTF8PROC_CATEGORY_SO = 22
+const UTF8PROC_CATEGORY_ZS = 23
+const UTF8PROC_CATEGORY_ZL = 24
+const UTF8PROC_CATEGORY_ZP = 25
+const UTF8PROC_CATEGORY_CC = 26
+const UTF8PROC_CATEGORY_CF = 27
+const UTF8PROC_CATEGORY_CS = 28
+const UTF8PROC_CATEGORY_CO = 29
 
 #############################################################################
 # Use a default width of 1 for all character categories that are
@@ -26,16 +54,16 @@ import Base.UTF8proc
 # a new Unicode version has been released but Unifont hasn't been updated yet.
 
 zerowidth = Set{Int}() # categories that may contain zero-width chars
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_MN)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_MC)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ME)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_SK)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ZS)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ZL)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_ZP)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CC)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CF)
-push!(zerowidth, UTF8proc.UTF8PROC_CATEGORY_CS)
+push!(zerowidth, UTF8PROC_CATEGORY_MN)
+push!(zerowidth, UTF8PROC_CATEGORY_MC)
+push!(zerowidth, UTF8PROC_CATEGORY_ME)
+push!(zerowidth, UTF8PROC_CATEGORY_SK)
+push!(zerowidth, UTF8PROC_CATEGORY_ZS)
+push!(zerowidth, UTF8PROC_CATEGORY_ZL)
+push!(zerowidth, UTF8PROC_CATEGORY_ZP)
+push!(zerowidth, UTF8PROC_CATEGORY_CC)
+push!(zerowidth, UTF8PROC_CATEGORY_CF)
+push!(zerowidth, UTF8PROC_CATEGORY_CS)
 for c in 0x0000:0x110000
     if catcode(c) ∉ zerowidth
         CharWidths[c] = 1
@@ -53,14 +81,14 @@ function parsesfd(filename::AbstractString, CharWidths::Dict{Int,Int}=Dict{Int,I
     for line in readlines(open(filename))
         lineno += 1
         if state==:seekchar         #StartChar: nonmarkingreturn
-            if contains(line, "StartChar: ")
+            if occursin("StartChar: ", line)
                 codepoint = nothing
                 width = nothing
                 state = :readdata
             end
         elseif state==:readdata #Encoding: 65538 -1 2, Width: 1024
-            contains(line, "Encoding:") && (codepoint = parse(Int, split(line)[3]))
-            contains(line, "Width:") && (width = parse(Int, split(line)[2]))
+            occursin("Encoding:", line) && (codepoint = parse(Int, split(line)[3]))
+            occursin("Width:", line) && (width = parse(Int, split(line)[2]))
             if codepoint!=nothing && width!=nothing && codepoint >= 0
                 w=div(width, 512) # 512 units to the en
                 if w > 0
@@ -118,14 +146,14 @@ for c in keys(CharWidths)
     # (some of these, like U+0601, can have a width in some cases
     #  but normally act like prepended combining marks.  U+fff9 etc
     #  are also odd, but have zero width in typical terminal contexts)
-    if cat==UTF8proc.UTF8PROC_CATEGORY_CF
+    if cat==UTF8PROC_CATEGORY_CF
         CharWidths[c]=0
     end
 
     # Unifont has nonzero width for a number of non-spacing combining
     # characters, e.g. (in 7.0.06): f84,17b4,17b5,180b,180d,2d7f, and
     # the variation selectors
-    if cat==UTF8proc.UTF8PROC_CATEGORY_MN
+    if cat==UTF8PROC_CATEGORY_MN
         CharWidths[c]=0
     end
 
@@ -133,12 +161,12 @@ for c in keys(CharWidths)
     # codepoints (Unifont includes ConScript Unicode Registry PUA fonts,
     # but since these are nonstandard it seems questionable to use Unifont metrics;
     # if they are printed as the replacement character U+FFFD they will have width 1).
-    if cat==UTF8proc.UTF8PROC_CATEGORY_CO || cat==UTF8proc.UTF8PROC_CATEGORY_CN
+    if cat==UTF8PROC_CATEGORY_CO || cat==UTF8PROC_CATEGORY_CN
         CharWidths[c]=1
     end
 
     # for some reason, Unifont has width-2 glyphs for ASCII control chars
-    if cat==UTF8proc.UTF8PROC_CATEGORY_CC
+    if cat==UTF8PROC_CATEGORY_CC
         CharWidths[c]=0
     end
 end
@@ -168,8 +196,9 @@ CharWidths[0x2003]=2
 
 firstc = 0x000000
 lastv = 0
-uhex(c) = uppercase(hex(c,4))
+uhex(c) = uppercase(string(c,base=16,pad=4))
 for c in 0x0000:0x110000
+    global firstc, lastv
     v = get(CharWidths, c, 0)
     if v != lastv || c == 0x110000
         v < 4 || error("invalid charwidth $v for $c")
