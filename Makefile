@@ -11,7 +11,7 @@ CFLAGS ?= -O2
 PICFLAG = -fPIC
 C99FLAG = -std=c99
 WCFLAGS = -Wall -pedantic
-UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PROC_DEFINES)
+UCFLAGS = $(CPPFLAGS) $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PROC_DEFINES)
 
 # shared-library version MAJOR.MINOR.PATCH ... this may be *different*
 # from the utf8proc version number because it indicates ABI compatibility,
@@ -130,31 +130,31 @@ test/tests.o: test/tests.c test/tests.h utf8proc.h
 	$(CC) $(UCFLAGS) -c -o test/tests.o test/tests.c
 
 test/normtest: test/normtest.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/normtest.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/normtest.c test/tests.o utf8proc.o -o $@
 
 test/graphemetest: test/graphemetest.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/graphemetest.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/graphemetest.c test/tests.o utf8proc.o -o $@
 
 test/printproperty: test/printproperty.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/printproperty.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/printproperty.c test/tests.o utf8proc.o -o $@
 
 test/charwidth: test/charwidth.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/charwidth.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/charwidth.c test/tests.o utf8proc.o -o $@
 
 test/valid: test/valid.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/valid.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/valid.c test/tests.o utf8proc.o -o $@
 
 test/iterate: test/iterate.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/iterate.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/iterate.c test/tests.o utf8proc.o -o $@
 
 test/case: test/case.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/case.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/case.c test/tests.o utf8proc.o -o $@
 
 test/custom: test/custom.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/custom.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/custom.c test/tests.o utf8proc.o -o $@
 
 test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/misc.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/misc.c test/tests.o utf8proc.o -o $@
 
 check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
