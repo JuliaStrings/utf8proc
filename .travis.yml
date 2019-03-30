@@ -1,7 +1,6 @@
-language: c
-compiler:
-    - gcc
-    - clang
+language: julia
+julia:
+    - 1.1
 notifications:
     email: false
 include:
