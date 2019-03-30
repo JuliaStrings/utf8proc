@@ -1,5 +1,20 @@
 # utf8proc release history #
 
+## Version 2.3 ##
+
+2019-03-30
+
+- Unicode 12 support ([#148]).
+
+- New function `utf8proc_unicode_version` to return the supported Unicode version ([#151]).
+
+- Simpler character-width computation that no longer uses GNU Unifont metrics: East-Asian wide
+  characters have width 2, and all other printable characters have width 1 ([#150]).
+
+- Fix `CHARBOUND` option for `utf8proc_map` to preserve U+FFFE and U+FFFF non-characters ([#149]).
+
+- Various build-system improvements ([#141], [#142], [#147]).
+
 ## Version 2.2 ##
 
 2018-07-24
@@ -301,45 +316,52 @@ Release of version 1.0.1
 
 2006-06-02: initial release of version 0.1
 
-[#6]: https://github.com/JuliaLang/utf8proc/issues/6
-[#13]: https://github.com/JuliaLang/utf8proc/issues/13
-[#17]: https://github.com/JuliaLang/utf8proc/issues/17
-[#20]: https://github.com/JuliaLang/utf8proc/issues/20
-[#22]: https://github.com/JuliaLang/utf8proc/issues/22
-[#24]: https://github.com/JuliaLang/utf8proc/issues/24
-[#27]: https://github.com/JuliaLang/utf8proc/issues/27
-[#28]: https://github.com/JuliaLang/utf8proc/issues/28
-[#29]: https://github.com/JuliaLang/utf8proc/issues/29
-[#32]: https://github.com/JuliaLang/utf8proc/issues/32
-[#35]: https://github.com/JuliaLang/utf8proc/issues/35
-[#40]: https://github.com/JuliaLang/utf8proc/issues/40
-[#43]: https://github.com/JuliaLang/utf8proc/issues/43
-[#45]: https://github.com/JuliaLang/utf8proc/issues/45
-[#47]: https://github.com/JuliaLang/utf8proc/issues/47
-[#51]: https://github.com/JuliaLang/utf8proc/issues/51
-[#55]: https://github.com/JuliaLang/utf8proc/issues/55
-[#58]: https://github.com/JuliaLang/utf8proc/issues/58
-[#62]: https://github.com/JuliaLang/utf8proc/issues/62
-[#66]: https://github.com/JuliaLang/utf8proc/issues/66
-[#68]: https://github.com/JuliaLang/utf8proc/issues/68
-[#70]: https://github.com/JuliaLang/utf8proc/issues/70
-[#77]: https://github.com/JuliaLang/utf8proc/issues/77
-[#78]: https://github.com/JuliaLang/utf8proc/issues/78
-[#79]: https://github.com/JuliaLang/utf8proc/issues/79
-[#80]: https://github.com/JuliaLang/utf8proc/issues/80
-[#84]: https://github.com/JuliaLang/utf8proc/issues/84
-[#88]: https://github.com/JuliaLang/utf8proc/issues/88
-[#89]: https://github.com/JuliaLang/utf8proc/issues/89
-[#90]: https://github.com/JuliaLang/utf8proc/issues/90
-[#94]: https://github.com/JuliaLang/utf8proc/issues/94
-[#99]: https://github.com/JuliaLang/utf8proc/issues/99
-[#113]: https://github.com/JuliaLang/utf8proc/issues/113
-[#121]: https://github.com/JuliaLang/utf8proc/issues/121
-[#123]: https://github.com/JuliaLang/utf8proc/issues/123
-[#125]: https://github.com/JuliaLang/utf8proc/issues/125
-[#128]: https://github.com/JuliaLang/utf8proc/issues/128
-[#132]: https://github.com/JuliaLang/utf8proc/issues/132
-[#133]: https://github.com/JuliaLang/utf8proc/issues/133
-[#134]: https://github.com/JuliaLang/utf8proc/issues/134
-[#135]: https://github.com/JuliaLang/utf8proc/issues/135
-[#140]: https://github.com/JuliaLang/utf8proc/issues/140
+[#6]: https://github.com/JuliaLang/julia/issues/6
+[#13]: https://github.com/JuliaLang/julia/issues/13
+[#17]: https://github.com/JuliaLang/julia/issues/17
+[#20]: https://github.com/JuliaLang/julia/issues/20
+[#22]: https://github.com/JuliaLang/julia/issues/22
+[#24]: https://github.com/JuliaLang/julia/issues/24
+[#27]: https://github.com/JuliaLang/julia/issues/27
+[#28]: https://github.com/JuliaLang/julia/issues/28
+[#29]: https://github.com/JuliaLang/julia/issues/29
+[#32]: https://github.com/JuliaLang/julia/issues/32
+[#35]: https://github.com/JuliaLang/julia/issues/35
+[#40]: https://github.com/JuliaLang/julia/issues/40
+[#43]: https://github.com/JuliaLang/julia/issues/43
+[#45]: https://github.com/JuliaLang/julia/issues/45
+[#47]: https://github.com/JuliaLang/julia/issues/47
+[#51]: https://github.com/JuliaLang/julia/issues/51
+[#55]: https://github.com/JuliaLang/julia/issues/55
+[#58]: https://github.com/JuliaLang/julia/issues/58
+[#62]: https://github.com/JuliaLang/julia/issues/62
+[#66]: https://github.com/JuliaLang/julia/issues/66
+[#68]: https://github.com/JuliaLang/julia/issues/68
+[#70]: https://github.com/JuliaLang/julia/issues/70
+[#77]: https://github.com/JuliaLang/julia/issues/77
+[#78]: https://github.com/JuliaLang/julia/issues/78
+[#79]: https://github.com/JuliaLang/julia/issues/79
+[#80]: https://github.com/JuliaLang/julia/issues/80
+[#84]: https://github.com/JuliaLang/julia/issues/84
+[#88]: https://github.com/JuliaLang/julia/issues/88
+[#89]: https://github.com/JuliaLang/julia/issues/89
+[#90]: https://github.com/JuliaLang/julia/issues/90
+[#94]: https://github.com/JuliaLang/julia/issues/94
+[#99]: https://github.com/JuliaLang/julia/issues/99
+[#113]: https://github.com/JuliaLang/julia/issues/113
+[#121]: https://github.com/JuliaLang/julia/issues/121
+[#123]: https://github.com/JuliaLang/julia/issues/123
+[#125]: https://github.com/JuliaLang/julia/issues/125
+[#128]: https://github.com/JuliaLang/julia/issues/128
+[#132]: https://github.com/JuliaLang/julia/issues/132
+[#133]: https://github.com/JuliaLang/julia/issues/133
+[#134]: https://github.com/JuliaLang/julia/issues/134
+[#135]: https://github.com/JuliaLang/julia/issues/135
+[#140]: https://github.com/JuliaLang/julia/issues/140
+[#141]: https://github.com/JuliaLang/julia/issues/141
+[#142]: https://github.com/JuliaLang/julia/issues/142
+[#147]: https://github.com/JuliaLang/julia/issues/147
+[#148]: https://github.com/JuliaLang/julia/issues/148
+[#149]: https://github.com/JuliaLang/julia/issues/149
+[#150]: https://github.com/JuliaLang/julia/issues/150
+[#151]: https://github.com/JuliaLang/julia/issues/151
