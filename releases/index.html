@@ -21,8 +21,8 @@
           <h1 id="project_title"><a href="http://julialang.org/utf8proc">utf8proc</a> releases</h1>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/JuliaStrings/utf8proc/archive/v2.2.0.zip">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/JuliaStrings/utf8proc/archive/v2.2.0.tar.gz">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/JuliaStrings/utf8proc/archive/v2.3.0.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/JuliaStrings/utf8proc/archive/v2.3.0.tar.gz">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -33,7 +33,7 @@
         <h1>
 <a id="utf8proc" class="anchor" href="#utf8proc" aria-hidden="true"><span class="octicon octicon-link"></span></a>utf8proc</h1>
 
-<p>The following are the current and past releases of the <a href="http://julialang.org/utf8proc">utf8proc library</a>.   See also the <a href="https://github.com/JuliaStrings/utf8proc">development version of utf8proc on Github.</a> 
+<p>The following are the current and past releases of the <a href="http://julialang.org/utf8proc">utf8proc library</a>.   See also the <a href="https://github.com/JuliaStrings/utf8proc">development version of utf8proc on Github.</a>
 
 <p>The utf8proc package is licensed under the
 free/open-source <a href="http://opensource.org/licenses/MIT">MIT "expat"
@@ -43,6 +43,28 @@ license</a>); please see
 the included <a href="https://github.com/JuliaStrings/utf8proc/blob/master/LICENSE.md">LICENSE.md</a> file for more detailed information.</p>
 
 <ul>
+
+
+<li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.3.0">utf8proc 2.3.0</a> (2019-03-30):
+  <ul>
+      <li>
+      <p>Unicode 12 support (<a href="https://github.com/JuliaLang/julia/issues/148">#148</a>).</p>
+      </li>
+      <li>
+      <p>New function <code>utf8proc_unicode_version</code> to return the supported Unicode version (<a href="https://github.com/JuliaLang/julia/issues/151">#151</a>).</p>
+      </li>
+      <li>
+      <p>Simpler character-width computation that no longer uses GNU Unifont metrics: East-Asian wide
+      characters have width 2, and all other printable characters have width 1 (<a href="https://github.com/JuliaLang/julia/issues/150">#150</a>).</p>
+      </li>
+      <li>
+      <p>Fix <code>CHARBOUND</code> option for <code>utf8proc_map</code> to preserve U+FFFE and U+FFFF non-characters (<a href="https://github.com/JuliaLang/julia/issues/149">#149</a>).</p>
+      </li>
+      <li>
+      <p>Various build-system improvements (<a href="https://github.com/JuliaLang/julia/issues/141">#141</a>, <a href="https://github.com/JuliaLang/julia/issues/142">#142</a>, <a href="https://github.com/JuliaLang/julia/issues/147">#147</a>).</p>
+      </li>
+  </ul>
+</li>
 
 <li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.2.0">utf8proc 2.2.0</a> (2018-07-24):
 <ul>
@@ -82,8 +104,8 @@ for unassigned/PUA codepoints (<a href="https://github.com/JuliaLang/utf8proc/is
 <li>
 <p>Minor build fixes (<a href="https://github.com/JuliaLang/utf8proc/issues/94">#94</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/99">#99</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/113">#113</a>, <a href="https://github.com/JuliaLang/utf8proc/issues/125">#125</a>).</p>
 </li>
-</ul>    
-</li>    
+</ul>
+</li>
 
 <li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.1.0">utf8proc v2.1.0</a> (2016-12-26):
 <ul>
@@ -122,7 +144,7 @@ declare it in a C89 way rather than inside the <code>for</code> to avoid "error:
 'for' loop initial declarations are only allowed in C99 mode" (<a href="https://github.com/JuliaLang/utf8proc/issues/80">#80</a>).</p>
 </li>
 </ul>
-</li>  
+</li>
 
 <li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v2.0.1">utf8proc v2.0.1</a> (2016-07-13):
 
@@ -148,7 +170,7 @@ declare it in a C89 way rather than inside the <code>for</code> to avoid "error:
   </ul>
 
 <li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v1.3.1">utf8proc v1.3.1</a> (2015-11-02):
-  
+
   <ul>
     <li><p>Do not export symbol for internal function <code>unsafe_encode_char()</code> (<a href="https://github.com/JuliaStrings/utf8proc/issues/55">#55</a>).</p></li>
     <li><p>Install relative symbolic links for shared libraries (<a href="https://github.com/JuliaStrings/utf8proc/issues/58">#58</a>).</p></li>
@@ -205,7 +227,7 @@ detection of the API version.</p></li>
 </ul>
 
 <li><a href="https://github.com/JuliaStrings/utf8proc/releases/tag/v1.1.6">utf8proc v1.1.6</a> (2013-11-27):
-<ul> 
+<ul>
 
    <li>PostgreSQL 9.2 and 9.3 compatibility (lower case 'c' language name)
 </ul>
