@@ -41,6 +41,10 @@ int main(void)
 {
     issue128();
     issue102();
+#ifdef UNICODE_VERSION
+    printf("Unicode version: Makefile has %s, has API %s\n", UNICODE_VERSION, utf8proc_unicode_version());
+    check(!strcmp(UNICODE_VERSION, utf8proc_unicode_version()), "utf8proc_unicode_version mismatch");
+#endif
     printf("Misc tests SUCCEEDED.\n");
     return 0;
 }
