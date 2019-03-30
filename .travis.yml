@@ -4,8 +4,7 @@ compiler:
     - clang
 notifications:
     email: false
-matrix:
-    include:
+include:
     - language: julia
       julia: 1.1
 script:
