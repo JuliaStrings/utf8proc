@@ -409,6 +409,11 @@ UTF8PROC_DLLEXPORT extern const utf8proc_int8_t utf8proc_utf8class[256];
 UTF8PROC_DLLEXPORT const char *utf8proc_version(void);
 
 /**
+ * Returns the utf8proc supported Unicode version as a string MAJOR.MINOR.PATCH.
+ */
+UTF8PROC_DLLEXPORT const char *utf8proc_unicode_version(void);
+
+/**
  * Returns an informative error string for the given utf8proc error code
  * (e.g. the error codes returned by @ref utf8proc_map).
  */
