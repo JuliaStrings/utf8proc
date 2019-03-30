@@ -18,6 +18,9 @@ add_library (utf8proc
   utf8proc.h
 )
 
+# expose header path, for when this is part of a larger cmake project
+target_include_directories(utf8proc PUBLIC ../utf8proc)
+
 if (BUILD_SHARED_LIBS)
   # Building shared library
 else()
@@ -28,12 +31,7 @@ else()
   endif()
 endif()
 
-target_include_directories(utf8proc PUBLIC ../utf8proc)
-
-set_target_properties(
-  utf8proc PROPERTIES
-  COMPILE_DEFINITIONS "UTF8PROC_EXPORTS"
-)
+target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
 
 if (NOT MSVC)
   set_target_properties(
