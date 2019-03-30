@@ -14,4 +14,3 @@ script:
     - make clean && git status --ignored --porcelain && test -z "$(git status --ignored --porcelain)"
     - (mkdir build_static && cd build_static && cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON && make)
     - (mkdir build_shared && cd build_shared && cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON && make)
-env:
