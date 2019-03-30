@@ -1,8 +1,11 @@
 # Following work by @jiahao, we compute character widths using a combination of
-#   * advance widths from GNU Unifont (advance width 512 = 1 en)
+#   * character category
 #   * UAX 11: East Asian Width
 #   * a few exceptions as needed
 # Adapted from http://nbviewer.ipython.org/gist/jiahao/07e8b08bf6d8671e9734
+#
+# We used to also use data from GNU Unifont, but that has proven unreliable
+# and unlikely to match widths assumed by terminals.
 #
 # Requires Julia (obviously) and FontForge.
 
@@ -49,7 +52,7 @@ const UTF8PROC_CATEGORY_CO = 29
 #############################################################################
 # Use a default width of 1 for all character categories that are
 # letter/symbol/number-like, as well as for unassigned/private-use chars.
-# This can be overriden by Unifont or UAX 11
+# This can be overriden by UAX 11
 # below, but provides a useful nonzero fallback for new codepoints when
 # a new Unicode version has been released but Unifont hasn't been updated yet.
 
@@ -58,7 +61,6 @@ push!(zerowidth, UTF8PROC_CATEGORY_MN)
 push!(zerowidth, UTF8PROC_CATEGORY_MC)
 push!(zerowidth, UTF8PROC_CATEGORY_ME)
 push!(zerowidth, UTF8PROC_CATEGORY_SK)
-push!(zerowidth, UTF8PROC_CATEGORY_ZS)
 push!(zerowidth, UTF8PROC_CATEGORY_ZL)
 push!(zerowidth, UTF8PROC_CATEGORY_ZP)
 push!(zerowidth, UTF8PROC_CATEGORY_CC)
@@ -71,44 +73,8 @@ for c in 0x0000:0x110000
 end
 
 #############################################################################
-# Widths from GNU Unifont
-
-#Read sfdfile for character widths
-function parsesfd(filename::AbstractString, CharWidths::Dict{Int,Int}=Dict{Int,Int}())
-    state=:seekchar
-    lineno = 0
-    codepoint = width = nothing
-    for line in readlines(open(filename))
-        lineno += 1
-        if state==:seekchar         #StartChar: nonmarkingreturn
-            if occursin("StartChar: ", line)
-                codepoint = nothing
-                width = nothing
-                state = :readdata
-            end
-        elseif state==:readdata #Encoding: 65538 -1 2, Width: 1024
-            occursin("Encoding:", line) && (codepoint = parse(Int, split(line)[3]))
-            occursin("Width:", line) && (width = parse(Int, split(line)[2]))
-            if codepoint!=nothing && width!=nothing && codepoint >= 0
-                w=div(width, 512) # 512 units to the en
-                if w > 0
-                    # only add nonzero widths, since (1) the default is zero
-                    # and (2) this circumvents some apparent bugs in Unifont
-                    # (https://savannah.gnu.org/bugs/index.php?45395)
-                    CharWidths[codepoint] = w
-                end
-                state = :seekchar
-            end
-        end
-    end
-    CharWidths
-end
-CharWidths=parsesfd("unifont.sfd", CharWidths)
-CharWidths=parsesfd("unifont_upper.sfd", CharWidths)
-
-#############################################################################
 # Widths from UAX #11: East Asian Width
-#   .. these take precedence over the Unifont width for all codepoints
+#   .. these take precedence for all codepoints
 #      listed explicitly as wide/full/narrow/half-width
 
 for line in readlines(open("EastAsianWidth.txt"))
@@ -179,16 +145,6 @@ CharWidths[0x00ad]=1
 #0x002029 ' ' category: Zp name: PARAGRAPH SEPARATOR/
 CharWidths[0x2028]=0
 CharWidths[0x2029]=0
-
-#By definition, should be narrow = width of 1 en space
-#0x00202f ' ' category: Zs name: NARROW NO-BREAK SPACE/
-CharWidths[0x202f]=1
-
-#By definition, should be wide = width of 1 em space
-#0x002001 ' ' category: Zs name: EM QUAD/
-#0x002003 ' ' category: Zs name: EM SPACE/
-CharWidths[0x2001]=2
-CharWidths[0x2003]=2
 
 #############################################################################
 # Output (to a file or pipe) for processing by data_generator.rb,
