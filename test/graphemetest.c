@@ -7,17 +7,17 @@ int main(int argc, char **argv)
     FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
     utf8proc_uint8_t src[1024];
     int len;
-    
+
     check(f != NULL, "error opening GraphemeBreakTest.txt");
     while (getline(&buf, &bufsize, f) > 0) {
         size_t bi = 0, si = 0;
         lineno += 1;
-        
+
         if (lineno % 100 == 0)
             printf("checking line %zd...\n", lineno);
-        
+
         if (buf[0] == '#') continue;
-        
+
         while (buf[bi]) {
             bi = skipspaces(buf, bi);
             if (buf[bi] == '/') { /* grapheme break */
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
         if (si && src[si-1] == '/')
             --si; /* no break after final grapheme */
         src[si] = 0; /* NUL-terminate */
-        
+
         if (si) {
             utf8proc_uint8_t utf8[1024]; /* copy src without 0xff grapheme separators */
             size_t i = 0, j = 0;
@@ -70,5 +70,17 @@ int main(int argc, char **argv)
     }
     fclose(f);
     printf("Passed tests after %zd lines!\n", lineno);
+
+    /* issue 144 */
+    {
+        utf8proc_uint8_t input[] = {0xef,0xbf,0xbf,0xef,0xbf,0xbe,0x00}; /* "\uffff\ufffe" */
+        utf8proc_uint8_t output[] = {0xff,0xef,0xbf,0xbf,0xff,0xef,0xbf,0xbe,0x00}; /* with 0xff grapheme markers */
+        utf8proc_ssize_t glen;
+        utf8proc_uint8_t *g;
+        glen = utf8proc_map(input, 6, &g, UTF8PROC_CHARBOUND);
+        check(!strcmp((char*)g, (char*)output), "mishandled u+ffff and u+fffe grapheme breaks");
+        free(g);
+    };
+
     return 0;
 }
