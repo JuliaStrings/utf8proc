@@ -6,8 +6,6 @@ notifications:
 include:
     - language: julia
       julia: 1.1
-before_install:
-    - sudo apt-get install fontforge -y
 script:
     - make manifest && diff MANIFEST.new MANIFEST
     - make check
