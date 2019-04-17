@@ -13,6 +13,8 @@ set(SO_MAJOR 2)
 set(SO_MINOR 2)
 set(SO_PATCH 0)
 
+option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
+
 add_library (utf8proc
   utf8proc.c
   utf8proc.h
@@ -46,12 +48,14 @@ set_target_properties (utf8proc PROPERTIES
   SOVERSION ${SO_MAJOR}
 )
 
-install(TARGETS utf8proc
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+if (UTF8PROC_INSTALL)
+  install(TARGETS utf8proc
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
-install(
-  FILES
-    "${PROJECT_SOURCE_DIR}/utf8proc.h"
-  DESTINATION include)
+  install(
+    FILES
+      "${PROJECT_SOURCE_DIR}/utf8proc.h"
+    DESTINATION include)
+endif()
