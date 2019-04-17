@@ -13,7 +13,7 @@ set(SO_MAJOR 2)
 set(SO_MINOR 2)
 set(SO_PATCH 0)
 
-option(UTF8PROC_NO_INSTALL "Disable installation of utf8proc" Off)
+option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
 
 add_library (utf8proc
   utf8proc.c
@@ -48,7 +48,7 @@ set_target_properties (utf8proc PROPERTIES
   SOVERSION ${SO_MAJOR}
 )
 
-if (NOT UTF8PROC_NO_INSTALL)
+if (UTF8PROC_INSTALL)
   install(TARGETS utf8proc
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
