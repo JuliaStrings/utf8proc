@@ -33,6 +33,19 @@ the included `LICENSE.md` file for more detailed information.
 
 For compilation of the C library run `make`.
 
+### Compiling on HP-UX
+Have HP aCC, GNU Make, and either GNU coreutils (`install`) or GNU libtool
+installed.
+
+```
+$ gmake CC=/opt/aCC/bin/aCC CFLAGS="" PICFLAG='+z' C99FLAG=-Ae INSTALL=.. \
+  WCFLAGS='+w' LDFLAG_SHARED=-b SOFLAG="-Wl,+h" \
+  prefix=$PREFIX libdir=$PREFIX/lib/hpux32 install
+```
+
+where `INSTALL` points either to `install` or `install-sh`, `PREFIX` points to
+your preferred target, e.g., `/opt` in System V Unix.
+
 ## General Information
 
 The C library is found in this directory after successful compilation
