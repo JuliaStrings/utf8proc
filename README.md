@@ -31,20 +31,26 @@ the included `LICENSE.md` file for more detailed information.
 
 ## Quick Start
 
-For compilation of the C library run `make`.
+For compilation of the C library run `make`.  You can also install the library and header file with `make install` (by default into `/usr/local/lib` and `/usr/local/bin`), but this can be changed by `make prefix=/some/dir`).
 
-### Compiling on HP-UX
-Have HP aCC, GNU Make, and either GNU coreutils (`install`) or GNU libtool
-installed.
-
-```
-$ gmake CC=/opt/aCC/bin/aCC CFLAGS="" PICFLAG='+z' C99FLAG=-Ae INSTALL=.. \
-  WCFLAGS='+w' LDFLAG_SHARED=-b SOFLAG="-Wl,+h" \
-  prefix=$PREFIX libdir=$PREFIX/lib/hpux32 install
+Alternatively, you can compile with `cmake`, e.g. by
+```sh
+mkdir build
+cd build
+cmake ..
+make
 ```
 
-where `INSTALL` points either to `install` or `install-sh`, `PREFIX` points to
-your preferred target, e.g., `/opt` in System V Unix.
+### Using other compilers
+The included `Makefile` supports GNU/Linux flavors and MacOS with `gcc`-like compilers; Windows users will typically use `cmake`.
+
+For other Unix-like systems and other compilers, you may need to pass modified settings to `make` in order to use the correct compilation flags for building shared libraries on your system.
+
+For HP-UX with HP's `aCC` compiler and GNU Make (installed as `gmake`), you can compile with
+```
+gmake CC=/opt/aCC/bin/aCC CFLAGS="+O2" PICFLAG="+z" C99FLAG="-Ae" WCFLAGS="+w" LDFLAG_SHARED="-b" SOFLAG="-Wl,+h"
+```
+To run `gmake install` you will need GNU coreutils for the `install` command, and you may want to pass `prefix=/opt libdir=/opt/lib/hpux32` or similar to change the installation location.
 
 ## General Information
 
