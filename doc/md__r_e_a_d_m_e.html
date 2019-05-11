@@ -74,10 +74,15 @@ $(function() {
 <p>(The original utf8proc package also includes Ruby and PostgreSQL plug-ins. We removed those from utf8proc in order to focus exclusively on the C library for the time being, but plan to add them back in or release them as separate packages.)</p>
 <p>The utf8proc package is licensed under the free/open-source <a href="http://opensource.org/licenses/MIT">MIT "expat" license</a> (plus certain Unicode data governed by the similarly permissive <a href="http://www.unicode.org/copyright.html#Exhibit1">Unicode data license</a>); please see the included <code>LICENSE.md</code> file for more detailed information.</p>
 <h2>Quick Start</h2>
-<p>For compilation of the C library run <code>make</code>.</p>
+<p>Typical users should download a <a href="http://juliastrings.github.io/utf8proc/releases/">utf8proc release</a> rather than cloning directly from github.</p>
+<p>For compilation of the C library, run <code>make</code>. You can also install the library and header file with <code>make install</code> (by default into <code>/usr/local/lib</code> and <code>/usr/local/bin</code>, but this can be changed by <code>make prefix=/some/dir</code>). <code>make check</code> runs some tests, and <code>make clean</code> deletes all of the generated files.</p>
+<p>Alternatively, you can compile with <code>cmake</code>, e.g. by </p><div class="fragment"><div class="line">mkdir build</div><div class="line">cd build</div><div class="line">cmake ..</div><div class="line">make</div></div><!-- fragment --><h3>Using other compilers</h3>
+<p>The included <code>Makefile</code> supports GNU/Linux flavors and MacOS with <code>gcc</code>-like compilers; Windows users will typically use <code>cmake</code>.</p>
+<p>For other Unix-like systems and other compilers, you may need to pass modified settings to <code>make</code> in order to use the correct compilation flags for building shared libraries on your system.</p>
+<p>For HP-UX with HP's <code>aCC</code> compiler and GNU Make (installed as <code>gmake</code>), you can compile with </p><div class="fragment"><div class="line">gmake CC=/opt/aCC/bin/aCC CFLAGS=&quot;+O2&quot; PICFLAG=&quot;+z&quot; C99FLAG=&quot;-Ae&quot; WCFLAGS=&quot;+w&quot; LDFLAG_SHARED=&quot;-b&quot; SOFLAG=&quot;-Wl,+h&quot;</div></div><!-- fragment --><p> To run <code>gmake install</code> you will need GNU coreutils for the <code>install</code> command, and you may want to pass <code>prefix=/opt libdir=/opt/lib/hpux32</code> or similar to change the installation location.</p>
 <h2>General Information</h2>
 <p>The C library is found in this directory after successful compilation and is named <code>libutf8proc.a</code> (for the static library) and <code>libutf8proc.so</code> (for the dynamic library).</p>
-<p>The Unicode version supported is 12.0.0.</p>
+<p>The Unicode version supported is 12.1.0.</p>
 <p>For Unicode normalizations, the following options are used:</p>
 <ul>
 <li>Normalization Form C: <code>STABLE</code>, <code>COMPOSE</code></li>
@@ -97,7 +102,7 @@ $(function() {
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Mar 30 2019 16:36:08 for utf8proc by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 10 2019 21:25:04 for utf8proc by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.15
 </small></address>
