@@ -5,13 +5,16 @@ AR?=ar
 CC?=gcc
 INSTALL=install
 FIND=find
+PERL=perl
 
 # compiler settings
 CFLAGS ?= -O2
 PICFLAG = -fPIC
 C99FLAG = -std=c99
 WCFLAGS = -Wall -pedantic
-UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PROC_DEFINES)
+UCFLAGS = $(CPPFLAGS) $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PROC_DEFINES)
+LDFLAG_SHARED = -shared
+SOFLAG = -Wl,-soname
 
 # shared-library version MAJOR.MINOR.PATCH ... this may be *different*
 # from the utf8proc version number because it indicates ABI compatibility,
@@ -20,8 +23,8 @@ UCFLAGS = $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PR
 # The API version number is defined in utf8proc.h.
 # Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
 MAJOR=2
-MINOR=2
-PATCH=0
+MINOR=3
+PATCH=1
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
@@ -36,6 +39,10 @@ endif
 prefix=/usr/local
 libdir=$(prefix)/lib
 includedir=$(prefix)/include
+pkgconfigdir=$(libdir)/pkgconfig
+
+pkglibdir=$(libdir:$(prefix)/%=%)
+pkgincludedir=$(includedir:$(prefix)/%=%)
 
 # meta targets
 
@@ -45,6 +52,7 @@ all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
 clean:
 	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT)
+	rm -f libutf8proc.pc
 ifneq ($(OS),Darwin)
 	rm -f libutf8proc.so.$(MAJOR)
 endif
@@ -73,7 +81,7 @@ libutf8proc.a: utf8proc.o
 	$(AR) rs libutf8proc.a utf8proc.o
 
 libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH): utf8proc.o
-	$(CC) $(LDFLAGS) -shared -o $@ -Wl,-soname -Wl,libutf8proc.so.$(MAJOR) utf8proc.o
+	$(CC) $(LDFLAGS) $(LDFLAG_SHARED) -o $@ $(SOFLAG) -Wl,libutf8proc.so.$(MAJOR) utf8proc.o
 	chmod a-x $@
 
 libutf8proc.so: libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH)
@@ -86,12 +94,22 @@ libutf8proc.$(MAJOR).dylib: utf8proc.o
 libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 	ln -f -s libutf8proc.$(MAJOR).dylib $@
 
-install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT)
+libutf8proc.pc: libutf8proc.pc.in
+	sed \
+		-e 's#PREFIX#$(prefix)#' \
+		-e 's#LIBDIR#$(pkglibdir)#' \
+		-e 's#INCLUDEDIR#$(pkgincludedir)#' \
+		-e 's#VERSION#$(MAJOR).$(MINOR).$(PATCH)#' \
+		libutf8proc.pc.in > libutf8proc.pc
+
+install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.pc
 	mkdir -m 755 -p $(DESTDIR)$(includedir)
 	$(INSTALL) -m 644 utf8proc.h $(DESTDIR)$(includedir)
 	mkdir -m 755 -p $(DESTDIR)$(libdir)
 	$(INSTALL) -m 644 libutf8proc.a $(DESTDIR)$(libdir)
 	$(INSTALL) -m 755 libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)
+	mkdir -m 755 -p $(DESTDIR)$(pkgconfigdir)
+	$(INSTALL) -m 644 libutf8proc.pc $(DESTDIR)$(pkgconfigdir)/libutf8proc.pc
 	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
 ifneq ($(OS),Darwin)
 	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
@@ -115,31 +133,31 @@ test/tests.o: test/tests.c test/tests.h utf8proc.h
 	$(CC) $(UCFLAGS) -c -o test/tests.o test/tests.c
 
 test/normtest: test/normtest.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/normtest.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/normtest.c test/tests.o utf8proc.o -o $@
 
 test/graphemetest: test/graphemetest.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/graphemetest.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/graphemetest.c test/tests.o utf8proc.o -o $@
 
 test/printproperty: test/printproperty.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/printproperty.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/printproperty.c test/tests.o utf8proc.o -o $@
 
 test/charwidth: test/charwidth.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/charwidth.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/charwidth.c test/tests.o utf8proc.o -o $@
 
 test/valid: test/valid.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/valid.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/valid.c test/tests.o utf8proc.o -o $@
 
 test/iterate: test/iterate.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/iterate.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/iterate.c test/tests.o utf8proc.o -o $@
 
 test/case: test/case.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/case.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/case.c test/tests.o utf8proc.o -o $@
 
 test/custom: test/custom.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/custom.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/custom.c test/tests.o utf8proc.o -o $@
 
 test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) test/misc.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) -DUNICODE_VERSION='"'`$(PERL) -ne "/^UNICODE_VERSION=/ and print $$';" data/Makefile`'"' test/misc.c test/tests.o utf8proc.o -o $@
 
 check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench

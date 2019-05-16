@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Steven G. Johnson, Jiahao Chen, Peter Colberg, Tony Kelman, Scott P. Jones, and other contributors.
+ * Copyright (c) 2014-2019 Steven G. Johnson, Jiahao Chen, Peter Colberg, Tony Kelman, Scott P. Jones, and other contributors.
  * Copyright (c) 2009 Public Software Group e. V., Berlin, Germany
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,8 +27,8 @@
  *
  * utf8proc is a free/open-source (MIT/expat licensed) C library
  * providing Unicode normalization, case-folding, and other operations
- * for strings in the UTF-8 encoding, supporting Unicode version
- * 9.0.0.  See the utf8proc home page (http://julialang.org/utf8proc/)
+ * for strings in the UTF-8 encoding, supporting up-to-date Unicode versions.
+ * See the utf8proc home page (http://julialang.org/utf8proc/)
  * for downloads and other information, or the source code on github
  * (https://github.com/JuliaLang/utf8proc).
  *
@@ -71,7 +71,7 @@
 /** The MAJOR version number (increased when backwards API compatibility is broken). */
 #define UTF8PROC_VERSION_MAJOR 2
 /** The MINOR version number (increased when new functionality is added in a backwards-compatible manner). */
-#define UTF8PROC_VERSION_MINOR 2
+#define UTF8PROC_VERSION_MINOR 4
 /** The PATCH version (increased for fixes that do not change the API). */
 #define UTF8PROC_VERSION_PATCH 0
 /** @} */
@@ -409,6 +409,11 @@ UTF8PROC_DLLEXPORT extern const utf8proc_int8_t utf8proc_utf8class[256];
 UTF8PROC_DLLEXPORT const char *utf8proc_version(void);
 
 /**
+ * Returns the utf8proc supported Unicode version as a string MAJOR.MINOR.PATCH.
+ */
+UTF8PROC_DLLEXPORT const char *utf8proc_unicode_version(void);
+
+/**
  * Returns an informative error string for the given utf8proc error code
  * (e.g. the error codes returned by @ref utf8proc_map).
  */
@@ -595,7 +600,8 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
  *              matching the rules in Unicode 8.0.0.
  *
  * @warning If the state parameter is used, `utf8proc_grapheme_break_stateful` must
- *          be called IN ORDER on ALL potential breaks in a string.
+ *          be called IN ORDER on ALL potential breaks in a string.  However, it
+ *          is safe to reset the state to zero after a grapheme break.
  */
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break_stateful(
     utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2, utf8proc_int32_t *state);

@@ -31,7 +31,28 @@ the included `LICENSE.md` file for more detailed information.
 
 ## Quick Start
 
-For compilation of the C library run `make`.
+Typical users should download a [utf8proc release](http://juliastrings.github.io/utf8proc/releases/) rather than cloning directly from github.
+
+For compilation of the C library, run `make`.  You can also install the library and header file with `make install` (by default into `/usr/local/lib` and `/usr/local/bin`, but this can be changed by `make prefix=/some/dir`).  `make check` runs some tests, and `make clean` deletes all of the generated files.
+
+Alternatively, you can compile with `cmake`, e.g. by
+```sh
+mkdir build
+cd build
+cmake ..
+make
+```
+
+### Using other compilers
+The included `Makefile` supports GNU/Linux flavors and MacOS with `gcc`-like compilers; Windows users will typically use `cmake`.
+
+For other Unix-like systems and other compilers, you may need to pass modified settings to `make` in order to use the correct compilation flags for building shared libraries on your system.
+
+For HP-UX with HP's `aCC` compiler and GNU Make (installed as `gmake`), you can compile with
+```
+gmake CC=/opt/aCC/bin/aCC CFLAGS="+O2" PICFLAG="+z" C99FLAG="-Ae" WCFLAGS="+w" LDFLAG_SHARED="-b" SOFLAG="-Wl,+h"
+```
+To run `gmake install` you will need GNU coreutils for the `install` command, and you may want to pass `prefix=/opt libdir=/opt/lib/hpux32` or similar to change the installation location.
 
 ## General Information
 
@@ -39,7 +60,7 @@ The C library is found in this directory after successful compilation
 and is named `libutf8proc.a` (for the static library) and
 `libutf8proc.so` (for the dynamic library).
 
-The Unicode version supported is 11.0.0.
+The Unicode version supported is 12.1.0.
 
 For Unicode normalizations, the following options are used:
 

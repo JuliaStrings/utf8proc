@@ -10,12 +10,10 @@ project (utf8proc C)
 # API version number (defined in utf8proc.h).
 # Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 2)
-set(SO_MINOR 2)
+set(SO_MINOR 4)
 set(SO_PATCH 0)
 
-if (NOT MSVC)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=c99 -pedantic -Wall")
-endif ()
+option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
 
 set(UTF8PROC_FILES
   utf8proc.c
@@ -33,6 +31,9 @@ endif ()
 
 add_library (utf8proc ${UTF8PROC_FILES} ${UTF8PROC_WINDLL_SRCS})
 
+# expose header path, for when this is part of a larger cmake project
+target_include_directories(utf8proc PUBLIC ../utf8proc)
+
 if (BUILD_SHARED_LIBS)
   # Building shared library
 else()
@@ -45,18 +46,27 @@ endif()
 
 target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
 
+if (NOT MSVC)
+  set_target_properties(
+    utf8proc PROPERTIES
+    COMPILE_FLAGS "-O2 -std=c99 -pedantic -Wall"
+  )
+endif ()
+
 set_target_properties (utf8proc PROPERTIES
   POSITION_INDEPENDENT_CODE ON
   VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
   SOVERSION ${SO_MAJOR}
 )
 
-install(TARGETS utf8proc
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib)
+if (UTF8PROC_INSTALL)
+  install(TARGETS utf8proc
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
 
-install(
-  FILES
-    "${PROJECT_SOURCE_DIR}/utf8proc.h"
-  DESTINATION include)
+  install(
+    FILES
+      "${PROJECT_SOURCE_DIR}/utf8proc.h"
+    DESTINATION include)
+endif()
