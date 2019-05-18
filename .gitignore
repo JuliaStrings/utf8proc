@@ -28,3 +28,4 @@ test/iterate
 test/case
 test/custom
 /tmp/
+/build
