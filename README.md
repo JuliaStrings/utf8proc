@@ -43,6 +43,14 @@ cmake ..
 make
 ```
 
+or by using `meson`:
+```sh
+meson builddir # or for static library: meson -Ddefault_library=static builddir
+cd builddir
+ninja
+ninja install
+```
+
 ### Using other compilers
 The included `Makefile` supports GNU/Linux flavors and MacOS with `gcc`-like compilers; Windows users will typically use `cmake`.
 
