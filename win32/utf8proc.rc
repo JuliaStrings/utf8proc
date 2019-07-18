@@ -25,12 +25,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName",	"JuliaStrings\0"
       VALUE "FileDescription",	"utf8proc library\0"
-      VALUE "FileVersion",	UTF8PROC_VERSION
+      VALUE "FileVersion",	UTF8PROC_VERSION_NUMBER
       VALUE "InternalName",	"utf8proc.dll\0"
       VALUE "LegalCopyright",	"(C) Jan Behrens and the rest of the Public Software Group\0"
       VALUE "OriginalFilename",	"utf8proc.dll\0"
       VALUE "ProductName",	"utf8proc\0"
-      VALUE "ProductVersion",	UTF8PROC_VERSION
+      VALUE "ProductVersion",	UTF8PROC_VERSION_NUMBER
       VALUE "Comments",		"For more information visit https://github.com/JuliaStrings/utf8proc/\0"
     END
   END
