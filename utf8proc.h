@@ -75,6 +75,7 @@
 /** The PATCH version (increased for fixes that do not change the API). */
 #define UTF8PROC_VERSION_PATCH 0
 /** @} */
+#define UTF8PROC_VERSION "2.4.0\0"
 
 #include <stdlib.h>
 
