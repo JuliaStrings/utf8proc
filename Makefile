@@ -70,7 +70,7 @@ manifest: MANIFEST.new
 
 # real targets
 
-data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.rb data/charwidths.jl
+data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.rb
 	$(MAKE) -C data utf8proc_data.c.new
 
 utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
@@ -88,7 +88,7 @@ libutf8proc.so: libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH)
 	ln -f -s libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH) $@
 	ln -f -s libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH) $@.$(MAJOR)
 
-libutf8proc.$(MAJOR).dylib: utf8proc.o
+libutf8proc.$(MAJOR).dylib:
 	$(CC) $(LDFLAGS) -dynamiclib -o $@ $^ -install_name $(libdir)/$@ -Wl,-compatibility_version -Wl,$(MAJOR) -Wl,-current_version -Wl,$(MAJOR).$(MINOR).$(PATCH)
 
 libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
