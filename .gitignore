@@ -11,6 +11,7 @@
 *.out
 *.new
 .vscode
+libutf8proc.pc
 data/*.txt
 data/*.ttf
 data/*.sfd
