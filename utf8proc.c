@@ -174,6 +174,19 @@ UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_codepoint_valid(utf8proc_int32_t uc) {
     return (((utf8proc_uint32_t)uc)-0xd800 > 0x07ff) && ((utf8proc_uint32_t)uc < 0x110000);
 }
 
+UTF8PROC_DLLEXPORT int utf8proc_sizeof_char(utf8proc_int32_t uc)
+{
+   if (uc < 0x80) {
+      return 1;
+   } else if (uc < 0x800) {
+      return 2;
+   } else if (uc < 0x10000) {
+      return 3;
+   } else if (uc < 0x110000) {
+      return 4;
+   } else return 0;
+}
+
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_encode_char(utf8proc_int32_t uc, utf8proc_uint8_t *dst) {
   if (uc < 0x00) {
     return 0;

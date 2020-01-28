@@ -440,6 +440,13 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate(const utf8proc_uint8_t *str
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_codepoint_valid(utf8proc_int32_t codepoint);
 
 /**
+ * Returns the number of UTF-8 bytes required for the given codepoint.
+ *
+ * This function does not check whether `codepoint` is valid Unicode.
+ */
+UTF8PROC_DLLEXPORT int utf8proc_sizeof_char(utf8proc_int32_t codepoint);
+
+/**
  * Encodes the codepoint as an UTF-8 string in the byte array pointed
  * to by `dst`. This array must be at least 4 bytes long.
  *
