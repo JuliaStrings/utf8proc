@@ -81,7 +81,7 @@ if(UTF8PROC_ENABLE_TESTING)
   add_test(testmisc misc)
   add_test(testprintproperty printproperty)
   add_test(testvalid valid)
-  if (NOT MSVC)
+  if (NOT WIN32)
     # Some test disabled, because they don't compile on Windows, missing getline, ...
     add_executable(charwidth test/tests.h test/tests.c utf8proc.h test/charwidth.c)
     target_link_libraries(charwidth utf8proc)
