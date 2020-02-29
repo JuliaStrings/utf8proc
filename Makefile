@@ -29,17 +29,20 @@ PATCH=1
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
   SHLIB_EXT = dylib
-  SHLIB_VERS_EXT = $(MAJOR).dylib
+  SHLIB_VERS_EXT = .$(MAJOR).$(SHLIB_EXT)
+else ifneq (,$(findstring MSYS_NT,$(OS))) # MinGW
+  SHLIB_EXT = dll
+  SHLIB_VERS_EXT = -$(MAJOR).$(SHLIB_EXT)
 else # GNU/Linux, at least (Windows should probably use cmake)
   SHLIB_EXT = so
-  SHLIB_VERS_EXT = so.$(MAJOR).$(MINOR).$(PATCH)
+  SHLIB_VERS_EXT = .$(SHLIB_EXT).$(MAJOR).$(MINOR).$(PATCH)
 endif
 
 # installation directories (for 'make install')
 prefix=/usr/local
 libdir=$(prefix)/lib
 includedir=$(prefix)/include
-pkgconfigdir=$(libdir)/pkgconfig
+pkgconfigdir=$(prefix)/lib/pkgconfig
 
 pkglibdir=$(libdir:$(prefix)/%=%)
 pkgincludedir=$(includedir:$(prefix)/%=%)
@@ -51,7 +54,7 @@ pkgincludedir=$(includedir:$(prefix)/%=%)
 all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
 clean:
-	rm -f utf8proc.o libutf8proc.a libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT)
+	rm -f utf8proc.o libutf8proc.a libutf8proc$(SHLIB_VERS_EXT) libutf8proc.$(SHLIB_EXT)
 	rm -f libutf8proc.pc
 ifneq ($(OS),Darwin)
 	rm -f libutf8proc.so.$(MAJOR)
@@ -94,6 +97,13 @@ libutf8proc.$(MAJOR).dylib: utf8proc.o
 libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 	ln -f -s libutf8proc.$(MAJOR).dylib $@
 
+libutf8proc-$(MAJOR).dll: utf8proc.o
+	$(CC) $(LDFLAGS) $(LDFLAG_SHARED) -o $@ $(SOFLAG) -Wl,libutf8proc-$(MAJOR).dll utf8proc.o
+	chmod a-x $@
+
+libutf8proc.dll: libutf8proc-$(MAJOR).dll
+	ln -f -s libutf8proc-$(MAJOR).dll $@
+
 libutf8proc.pc: libutf8proc.pc.in
 	sed \
 		-e 's#PREFIX#$(prefix)#' \
@@ -102,17 +112,19 @@ libutf8proc.pc: libutf8proc.pc.in
 		-e 's#VERSION#$(MAJOR).$(MINOR).$(PATCH)#' \
 		libutf8proc.pc.in > libutf8proc.pc
 
-install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.pc
+install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc$(SHLIB_VERS_EXT) libutf8proc.pc
 	mkdir -m 755 -p $(DESTDIR)$(includedir)
 	$(INSTALL) -m 644 utf8proc.h $(DESTDIR)$(includedir)
 	mkdir -m 755 -p $(DESTDIR)$(libdir)
 	$(INSTALL) -m 644 libutf8proc.a $(DESTDIR)$(libdir)
-	$(INSTALL) -m 755 libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)
+	$(INSTALL) -m 755 libutf8proc$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)
 	mkdir -m 755 -p $(DESTDIR)$(pkgconfigdir)
 	$(INSTALL) -m 644 libutf8proc.pc $(DESTDIR)$(pkgconfigdir)/libutf8proc.pc
-	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
-ifneq ($(OS),Darwin)
-	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
+	ln -f -s libutf8proc$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
+ifeq (,$(findstring MSYS_NT,$(OS)))
+  ifneq ($(OS),Darwin)
+	ln -f -s libutf8proc$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
+  endif
 endif
 
 MANIFEST.new:
