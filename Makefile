@@ -27,10 +27,19 @@ MINOR=3
 PATCH=1
 
 OS := $(shell uname)
+
+# Normalize different Windows versions
+ifneq (,$(findstring MINGW,$(OS)))
+override OS := WINNT
+endif
+ifneq (,$(findstring MSYS,$(OS)))
+override OS := WINNT
+endif
+
 ifeq ($(OS),Darwin) # MacOS X
   SHLIB_EXT = dylib
   SHLIB_VERS_EXT = .$(MAJOR).$(SHLIB_EXT)
-else ifneq (,$(findstring MSYS_NT,$(OS))) # MinGW
+else ifeq ($(OS), WINNT)
   SHLIB_EXT = dll
   SHLIB_VERS_EXT = -$(MAJOR).$(SHLIB_EXT)
 else # GNU/Linux, at least (Windows should probably use cmake)
@@ -121,7 +130,7 @@ install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc$(SHLIB_VERS_EXT) lib
 	mkdir -m 755 -p $(DESTDIR)$(pkgconfigdir)
 	$(INSTALL) -m 644 libutf8proc.pc $(DESTDIR)$(pkgconfigdir)/libutf8proc.pc
 	ln -f -s libutf8proc$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
-ifeq (,$(findstring MSYS_NT,$(OS)))
+ifneq ($(OS), WINNT)
   ifneq ($(OS),Darwin)
 	ln -f -s libutf8proc$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
   endif
