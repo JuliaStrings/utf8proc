@@ -63,6 +63,27 @@ endif()
 
 if(UTF8PROC_ENABLE_TESTING)
   enable_testing()
+  if (NOT WIN32)
+    set(curl_cmd "/usr/bin/curl")
+    set(curl_param --retry 5 --location -\#)
+    set(UNICODE_VERSION 12.1.0)
+    set(UNICODE_EMOJI_VERSION 12.0)
+
+    execute_process(COMMAND mkdir -p data)
+    execute_process(
+      COMMAND ${curl_cmd} ${curl_param} -o data/emoji-data.txt -O http://unicode.org/Public/emoji/${UNICODE_EMOJI_VERSION}/emoji-data.txt
+      COMMAND ${curl_cmd} ${curl_param} -o data/UnicodeData.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/UnicodeData.txt
+      COMMAND ${curl_cmd} ${curl_param} -o data/EastAsianWidth.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/EastAsianWidth.txt
+      COMMAND ${curl_cmd} ${curl_param} -o data/GraphemeBreakProperty.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/auxiliary/GraphemeBreakProperty.txt
+      COMMAND ${curl_cmd} ${curl_param} -o data/DerivedCoreProperties.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/DerivedCoreProperties.txt
+      COMMAND ${curl_cmd} ${curl_param} -o data/CompositionExclusions.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/CompositionExclusions.txt
+      COMMAND ${curl_cmd} ${curl_param} -o data/CaseFolding.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/CaseFolding.txt
+      COMMAND ${curl_cmd} ${curl_param} -o data/NormalizationTest.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/NormalizationTest.txt
+      COMMAND ${curl_cmd} ${curl_param} -o data/GraphemeBreakTestOrg.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/auxiliary/GraphemeBreakTest.txt
+    )
+    execute_process(COMMAND bash -c "cat data/GraphemeBreakTestOrg.txt | /usr/bin/perl -pe 's,÷,/,g;s,×,+,g'" OUTPUT_FILE data/GraphemeBreakTest.txt)
+    execute_process(COMMAND bash -c "rm -f data/GraphemeBreakTestOrg.txt")
+  endif()
   add_executable(case test/tests.h test/tests.c utf8proc.h test/case.c)
   target_link_libraries(case utf8proc)
   add_executable(custom test/tests.h test/tests.c utf8proc.h test/custom.c)
@@ -75,12 +96,13 @@ if(UTF8PROC_ENABLE_TESTING)
   target_link_libraries(printproperty utf8proc)
   add_executable(valid test/tests.h test/tests.c utf8proc.h test/valid.c)
   target_link_libraries(valid utf8proc)
-  add_test(testcase case)
-  add_test(testcustom custom)
-  add_test(testiterate iterate)
-  add_test(testmisc misc)
-  add_test(testprintproperty printproperty)
-  add_test(testvalid valid)
+  add_test(utf8proc.testcase case)
+  add_test(utf8proc.testcustom custom)
+  add_test(utf8proc.testiterate iterate)
+  add_test(utf8proc.testmisc misc)
+  add_test(utf8proc.testprintproperty printproperty)
+  add_test(utf8proc.testvalid valid)
+
   if (NOT WIN32)
     # Some test disabled, because they don't compile on Windows, missing getline, ...
     add_executable(charwidth test/tests.h test/tests.c utf8proc.h test/charwidth.c)
@@ -89,8 +111,8 @@ if(UTF8PROC_ENABLE_TESTING)
     target_link_libraries(graphemetest utf8proc)
     add_executable(normtest test/tests.h test/tests.c utf8proc.h test/normtest.c)
     target_link_libraries(normtest utf8proc)
-    add_test(testcharwidth charwidth)
-    #add_test(testgraphemetest graphemetest data/GraphemeBreakTest.txt)
-    #add_test(testnormtest normtest data/NormalizationTest.txt)
+    add_test(utf8proc.testcharwidth charwidth)
+    add_test(utf8proc.testgraphemetest graphemetest data/GraphemeBreakTest.txt)
+    add_test(utf8proc.testnormtest normtest data/NormalizationTest.txt)
   endif()
 endif()
