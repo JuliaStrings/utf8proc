@@ -42,7 +42,7 @@ int main(int argc, char **argv)
         if (si) {
             utf8proc_uint8_t utf8[1024]; /* copy src without 0xff grapheme separators */
             size_t i = 0, j = 0;
-            utf8proc_ssize_t glen;
+            utf8proc_ssize_t glen, k;
             utf8proc_uint8_t *g; /* utf8proc_map grapheme results */
             while (i < si) {
                 if (src[i] != '/')
@@ -58,9 +58,9 @@ int main(int argc, char **argv)
             else {
                  check(glen >= 0, "utf8proc_map error = %s",
                        utf8proc_errmsg(glen));
-                 for (i = 0; i <= glen; ++i)
-                      if (g[i] == 0xff)
-                          g[i] = '/'; /* easier-to-read output (/ is not in test strings) */
+                 for (k = 0; k <= glen; ++k)
+                      if (g[k] == 0xff)
+                          g[k] = '/'; /* easier-to-read output (/ is not in test strings) */
                  check(!strcmp((char*)g, (char*)src),
                        "grapheme mismatch: \"%s\" instead of \"%s\"", (char*)g, (char*)src);
             }
