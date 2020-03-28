@@ -28,3 +28,7 @@ test/iterate
 test/case
 test/custom
 /tmp/
+mingw_static
+mingw_shared
+msvc_shared
+msvc_static
