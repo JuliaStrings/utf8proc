@@ -5,7 +5,6 @@ int main(int argc, char **argv)
     char buf[8192];
     FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
     utf8proc_uint8_t src[1024];
-    int len;
 
     check(f != NULL, "error opening GraphemeBreakTest.txt");
     while (simple_getline(buf, f) > 0) {
@@ -30,7 +29,7 @@ int main(int argc, char **argv)
                 break;
             }
 	    else { /* hex-encoded codepoint */
-                len = encode((char*) (src + si), buf + bi) - 1;
+                size_t len = encode((char*) (src + si), buf + bi) - 1;
                 while (src[si]) ++si; /* advance to NUL termination */
                 bi += len;
             }
