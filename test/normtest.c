@@ -1,5 +1,4 @@
 #include "tests.h"
-#include "simple_getline.h"
 
 #define CHECK_NORM(NRM, norm, src) {                                 \
     char *src_norm = (char*) utf8proc_ ## NRM((utf8proc_uint8_t*) src);      \

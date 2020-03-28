@@ -1,10 +1,8 @@
 #include "tests.h"
-#include "simple_getline.h"
 
 int main(int argc, char **argv)
 {
     char buf[8192];
-    size_t bufsize = 0;
     FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
     utf8proc_uint8_t src[1024];
     int len;

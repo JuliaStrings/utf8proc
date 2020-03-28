@@ -44,3 +44,15 @@ size_t encode(char *dest, const char *buf)
           d += utf8proc_encode_char(c, (utf8proc_uint8_t *) (dest + d));
      }
 }
+
+/* simplistic, portable replacement for getline, sufficient for our tests */
+size_t simple_getline(char buf[8192], FILE *f) {
+    size_t i = 0;
+    while (i < 1023) {
+        int c = getc(f);
+        if (c == EOF || c == '\n') break;
+        buf[i++] = (char) c;
+    }
+    buf[i] = 0;
+    return i;
+}
