@@ -24,7 +24,7 @@ SOFLAG = -Wl,-soname
 # Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
 MAJOR=2
 MINOR=3
-PATCH=1
+PATCH=2
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
