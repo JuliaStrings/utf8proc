@@ -27,4 +27,5 @@ test/valid
 test/iterate
 test/case
 test/custom
+test/sizeofchar
 /tmp/
