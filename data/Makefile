@@ -22,10 +22,7 @@ CharWidths.txt: charwidths.jl EastAsianWidth.txt
 	$(JULIA) charwidths.jl > $@
 
 # Unicode data version (must also update utf8proc_unicode_version function)
-UNICODE_VERSION=12.1.0
-
-# Unicode emoji version (managed separately from UNICODE_VERSION)
-UNICODE_EMOJI_VERSION=12.0
+UNICODE_VERSION=13.0.0
 
 UnicodeData.txt:
 	$(CURL) $(CURLFLAGS) -o $@ -O http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/UnicodeData.txt
@@ -52,7 +49,7 @@ GraphemeBreakTest.txt:
 	$(CURL) $(CURLFLAGS) $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/auxiliary/GraphemeBreakTest.txt | $(PERL) -pe 's,÷,/,g;s,×,+,g' > $@
 
 emoji-data.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://unicode.org/Public/emoji/$(UNICODE_EMOJI_VERSION)/emoji-data.txt
+	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://unicode.org/Public/$(UNICODE_VERSION)/ucd/emoji/emoji-data.txt
 
 clean:
 	rm -f UnicodeData.txt EastAsianWidth.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt GraphemeBreakTest.txt CharWidths.txt emoji-data.txt

@@ -11,7 +11,7 @@ project (utf8proc C)
 # Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 2)
 set(SO_MINOR 3)
-set(SO_PATCH 1)
+set(SO_PATCH 2)
 
 option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
 option(UTF8PROC_ENABLE_TESTING "Enable testing of utf8proc" Off)
@@ -86,7 +86,7 @@ if(UTF8PROC_ENABLE_TESTING)
     COMMAND ${curl_cmd} ${curl_param} -o data/NormalizationTest.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/NormalizationTest.txt
     COMMAND ${curl_cmd} ${curl_param} -o data/GraphemeBreakTestOrg.txt -O http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/auxiliary/GraphemeBreakTest.txt
   )
-  execute_process(COMMAND bash -c "cat data/GraphemeBreakTestOrg.txt | /usr/bin/perl -pe 's,Ã·,/,g;s,Ã—,+,g'" OUTPUT_FILE data/GraphemeBreakTest.txt)
+  execute_process(COMMAND bash -c "cat data/GraphemeBreakTestOrg.txt | /usr/bin/perl -pe 's,÷,/,g;s,×,+,g'" OUTPUT_FILE data/GraphemeBreakTest.txt)
   execute_process(COMMAND bash -c "rm -f data/GraphemeBreakTestOrg.txt")
 
   add_executable(case test/tests.h test/tests.c utf8proc.h test/case.c)
@@ -109,15 +109,15 @@ if(UTF8PROC_ENABLE_TESTING)
   add_test(utf8proc.testvalid valid)
 
   if (NOT WIN32)
-    # Some test disabled, because they don't compile on Windows, missing getline, ...
+    # no wcwidth function on Windows
     add_executable(charwidth test/tests.h test/tests.c utf8proc.h test/charwidth.c)
     target_link_libraries(charwidth utf8proc)
-    add_executable(graphemetest test/tests.h test/tests.c utf8proc.h test/graphemetest.c)
-    target_link_libraries(graphemetest utf8proc)
-    add_executable(normtest test/tests.h test/tests.c utf8proc.h test/normtest.c)
-    target_link_libraries(normtest utf8proc)
     add_test(utf8proc.testcharwidth charwidth)
-    add_test(utf8proc.testgraphemetest graphemetest data/GraphemeBreakTest.txt)
-    add_test(utf8proc.testnormtest normtest data/NormalizationTest.txt)
   endif()
+  add_executable(graphemetest test/tests.h test/tests.c utf8proc.h test/graphemetest.c)
+  target_link_libraries(graphemetest utf8proc)
+  add_executable(normtest test/tests.h test/tests.c utf8proc.h test/normtest.c)
+  target_link_libraries(normtest utf8proc)
+  #add_test(utf8proc.testgraphemetest graphemetest data/GraphemeBreakTest.txt)
+  #add_test(utf8proc.testnormtest normtest data/NormalizationTest.txt)
 endif()

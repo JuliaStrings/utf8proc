@@ -60,7 +60,7 @@ The C library is found in this directory after successful compilation
 and is named `libutf8proc.a` (for the static library) and
 `libutf8proc.so` (for the dynamic library).
 
-The Unicode version supported is 12.1.0.
+The Unicode version supported is 13.0.0.
 
 For Unicode normalizations, the following options are used:
 
