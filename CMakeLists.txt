@@ -16,10 +16,18 @@ set(SO_PATCH 2)
 option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
 option(UTF8PROC_ENABLE_TESTING "Enable testing of utf8proc" Off)
 
-add_library (utf8proc
+set(UTF8PROC_FILES
   utf8proc.c
   utf8proc.h
 )
+
+if (BUILD_SHARED_LIBS AND MSVC)
+  set(UTF8PROC_WINDLL_SRCS
+    win32/utf8proc.rc
+  )
+endif ()
+
+add_library (utf8proc ${UTF8PROC_FILES} ${UTF8PROC_WINDLL_SRCS})
 
 # expose header path, for when this is part of a larger cmake project
 target_include_directories(utf8proc PUBLIC ../utf8proc)
