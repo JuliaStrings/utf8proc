@@ -60,7 +60,7 @@ zerowidth = Set{Int}() # categories that may contain zero-width chars
 push!(zerowidth, UTF8PROC_CATEGORY_MN)
 push!(zerowidth, UTF8PROC_CATEGORY_MC)
 push!(zerowidth, UTF8PROC_CATEGORY_ME)
-push!(zerowidth, UTF8PROC_CATEGORY_SK)
+# push!(zerowidth, UTF8PROC_CATEGORY_SK)  # see issue #167
 push!(zerowidth, UTF8PROC_CATEGORY_ZL)
 push!(zerowidth, UTF8PROC_CATEGORY_ZP)
 push!(zerowidth, UTF8PROC_CATEGORY_CC)

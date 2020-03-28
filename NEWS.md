@@ -1,5 +1,15 @@
 # utf8proc release history #
 
+## Version 2.5 ##
+
+2019-03-27
+
+- Unicode 13 support ([#179]).
+
+- No longer report zero width for category Sk ([#167]).
+
+- `cmake` support improvements ([#173]).
+
 ## Version 2.4 ##
 
 2019-05-10
@@ -382,3 +392,6 @@ Release of version 1.0.1
 [#152]: https://github.com/JuliaStrings/utf8proc/issues/152
 [#154]: https://github.com/JuliaStrings/utf8proc/issues/154
 [#156]: https://github.com/JuliaStrings/utf8proc/issues/156
+[#167]: https://github.com/JuliaStrings/utf8proc/issues/167
+[#173]: https://github.com/JuliaStrings/utf8proc/issues/173
+[#179]: https://github.com/JuliaStrings/utf8proc/issues/179
