@@ -18,12 +18,12 @@ int main(int argc, char **argv)
 
         while (buf[bi]) {
             bi = skipspaces(buf, bi);
-            if (buf[bi] == '/') { /* grapheme break */
+            if ((uint8_t)buf[bi] == 0xc3 && (uint8_t)buf[bi+1] == 0xb7) { /* U+00f7 = grapheme break */
                 src[si++] = '/';
-                bi++;
+                bi += 2;
             }
-            else if (buf[bi] == '+') { /* no break */
-                bi++;
+            else if ((uint8_t)buf[bi] == 0xc3 && (uint8_t)buf[bi+1] == 0x97) { /* U+00d7 = no break */
+                bi += 2;
             }
             else if (buf[bi] == '#') { /* start of comments */
                 break;
