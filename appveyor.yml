@@ -29,14 +29,12 @@ build_script:
       cd /c/projects/utf8proc &&
       mkdir mingw_static &&
       cd mingw_static &&
-      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DUTF8PROC_ENABLE_TESTING=On -G'MSYS Makefiles' &&
+      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -G'MSYS Makefiles' &&
       make &&
-      ctest &&
       mkdir ../mingw_shared &&
       cd ../mingw_shared &&
-      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON -DUTF8PROC_ENABLE_TESTING=On -G'MSYS Makefiles' &&
-      make &&
-      ctest
+      cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON -G'MSYS Makefiles' &&
+      make
       "
 
 on_finish:
