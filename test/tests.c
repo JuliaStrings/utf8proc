@@ -48,10 +48,10 @@ size_t encode(char *dest, const char *buf)
 /* simplistic, portable replacement for getline, sufficient for our tests */
 size_t simple_getline(char buf[8192], FILE *f) {
     size_t i = 0;
-    while (i < 1023) {
+    while (i < 8191) {
         int c = getc(f);
         if (c == EOF || c == '\n') break;
-        buf[i++] = (char) c;
+        buf[i++] = (char) ((uint8_t) c);
     }
     buf[i] = 0;
     return i;
