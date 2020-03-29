@@ -62,12 +62,32 @@ if (UTF8PROC_INSTALL)
 endif()
 
 if(UTF8PROC_ENABLE_TESTING)
+  function(replaceinplace IN_FILE)
+    # create list of lines form the contens of a file
+    file(STRINGS ${IN_FILE} LINES NEWLINE_CONSUME ENCODING UTF-8)
+  
+    # overwrite the file....
+    file(WRITE ${IN_FILE} "")
+  
+    # loop through the lines,
+    # remove unwanted parts 
+    # and write the (changed) line ...
+    foreach(LINE IN LISTS LINES)
+      #TODO Windows UTF-8 problem
+      #string(REPLACE "®" "(R)" REPLACED00 "${LINE}")
+      #string(REPLACE "©" "(C)" REPLACED0 "${REPLACED00}")
+      string(REPLACE "÷" "/" REPLACED1 "${LINE}")
+      string(REPLACE "×" "+" REPLACED2 "${REPLACED1}")
+      file(APPEND ${IN_FILE} "${REPLACED2}")
+    endforeach()
+  endfunction()
+
   enable_testing()
   file(MAKE_DIRECTORY data)
   set(UNICODE_VERSION 13.0.0)
   file(DOWNLOAD http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/NormalizationTest.txt data/NormalizationTest.txt SHOW_PROGRESS)
-  file(DOWNLOAD http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/auxiliary/GraphemeBreakTest.txt data/GraphemeBreakTestOrg.txt SHOW_PROGRESS)
-  execute_process(COMMAND bash -c "cat data/GraphemeBreakTestOrg.txt | /usr/bin/perl -pe 's,÷,/,g;s,×,+,g' && rm -f data/GraphemeBreakTestOrg.txt" OUTPUT_FILE data/GraphemeBreakTest.txt)
+  file(DOWNLOAD http://www.unicode.org/Public/${UNICODE_VERSION}/ucd/auxiliary/GraphemeBreakTest.txt data/GraphemeBreakTest.txt SHOW_PROGRESS)
+  replaceinplace(${CMAKE_CURRENT_BINARY_DIR}/data/GraphemeBreakTest.txt)
   add_executable(case test/tests.h test/tests.c utf8proc.h test/case.c)
   target_link_libraries(case utf8proc)
   add_executable(custom test/tests.h test/tests.c utf8proc.h test/custom.c)
@@ -97,8 +117,6 @@ if(UTF8PROC_ENABLE_TESTING)
   target_link_libraries(graphemetest utf8proc)
   add_executable(normtest test/tests.h test/tests.c utf8proc.h test/normtest.c)
   target_link_libraries(normtest utf8proc)
-  if (NOT MINGW)
-    add_test(utf8proc.testgraphemetest graphemetest data/GraphemeBreakTest.txt)
-  endif()
+  add_test(utf8proc.testgraphemetest graphemetest data/GraphemeBreakTest.txt)
   add_test(utf8proc.testnormtest normtest data/NormalizationTest.txt)
 endif()
