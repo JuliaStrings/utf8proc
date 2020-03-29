@@ -35,6 +35,7 @@ static void issue102(void) /* #128 */
     printf("NFKC_Casefold \"%s\" -> \"%s\" vs. \"%s\"\n", (char*)input, (char*)output, (char*)correct);
     check(strlen((char*) output) == 7, "incorrect NFKC_Casefold length");
     check(!memcmp(correct, output, 8), "incorrect NFKC_Casefold data");
+    free(output);
 }
 
 int main(void)

@@ -63,10 +63,13 @@ int main(int argc, char **argv)
            "incorrect 0x00df/0x1e9e case conversions");
      utf8proc_uint8_t str_00df[] = {0xc3, 0x9f, 0x00};
      utf8proc_uint8_t str_1e9e[] = {0xe1, 0xba, 0x9e, 0x00};
-     check(!strcmp((char*)utf8proc_NFKC_Casefold(str_00df), "ss") &&
-           !strcmp((char*)utf8proc_NFKC_Casefold(str_1e9e), "ss"),
+     utf8proc_uint8_t *s1 = utf8proc_NFKC_Casefold(str_00df);
+     utf8proc_uint8_t *s2 = utf8proc_NFKC_Casefold(str_1e9e);
+     check(!strcmp((char*)s1, "ss") &&
+           !strcmp((char*)s2, "ss"),
            "incorrect 0x00df/0x1e9e casefold normalization");
-
+     free(s1);
+     free(s2);
      printf("More up-to-date than OS unicode tables for %d tests.\n", better);
      printf("utf8proc case conversion tests SUCCEEDED.\n");
      return 0;
