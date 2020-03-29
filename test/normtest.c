@@ -1,17 +1,17 @@
 #include "tests.h"
 
 #define CHECK_NORM(NRM, norm, src) {                                 \
-    char *src_norm = (char*) utf8proc_ ## NRM((utf8proc_uint8_t*) src);      \
-    check(!strcmp(norm, src_norm),                                  \
+    unsigned char *src_norm = (unsigned char*) utf8proc_ ## NRM((utf8proc_uint8_t*) src);      \
+    check(!strcmp((char *) norm, (char *) src_norm),                                  \
           "normalization failed for %s -> %s", src, norm);          \
     free(src_norm);                                                 \
 }
 
 int main(int argc, char **argv)
 {
-     char buf[8192];
+     unsigned char buf[8192];
      FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
-     char source[1024], NFC[1024], NFD[1024], NFKC[1024], NFKD[1024];
+     unsigned char source[1024], NFC[1024], NFD[1024], NFKC[1024], NFKD[1024];
 
      check(f != NULL, "error opening NormalizationTest.txt");
      while (simple_getline(buf, f) > 0) {

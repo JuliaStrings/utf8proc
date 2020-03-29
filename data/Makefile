@@ -25,31 +25,31 @@ CharWidths.txt: charwidths.jl EastAsianWidth.txt
 UNICODE_VERSION=13.0.0
 
 UnicodeData.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/UnicodeData.txt
+	$(CURL) $(CURLFLAGS) -o $@ http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/UnicodeData.txt
 
 EastAsianWidth.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/EastAsianWidth.txt
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/EastAsianWidth.txt
 
 GraphemeBreakProperty.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/auxiliary/GraphemeBreakProperty.txt
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/auxiliary/GraphemeBreakProperty.txt
 
 DerivedCoreProperties.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/DerivedCoreProperties.txt
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/DerivedCoreProperties.txt
 
 CompositionExclusions.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/CompositionExclusions.txt
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/CompositionExclusions.txt
 
 CaseFolding.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/CaseFolding.txt
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/CaseFolding.txt
 
 NormalizationTest.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/NormalizationTest.txt
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/NormalizationTest.txt
 
 GraphemeBreakTest.txt:
-	$(CURL) $(CURLFLAGS) $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/auxiliary/GraphemeBreakTest.txt | $(PERL) -pe 's,÷,/,g;s,×,+,g' > $@
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/auxiliary/GraphemeBreakTest.txt
 
 emoji-data.txt:
-	$(CURL) $(CURLFLAGS) -o $@ -O $(URLCACHE)http://unicode.org/Public/$(UNICODE_VERSION)/ucd/emoji/emoji-data.txt
+	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)http://unicode.org/Public/$(UNICODE_VERSION)/ucd/emoji/emoji-data.txt
 
 clean:
 	rm -f UnicodeData.txt EastAsianWidth.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt GraphemeBreakTest.txt CharWidths.txt emoji-data.txt

@@ -2,7 +2,7 @@
 
 int main(int argc, char **argv)
 {
-    char buf[8192];
+    unsigned char buf[8192];
     FILE *f = argc > 1 ? fopen(argv[1], "r") : NULL;
     utf8proc_uint8_t src[1024];
 
@@ -18,18 +18,18 @@ int main(int argc, char **argv)
 
         while (buf[bi]) {
             bi = skipspaces(buf, bi);
-            if (buf[bi] == '/') { /* grapheme break */
+            if (buf[bi] == 0xc3 && buf[bi+1] == 0xb7) { /* U+00f7 = grapheme break */
                 src[si++] = '/';
-                bi++;
+                bi += 2;
             }
-            else if (buf[bi] == '+') { /* no break */
-                bi++;
+            else if (buf[bi] == 0xc3 && buf[bi+1] == 0x97) { /* U+00d7 = no break */
+                bi += 2;
             }
             else if (buf[bi] == '#') { /* start of comments */
                 break;
             }
 	    else { /* hex-encoded codepoint */
-                size_t len = encode((char*) (src + si), buf + bi) - 1;
+                size_t len = encode((unsigned char*) (src + si), buf + bi) - 1;
                 while (src[si]) ++si; /* advance to NUL termination */
                 bi += len;
             }
