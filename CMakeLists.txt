@@ -22,7 +22,7 @@ add_library (utf8proc
 )
 
 # expose header path, for when this is part of a larger cmake project
-target_include_directories(utf8proc PUBLIC ../utf8proc)
+target_include_directories(utf8proc PUBLIC .)
 
 if (BUILD_SHARED_LIBS)
   # Building shared library
