@@ -27,7 +27,7 @@
  *  Unicode data files.
  *
  *  The original data files are available at
- *  http://www.unicode.org/Public/UNIDATA/
+ *  https://www.unicode.org/Public/UNIDATA/
  *
  *  Please notice the copyright statement in the file "utf8proc_data.c".
  */
