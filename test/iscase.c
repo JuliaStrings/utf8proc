@@ -25,19 +25,26 @@ int test_iscase(const char *fname, int (*iscase)(utf8proc_int32_t),
 {
      FILE *f = fopen(fname, "r");
      int lines = 0, tests = 0, success = 1;
+     utf8proc_int32_t c = 0;
 
      check(f != NULL, "error opening data file \"%s\"\n", fname);
 
      while (success && !feof(f)) {
-          utf8proc_int32_t c, start, end;
+          utf8proc_int32_t start, end;
           if (read_range(f, &start, &end)) {
-               for (c = start; c <= end; ++c) {
+               for (; c < start; ++c) {
+                    check(!iscase(c), "failed !iscase(%04x) in %s\n", c, fname);
+               }
+               for (; c <= end; ++c) {
                     check(iscase(c), "failed iscase(%04x) in %s\n", c, fname);
                     check(thatcase(c) == c, "inconsistent thatcase(%04x) in %s\n", c, fname);
                     ++tests;
                }
           }
           ++lines;
+     }
+     for (; c <= 0x110000; ++c) {
+          check(!iscase(c), "failed !iscase(%04x) in %s\n", c, fname);
      }
 
      printf("Checked %d characters from %d lines of %s\n", tests, lines, fname);

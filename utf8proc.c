@@ -393,7 +393,7 @@ UTF8PROC_DLLEXPORT int utf8proc_islower(utf8proc_int32_t c)
 UTF8PROC_DLLEXPORT int utf8proc_isupper(utf8proc_int32_t c)
 {
   const utf8proc_property_t *p = utf8proc_get_property(c);
-  return p->lowercase_seqindex != p->uppercase_seqindex && p->uppercase_seqindex == UINT16_MAX;
+  return p->lowercase_seqindex != p->uppercase_seqindex && p->uppercase_seqindex == UINT16_MAX && p->category != UTF8PROC_CATEGORY_LT;
 }
 
 /* return a character width analogous to wcwidth (except portable and
