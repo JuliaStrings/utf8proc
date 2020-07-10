@@ -636,6 +636,18 @@ UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_toupper(utf8proc_int32_t c);
 UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_totitle(utf8proc_int32_t c);
 
 /**
+ * Given a codepoint `c`, return `1` if the codepoint corresponds to a lower-case character
+ * and `0` otherwise.
+ */
+UTF8PROC_DLLEXPORT int utf8proc_islower(utf8proc_int32_t c);
+
+/**
+ * Given a codepoint `c`, return `1` if the codepoint corresponds to an upper-case character
+ * and `0` otherwise.
+ */
+UTF8PROC_DLLEXPORT int utf8proc_isupper(utf8proc_int32_t c);
+
+/**
  * Given a codepoint, return a character width analogous to `wcwidth(codepoint)`,
  * except that a width of 0 is returned for non-printable codepoints
  * instead of -1 as in `wcwidth`.
