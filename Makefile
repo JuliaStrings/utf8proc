@@ -129,6 +129,12 @@ data/NormalizationTest.txt:
 data/GraphemeBreakTest.txt:
 	$(MAKE) -C data GraphemeBreakTest.txt
 
+data/Lowercase.txt:
+	$(MAKE) -C data Lowercase.txt
+
+data/Uppercase.txt:
+	$(MAKE) -C data Uppercase.txt
+
 test/tests.o: test/tests.c test/tests.h utf8proc.h
 	$(CC) $(UCFLAGS) -c -o test/tests.o test/tests.c
 
@@ -150,6 +156,9 @@ test/valid: test/valid.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 test/iterate: test/iterate.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) $(LDFLAGS) test/iterate.c test/tests.o utf8proc.o -o $@
 
+test/iscase: test/iscase.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) $(LDFLAGS) test/iscase.c test/tests.o utf8proc.o -o $@
+
 test/case: test/case.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) $(LDFLAGS) test/case.c test/tests.o utf8proc.o -o $@
 
@@ -159,7 +168,7 @@ test/custom: test/custom.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) $(LDFLAGS) -DUNICODE_VERSION='"'`$(PERL) -ne "/^UNICODE_VERSION=/ and print $$';" data/Makefile`'"' test/misc.c test/tests.o utf8proc.o -o $@
 
-check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
+check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
@@ -168,4 +177,5 @@ check: test/normtest data/NormalizationTest.txt test/graphemetest data/GraphemeB
 	test/valid
 	test/iterate
 	test/case
+	test/iscase data/Lowercase.txt data/Uppercase.txt
 	test/custom
