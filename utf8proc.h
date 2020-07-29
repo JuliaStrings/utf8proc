@@ -657,6 +657,9 @@ UTF8PROC_DLLEXPORT utf8proc_category_t utf8proc_category(utf8proc_int32_t codepo
  */
 UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t codepoint);
 
+
+#ifndef UTF8PROC_NO_ALLOC
+
 /**
  * Maps the given UTF-8 string pointed to by `str` to a new UTF-8
  * string, allocated dynamically by `malloc` and returned via `dstptr`.
@@ -713,6 +716,8 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC(const utf8proc_uint8_t *str);
  **/
 UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_Casefold(const utf8proc_uint8_t *str);
 /** @} */
+
+#endif
 
 #ifdef __cplusplus
 }
