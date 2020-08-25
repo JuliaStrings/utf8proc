@@ -77,6 +77,26 @@ $ignorable_list.each_line do |entry|
   end
 end
 
+$uppercase_list = File.read("DerivedCoreProperties.txt")[/# Derived Property: Uppercase.*?# Total code points:/m]
+$uppercase = []
+$uppercase_list.each_line do |entry|
+  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
+    $1.hex.upto($2.hex) { |e2| $uppercase << e2 }
+  elsif entry =~ /^[0-9A-F]+/
+    $uppercase << $&.hex
+  end
+end
+
+$lowercase_list = File.read("DerivedCoreProperties.txt")[/# Derived Property: Lowercase.*?# Total code points:/m]
+$lowercase = []
+$lowercase_list.each_line do |entry|
+  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
+    $1.hex.upto($2.hex) { |e2| $lowercase << e2 }
+  elsif entry =~ /^[0-9A-F]+/
+    $lowercase << $&.hex
+  end
+end
+
 $grapheme_boundclass_list = File.read("GraphemeBreakProperty.txt")
 $grapheme_boundclass = Hash.new("UTF8PROC_BOUNDCLASS_OTHER")
 $grapheme_boundclass_list.each_line do |entry|
@@ -204,8 +224,10 @@ class UnicodeChar
                          $8.split.collect { |element| element.hex }
     @bidi_mirrored     = ($13=='Y') ? true : false
     # issue #130: use nonstandard uppercase ß -> ẞ
-    @uppercase_mapping = ($16=='') ? (code==0x00df ? 0x1e9e : nil) : $16.hex
-    @lowercase_mapping = ($17=='') ? nil : $17.hex
+    # issue #195: if character is uppercase but has no lowercase mapping,
+    #             then make lowercase mapping = itself (vice versa for lowercase)
+    @uppercase_mapping = ($16=='') ? (code==0x00df ? 0x1e9e : ($17=='' && $lowercase.include?(code) ? code : nil)) : $16.hex
+    @lowercase_mapping = ($17=='') ? ($16=='' && $uppercase.include?(code) ? code : nil) : $17.hex
     @titlecase_mapping = ($18=='') ? (code==0x00df ? 0x1e9e : nil) : $18.hex
   end
   def case_folding

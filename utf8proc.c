@@ -384,6 +384,18 @@ UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_totitle(utf8proc_int32_t c)
   return cu != UINT16_MAX ? seqindex_decode_index(cu) : c;
 }
 
+UTF8PROC_DLLEXPORT int utf8proc_islower(utf8proc_int32_t c)
+{
+  const utf8proc_property_t *p = utf8proc_get_property(c);
+  return p->lowercase_seqindex != p->uppercase_seqindex && p->lowercase_seqindex == UINT16_MAX;
+}
+
+UTF8PROC_DLLEXPORT int utf8proc_isupper(utf8proc_int32_t c)
+{
+  const utf8proc_property_t *p = utf8proc_get_property(c);
+  return p->lowercase_seqindex != p->uppercase_seqindex && p->uppercase_seqindex == UINT16_MAX && p->category != UTF8PROC_CATEGORY_LT;
+}
+
 /* return a character width analogous to wcwidth (except portable and
    hopefully less buggy than most system wcwidth functions). */
 UTF8PROC_DLLEXPORT int utf8proc_charwidth(utf8proc_int32_t c) {

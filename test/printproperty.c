@@ -27,9 +27,9 @@ int main(int argc, char **argv)
             "  combining_class = %d\n"
             "  bidi_class = %d\n"
             "  decomp_type = %d\n"
-            "  uppercase_mapping = %x\n"
-            "  lowercase_mapping = %x\n"
-            "  titlecase_mapping = %x\n"
+            "  uppercase_mapping = %04x (seqindex %04x)%s\n"
+            "  lowercase_mapping = %04x (seqindex %04x)%s\n"
+            "  titlecase_mapping = %04x (seqindex %04x)\n"
             "  casefold = %s\n"
             "  comb_index = %d\n"
             "  bidi_mirrored = %d\n"
@@ -43,9 +43,9 @@ int main(int argc, char **argv)
         p->combining_class,
         p->bidi_class,
         p->decomp_type,
-        utf8proc_toupper(c),
-        utf8proc_tolower(c),
-        utf8proc_totitle(c),
+        utf8proc_toupper(c), p->uppercase_seqindex, utf8proc_isupper(c) ? " (isupper)" : "",
+        utf8proc_tolower(c), p->lowercase_seqindex, utf8proc_islower(c) ? " (islower)" : "",
+        utf8proc_totitle(c), p->titlecase_seqindex,
         (char *) map,
         p->comb_index,
         p->bidi_mirrored,
