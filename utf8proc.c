@@ -177,25 +177,31 @@ UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_codepoint_valid(utf8proc_int32_t uc) {
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_encode_char(utf8proc_int32_t uc, utf8proc_uint8_t *dst) {
   if (uc < 0x00) {
     return 0;
-  } else if (uc < 0x80) {
-    dst[0] = (utf8proc_uint8_t) uc;
+  } else if (uc <= 0x7F) {
+    dst[0] = (utf8proc_uint8_t)uc;
     return 1;
-  } else if (uc < 0x800) {
-    dst[0] = (utf8proc_uint8_t)(0xC0 + (uc >> 6));
-    dst[1] = (utf8proc_uint8_t)(0x80 + (uc & 0x3F));
+  } else if (uc <= 0x07FF) {
+    // BITS IN:  00000AAA AABBBBBB
+    dst[0] = (utf8proc_uint8_t)(0xC0 | (uc >> 6));
+    dst[1] = (utf8proc_uint8_t)(0x80 | (uc & 0x3F));
+    // BITS OUT: 110AAAAA 10BBBBBB
     return 2;
   // Note: we allow encoding 0xd800-0xdfff here, so as not to change
   // the API, however, these are actually invalid in UTF-8
-  } else if (uc < 0x10000) {
-    dst[0] = (utf8proc_uint8_t)(0xE0 + (uc >> 12));
-    dst[1] = (utf8proc_uint8_t)(0x80 + ((uc >> 6) & 0x3F));
-    dst[2] = (utf8proc_uint8_t)(0x80 + (uc & 0x3F));
+  } else if (uc <= 0xFFFF) {
+    // BITS IN:  AAAABBBB BBCCCCCC
+    dst[0] = (utf8proc_uint8_t)(0xE0 | (uc >> 12));
+    dst[1] = (utf8proc_uint8_t)(0x80 | ((uc >> 6) & 0x3F));
+    dst[2] = (utf8proc_uint8_t)(0x80 | (uc & 0x3F));
+    // BITS OUT: 1110AAAA 10BBBBBB 10CCCCCC
     return 3;
-  } else if (uc < 0x110000) {
-    dst[0] = (utf8proc_uint8_t)(0xF0 + (uc >> 18));
-    dst[1] = (utf8proc_uint8_t)(0x80 + ((uc >> 12) & 0x3F));
-    dst[2] = (utf8proc_uint8_t)(0x80 + ((uc >> 6) & 0x3F));
-    dst[3] = (utf8proc_uint8_t)(0x80 + (uc & 0x3F));
+  } else if (uc <= 0x10FFFF) {
+    // BITS IN:  000AAABB BBBBCCCC CCDDDDDD
+    dst[0] = (utf8proc_uint8_t)(0xF0 | (uc >> 18));
+    dst[1] = (utf8proc_uint8_t)(0x80 | ((uc >> 12) & 0x3F));
+    dst[2] = (utf8proc_uint8_t)(0x80 | ((uc >> 6) & 0x3F));
+    dst[3] = (utf8proc_uint8_t)(0x80 | (uc & 0x3F));
+    // BITS OUT: 11110AAA 10BBBBBB 10CCCCCC 10DDDDDD
     return 4;
   } else return 0;
 }
@@ -208,23 +214,23 @@ static utf8proc_ssize_t charbound_encode_char(utf8proc_int32_t uc, utf8proc_uint
         return 1;
       }
       return 0;
-   } else if (uc < 0x80) {
+   } else if (uc <= 0x7F) {
       dst[0] = (utf8proc_uint8_t)uc;
       return 1;
-   } else if (uc < 0x800) {
-      dst[0] = (utf8proc_uint8_t)(0xC0 + (uc >> 6));
-      dst[1] = (utf8proc_uint8_t)(0x80 + (uc & 0x3F));
+   } else if (uc <= 0x07FF) {
+      dst[0] = (utf8proc_uint8_t)(0xC0 | (uc >> 6));
+      dst[1] = (utf8proc_uint8_t)(0x80 | (uc & 0x3F));
       return 2;
-   } else if (uc < 0x10000) {
-      dst[0] = (utf8proc_uint8_t)(0xE0 + (uc >> 12));
-      dst[1] = (utf8proc_uint8_t)(0x80 + ((uc >> 6) & 0x3F));
-      dst[2] = (utf8proc_uint8_t)(0x80 + (uc & 0x3F));
+   } else if (uc <= 0xFFFF) {
+      dst[0] = (utf8proc_uint8_t)(0xE0 | (uc >> 12));
+      dst[1] = (utf8proc_uint8_t)(0x80 | ((uc >> 6) & 0x3F));
+      dst[2] = (utf8proc_uint8_t)(0x80 | (uc & 0x3F));
       return 3;
-   } else if (uc < 0x110000) {
-      dst[0] = (utf8proc_uint8_t)(0xF0 + (uc >> 18));
-      dst[1] = (utf8proc_uint8_t)(0x80 + ((uc >> 12) & 0x3F));
-      dst[2] = (utf8proc_uint8_t)(0x80 + ((uc >> 6) & 0x3F));
-      dst[3] = (utf8proc_uint8_t)(0x80 + (uc & 0x3F));
+   } else if (uc <= 0x10FFFF) {
+      dst[0] = (utf8proc_uint8_t)(0xF0 | (uc >> 18));
+      dst[1] = (utf8proc_uint8_t)(0x80 | ((uc >> 12) & 0x3F));
+      dst[2] = (utf8proc_uint8_t)(0x80 | ((uc >> 6) & 0x3F));
+      dst[3] = (utf8proc_uint8_t)(0x80 | (uc & 0x3F));
       return 4;
    } else return 0;
 }
