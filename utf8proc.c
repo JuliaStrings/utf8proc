@@ -310,6 +310,8 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t 
       else
         *state = tbc;
     }
+    else if (*state == UTF8PROC_BOUNDCLASS_EXTEND && tbc == UTF8PROC_BOUNDCLASS_ZWJ)
++       *state = UTF8PROC_BOUNDCLASS_E_ZWG;     
     else
       *state = tbc;
   }
