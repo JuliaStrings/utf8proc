@@ -301,6 +301,8 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t 
     // forbidden by a different rule such as GB9).
     if (*state == tbc && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
       *state = UTF8PROC_BOUNDCLASS_OTHER;
+    else if (*state == UTF8PROC_BOUNDCLASS_START && lbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
+       *state = UTF8PROC_BOUNDCLASS_OTHER;
     // Special support for GB11 (emoji extend* zwj / emoji)
     else if (*state == UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC) {
       if (tbc == UTF8PROC_BOUNDCLASS_EXTEND) // fold EXTEND codepoints into emoji
@@ -311,7 +313,7 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t 
         *state = tbc;
     }
     else if (*state == UTF8PROC_BOUNDCLASS_EXTEND && tbc == UTF8PROC_BOUNDCLASS_ZWJ)
-+       *state = UTF8PROC_BOUNDCLASS_E_ZWG;     
+       *state = UTF8PROC_BOUNDCLASS_E_ZWG;
     else
       *state = tbc;
   }

@@ -80,5 +80,51 @@ int main(int argc, char **argv)
         free(g);
     };
 
+    /*https://github.com/JuliaLang/julia/issues/37680*/
+    {
+        // Two swedish flags after each other
+        utf8proc_int32_t double_sweden[] = {
+            0x0001f1f8, 0x0001f1ea, 0x0001f1f8, 0x0001f1ea
+        };
+        // facepalm + pale skin + zwj + male sign + FE0F
+        utf8proc_int32_t facepalm[] ={
+           0x0001f926, 0x0001f3fc, 0x0000200d, 0x00002642, 0x0000fe0f
+        };
+        // man face + pale skin + zwj + hand holding + zwj + man face + dark skin
+        utf8proc_int32_t family[] = {
+            0x0001f468, 0x0001f3fb, 0x0000200d, 0x00001f91d, 0x0000200d, 0x0001f468, 0x0001f3fd
+        };
+        bool expected_double_sweden[] = {false, true, false};
+        bool expected_facepalm[] = {false, false, false, false};
+        bool expected_family[] = {false, false, false, false, false, false};
+        bool results_double_sweden[4];
+        bool results_facepalm[5];
+        bool results_family[6];
+
+        utf8proc_int32_t state = 0;
+        for (int i = 0; i < 3; i++) {
+            utf8proc_int32_t c1 = double_sweden[i];
+            utf8proc_int32_t c2 = double_sweden[i+1];
+            results_double_sweden[i] = utf8proc_grapheme_break_stateful(c1, c2, &state);
+            check(results_double_sweden[i] == expected_double_sweden[i], "Incorrect grapheme break on initial repeated flags");
+        }
+
+        state = 0;
+        for (int i = 0; i < 4; i++) {
+            utf8proc_int32_t c1 = facepalm[i];
+            utf8proc_int32_t c2 = facepalm[i+1];
+            results_facepalm[i] = utf8proc_grapheme_break_stateful(c1, c2, &state);
+            check(results_facepalm[i] == expected_facepalm[i], "Incorrect grapheme break on initial extended + zwj emoji");
+        }
+
+        state = 0;
+        for (int i = 0; i < 5; i++) {
+            utf8proc_int32_t c1 = family[i];
+            utf8proc_int32_t c2 = family[i+1];
+            results_family[i] = utf8proc_grapheme_break_stateful(c1, c2, &state);
+            check(results_family[i] == expected_family[i], "Incorrect grapheme break on initial extended + zwj emoji");
+        }
+    }
+
     return 0;
 }
