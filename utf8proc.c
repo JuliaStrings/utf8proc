@@ -290,8 +290,11 @@ static utf8proc_bool grapheme_break_simple(int lbc, int tbc) {
 
 static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t *state)
 {
-  int lbc_override = ((state && *state != UTF8PROC_BOUNDCLASS_START)
-                      ? *state : lbc);
+  int lbc_override;
+  if (*state == UTF8PROC_BOUNDCLASS_START)
+    *state = lbc_override = lbc; 
+  else
+    lbc_override = *state;
   utf8proc_bool break_permitted = grapheme_break_simple(lbc_override, tbc);
   if (state) {
     // Special support for GB 12/13 made possible by GB999. After two RI
@@ -299,9 +302,8 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t 
     // second RI's bound class to UTF8PROC_BOUNDCLASS_OTHER, to force a break
     // after that character according to GB999 (unless of course such a break is
     // forbidden by a different rule such as GB9).
-    if (tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR && 
-        (*state == tbc || (*state == UTF8PROC_BOUNDCLASS_START && lbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)))
-        *state = UTF8PROC_BOUNDCLASS_OTHER;
+    if (*state == tbc && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
+      *state = UTF8PROC_BOUNDCLASS_OTHER;
     // Special support for GB11 (emoji extend* zwj / emoji)
     else if (*state == UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC) {
       if (tbc == UTF8PROC_BOUNDCLASS_EXTEND) // fold EXTEND codepoints into emoji
@@ -311,8 +313,6 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t 
       else
         *state = tbc;
     }
-    else if (*state == UTF8PROC_BOUNDCLASS_EXTEND && tbc == UTF8PROC_BOUNDCLASS_ZWJ)
-       *state = UTF8PROC_BOUNDCLASS_E_ZWG;
     else
       *state = tbc;
   }
