@@ -38,7 +38,7 @@ int main(int argc, char **argv)
             --si; /* no break after final grapheme */
         src[si] = 0; /* NUL-terminate */
 
-        if (si) {
+        if (si) { /* test utf8proc_map */
             utf8proc_uint8_t utf8[1024]; /* copy src without 0xff grapheme separators */
             size_t i = 0, j = 0;
             utf8proc_ssize_t glen, k;
@@ -64,6 +64,27 @@ int main(int argc, char **argv)
                        "grapheme mismatch: \"%s\" instead of \"%s\"", (char*)g, (char*)src);
             }
             free(g);
+        }
+
+        if (si) { /* test manual calls to utf8proc_grapheme_break_stateful */
+            utf8proc_int32_t state = 0, prev_codepoint = 0;
+            size_t i = 0;
+            utf8proc_bool expectbreak = false;
+            do {
+                utf8proc_int32_t codepoint;
+                i += utf8proc_iterate(src + i, si - i, &codepoint);
+                check(codepoint >= 0, "invalid UTF-8 data");
+                if (codepoint == 0x002F)
+                    expectbreak = true;
+                else {
+                    if (prev_codepoint != 0) {
+                        check(expectbreak == utf8proc_grapheme_break_stateful(prev_codepoint, codepoint, &state),
+                              "grapheme mismatch: between 0x%04x and 0x%04x in \"%s\"", prev_codepoint, codepoint, (char*) src);
+                    }
+                    expectbreak = false;
+                    prev_codepoint = codepoint;
+                }
+            } while (i < si);
         }
     }
     fclose(f);
@@ -97,34 +118,56 @@ int main(int argc, char **argv)
         bool expected_double_sweden[] = {false, true, false};
         bool expected_facepalm[] = {false, false, false, false};
         bool expected_family[] = {false, false, false, false, false, false};
-        bool results_double_sweden[4];
-        bool results_facepalm[5];
-        bool results_family[6];
 
-        utf8proc_int32_t state = 0;
-        for (int i = 0; i < 3; i++) {
-            utf8proc_int32_t c1 = double_sweden[i];
-            utf8proc_int32_t c2 = double_sweden[i+1];
-            results_double_sweden[i] = utf8proc_grapheme_break_stateful(c1, c2, &state);
-            check(results_double_sweden[i] == expected_double_sweden[i], "Incorrect grapheme break on initial repeated flags");
-        }
+        utf8proc_int32_t *test_codepoints[] = {double_sweden, facepalm, family};
+        bool *test_expected[] = {expected_double_sweden, expected_facepalm, expected_family};
+        size_t itest, test_len[] = {4, 5, 6};
 
-        state = 0;
-        for (int i = 0; i < 4; i++) {
-            utf8proc_int32_t c1 = facepalm[i];
-            utf8proc_int32_t c2 = facepalm[i+1];
-            results_facepalm[i] = utf8proc_grapheme_break_stateful(c1, c2, &state);
-            check(results_facepalm[i] == expected_facepalm[i], "Incorrect grapheme break on initial extended + zwj emoji");
-        }
+        for (itest = 0; itest < sizeof(test_len) / sizeof(size_t); ++itest) {
+            utf8proc_uint8_t test_str[256];
+            utf8proc_int32_t j = 0, state = 0;
+            size_t i, break_count = 0;
+            utf8proc_ssize_t glen, gi;
+            utf8proc_uint8_t *g; /* utf8proc_map grapheme results */
 
-        state = 0;
-        for (int i = 0; i < 5; i++) {
-            utf8proc_int32_t c1 = family[i];
-            utf8proc_int32_t c2 = family[i+1];
-            results_family[i] = utf8proc_grapheme_break_stateful(c1, c2, &state);
-            check(results_family[i] == expected_family[i], "Incorrect grapheme break on initial extended + zwj emoji");
+            for (i = 0; i < test_len[itest]; ++i)
+                j += utf8proc_encode_char(test_codepoints[itest][i], test_str+j);
+            test_str[j] = 0;
+
+            printf("grapheme regression test for \"%s\"...\n", (char*) test_str);
+
+            /* test manual utf8proc_grapheme_break_stateful calls: */
+            for (i = 0; i < test_len[itest]-1; ++i) {
+                utf8proc_int32_t c1 = test_codepoints[itest][i];
+                utf8proc_int32_t c2 = test_codepoints[itest][i+1];
+                bool break_found = utf8proc_grapheme_break_stateful(c1, c2, &state);
+                break_count += break_found;
+                check(break_found == test_expected[itest][i],
+                      "incorrect grapheme between 0x%04x and 0x%04x in \"%s\"", c1, c2, (char*) test_str);
+            }
+
+            /* test utf8proc_map: */
+            glen = utf8proc_map(test_str, j, &g, UTF8PROC_CHARBOUND);
+            check(glen > 0 && g[0] == 0xff, "invalid UTF-8 in test");
+            for (gi = 0; gi < glen; ++gi)
+                g[gi] = g[gi] == 0xff ? '/' : g[gi]; /* easier to debug with /, for printing */
+            gi = i = 0;
+            while (gi < glen && i < test_len[itest]) {
+                utf8proc_int32_t c;
+                gi += g[gi] == '/';
+                gi += utf8proc_iterate(g+gi, glen - gi, &c); /* skip first char */
+                if (i < test_len[itest]-1)
+                    check(test_expected[itest][i] == (g[gi] == '/'), "incorrect break after 0x%04x in \"%s\"", c, (char*)test_str);
+                else
+                    check(g[gi] == 0, "missing null terminator");
+                ++i;
+            }
+            check(gi == glen && i == test_len[itest], "length mismatch %d/%d vs. %d in \"%s\" test", (int)gi, (int)glen, (int)i, (char*)test_str);
+            free(g);
         }
     }
+
+    printf("Passed regression tests!\n");
 
     return 0;
 }
