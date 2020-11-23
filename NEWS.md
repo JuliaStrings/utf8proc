@@ -1,5 +1,15 @@
 # utf8proc release history #
 
+## Version 2.6 ##
+
+2020-11-23
+
+ - New `utf8proc_islower` and `utf8proc_isupper` functions ([#196]).
+
+ - Bugfix for manual calls to `grapheme_break_extended` for initial characters ([#205]).
+
+ - Various build and portability improvements.
+
 ## Version 2.5 ##
 
 2019-03-27
@@ -395,3 +405,5 @@ Release of version 1.0.1
 [#167]: https://github.com/JuliaStrings/utf8proc/issues/167
 [#173]: https://github.com/JuliaStrings/utf8proc/issues/173
 [#179]: https://github.com/JuliaStrings/utf8proc/issues/179
+[#196]: https://github.com/JuliaStrings/utf8proc/issues/196
+[#205]: https://github.com/JuliaStrings/utf8proc/issues/205
