@@ -1,5 +1,12 @@
 # utf8proc release history #
 
+## Version 2.6.1 ##
+
+2020-12-15
+
+ - Bugfix in `utf8proc_grapheme_break_stateful` for `NULL` state argument, which
+   also broke `utf8proc_grapheme_break`.
+
 ## Version 2.6 ##
 
 2020-11-23
