@@ -67,7 +67,7 @@
 #  authorization of the copyright holder.
 
 
-$ignorable_list = File.read("DerivedCoreProperties.txt")[/# Derived Property: Default_Ignorable_Code_Point.*?# Total code points:/m]
+$ignorable_list = File.read("DerivedCoreProperties.txt", :encoding => 'utf-8')[/# Derived Property: Default_Ignorable_Code_Point.*?# Total code points:/m]
 $ignorable = []
 $ignorable_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
@@ -77,7 +77,7 @@ $ignorable_list.each_line do |entry|
   end
 end
 
-$uppercase_list = File.read("DerivedCoreProperties.txt")[/# Derived Property: Uppercase.*?# Total code points:/m]
+$uppercase_list = File.read("DerivedCoreProperties.txt", :encoding => 'utf-8')[/# Derived Property: Uppercase.*?# Total code points:/m]
 $uppercase = []
 $uppercase_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
@@ -87,7 +87,7 @@ $uppercase_list.each_line do |entry|
   end
 end
 
-$lowercase_list = File.read("DerivedCoreProperties.txt")[/# Derived Property: Lowercase.*?# Total code points:/m]
+$lowercase_list = File.read("DerivedCoreProperties.txt", :encoding => 'utf-8')[/# Derived Property: Lowercase.*?# Total code points:/m]
 $lowercase = []
 $lowercase_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
@@ -97,7 +97,7 @@ $lowercase_list.each_line do |entry|
   end
 end
 
-$grapheme_boundclass_list = File.read("GraphemeBreakProperty.txt")
+$grapheme_boundclass_list = File.read("GraphemeBreakProperty.txt", :encoding => 'utf-8')
 $grapheme_boundclass = Hash.new("UTF8PROC_BOUNDCLASS_OTHER")
 $grapheme_boundclass_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)\s*;\s*([A-Za-z_]+)/
@@ -107,7 +107,7 @@ $grapheme_boundclass_list.each_line do |entry|
   end
 end
 
-$emoji_data_list = File.read("emoji-data.txt")
+$emoji_data_list = File.read("emoji-data.txt", :encoding => 'utf-8')
 $emoji_data_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)\s*;\s*Extended_Pictographic\W/
     $1.hex.upto($2.hex) { |e2| $grapheme_boundclass[e2] = "UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC" }
@@ -120,7 +120,7 @@ $emoji_data_list.each_line do |entry|
   end
 end
 
-$charwidth_list = File.read("CharWidths.txt")
+$charwidth_list = File.read("CharWidths.txt", :encoding => 'utf-8')
 $charwidth = Hash.new(0)
 $charwidth_list.each_line do |entry|
   if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)\s*;\s*([0-9]+)/
@@ -130,13 +130,13 @@ $charwidth_list.each_line do |entry|
   end
 end
 
-$exclusions = File.read("CompositionExclusions.txt")[/# \(1\) Script Specifics.*?# Total code points:/m]
+$exclusions = File.read("CompositionExclusions.txt", :encoding => 'utf-8')[/# \(1\) Script Specifics.*?# Total code points:/m]
 $exclusions = $exclusions.chomp.split("\n").collect { |e| e.hex }
 
-$excl_version = File.read("CompositionExclusions.txt")[/# \(2\) Post Composition Version precomposed characters.*?# Total code points:/m]
+$excl_version = File.read("CompositionExclusions.txt", :encoding => 'utf-8')[/# \(2\) Post Composition Version precomposed characters.*?# Total code points:/m]
 $excl_version = $excl_version.chomp.split("\n").collect { |e| e.hex }
 
-$case_folding_string = File.open("CaseFolding.txt", :encoding => 'utf-8').read
+$case_folding_string = File.read("CaseFolding.txt", :encoding => 'utf-8')
 $case_folding = {}
 $case_folding_string.chomp.split("\n").each do |line|
   next unless line =~ /([0-9A-F]+); [CF]; ([0-9A-F ]+);/i
