@@ -613,6 +613,25 @@ UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break_stateful(
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break(
     utf8proc_int32_t codepoint1, utf8proc_int32_t codepoint2);
 
+/**
+ * Given the UTF-8 string `str`, produce the starting and ending byte indices of each
+ * extended grapheme cluster (as defined by UAX#29).
+ *
+ * This function will return 1 as long as a grapheme cluster can be found, and 0
+ * once `strlen` number of bytes has been read. A negative error code will be
+ * returned in case of an error.
+ *
+ * @param str The UTF-8 string to read from.
+ * @param start The index of the first byte in the grapheme cluster.
+ * @param strlen The maximum number of bytes read from `str`.
+ * @param end The index of the last byte (non-inclusive) in the grapheme cluster.
+ * @param read_bytes Keeps track of how many bytes have been read. Should
+ *                   initially be set to 0.
+ */
+
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate_graphemes(
+    const utf8proc_uint8_t *str, utf8proc_int32_t *read_bytes, utf8proc_ssize_t strlen,
+    utf8proc_uint32_t *start, utf8proc_uint32_t *end);
 
 /**
  * Given a codepoint `c`, return the codepoint of the corresponding

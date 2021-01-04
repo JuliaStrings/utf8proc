@@ -81,6 +81,35 @@ void checkline(const char *_buf, bool verbose) {
         } while (i < si);
     }
 
+    if (si) { /* test calls to utf8proc_iterate_graphemes */
+
+        /* note and remove break indicators */
+        int breaks[16];
+        int a = 0, i = 0, j = 0;
+        while (i < si) {
+            if (src[i] == '/') {
+                breaks[j++] = i;
+                a = i;
+                while (a < si) {
+                    src[a] = src[a+1];
+                    a++;
+                }
+                si = a-1;
+            }
+            i++;
+        }
+        breaks[j++] = si;
+        int k = 0;
+
+        int read_bytes = 0;
+        int start, end;
+        while ( utf8proc_iterate_graphemes(src, &read_bytes, si, &start, &end) ) {
+            check(breaks[k] == start, "expected grapheme start not found");
+            check(breaks[k+1] == end, "expected grapheme end not found");
+            k++;
+        }
+    }
+
     if (verbose)
         printf("passed grapheme test: \"%s\"\n", (char*) src);
 }
