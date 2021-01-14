@@ -11,7 +11,7 @@ PERL=perl
 CFLAGS ?= -O2
 PICFLAG = -fPIC
 C99FLAG = -std=c99
-WCFLAGS = -Wall -Wextra -pedantic
+WCFLAGS = -Wsign-conversion -Wall -Wextra -pedantic
 UCFLAGS = $(CPPFLAGS) $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PROC_DEFINES)
 LDFLAG_SHARED = -shared
 SOFLAG = -Wl,-soname
