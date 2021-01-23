@@ -98,4 +98,7 @@ if(UTF8PROC_ENABLE_TESTING)
   target_link_libraries(normtest utf8proc)
   add_test(utf8proc.testgraphemetest graphemetest data/GraphemeBreakTest.txt)
   add_test(utf8proc.testnormtest normtest data/NormalizationTest.txt)
+  
+  add_executable(fuzzer utf8proc.h test/fuzz_main.c test/fuzzer.c)
+  target_link_libraries(fuzzer utf8proc)
 endif()
