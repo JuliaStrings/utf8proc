@@ -7,11 +7,7 @@ cd build
 cmake .. -DUTF8PROC_ENABLE_TESTING=ON
 make -j$(nproc)
 
-
-$CC $CFLAGS -I$SRC/utf8proc \
-    $SRC/utf8proc/test/fuzzer.c \
-    -o $OUT/utf8proc_fuzzer \
-    $LIB_FUZZING_ENGINE $SRC/utf8proc/build/libutf8proc.a
+cp $SRC/utf8proc/build/fuzzer utf8proc_fuzzer
 
 find $SRC/utf8proc/test -name "*.txt" | \
      xargs zip $OUT/utf8proc_fuzzer_seed_corpus.zip
