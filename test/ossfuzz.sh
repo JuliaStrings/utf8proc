@@ -4,7 +4,7 @@
 
 mkdir build
 cd build
-cmake .. -DUTF8PROC_ENABLE_TESTING=ON
+cmake .. -DUTF8PROC_ENABLE_TESTING=ON -DLIB_FUZZING_ENGINE="$LIB_FUZZING_ENGINE"
 make -j$(nproc)
 
 cp $SRC/utf8proc/build/fuzzer utf8proc_fuzzer

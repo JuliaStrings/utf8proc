@@ -15,6 +15,7 @@ set(SO_PATCH 1)
 
 option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
 option(UTF8PROC_ENABLE_TESTING "Enable testing of utf8proc" Off)
+option(LIB_FUZZING_ENGINE "Fuzzing engine to link against" Off)
 
 add_library (utf8proc
   utf8proc.c
@@ -99,9 +100,9 @@ if(UTF8PROC_ENABLE_TESTING)
   add_test(utf8proc.testgraphemetest graphemetest data/GraphemeBreakTest.txt)
   add_test(utf8proc.testnormtest normtest data/NormalizationTest.txt)
   
-  if(DEFINED ENV{LIB_FUZZING_ENGINE})
+  if(LIB_FUZZING_ENGINE)
     add_executable(fuzzer utf8proc.h test/fuzzer.c)
-    target_link_libraries(fuzzer $ENV{LIB_FUZZING_ENGINE} utf8proc)
+    target_link_libraries(fuzzer ${LIB_FUZZING_ENGINE} utf8proc)
   else()
     add_executable(fuzzer utf8proc.h test/fuzz_main.c test/fuzzer.c)
     target_link_libraries(fuzzer utf8proc)
