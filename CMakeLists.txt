@@ -51,15 +51,21 @@ set_target_properties (utf8proc PROPERTIES
 )
 
 if (UTF8PROC_INSTALL)
-  install(TARGETS utf8proc
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib)
+  include(GNUInstallDirs)
 
-  install(
-    FILES
-      "${PROJECT_SOURCE_DIR}/utf8proc.h"
-    DESTINATION include)
+  install(TARGETS utf8proc
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+  install(FILES utf8proc.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+  set(PREFIX     ${CMAKE_INSTALL_PREFIX})
+  set(LIBDIR     ${CMAKE_INSTALL_BINDIR})
+  set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
+  set(VERSION    2.6.1)
+  configure_file(libutf8proc.pc.in  libutf8proc.pc @ONLY)
+  install(FILES ${CMAKE_BINARY_DIR}/libutf8proc.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
 if(UTF8PROC_ENABLE_TESTING)

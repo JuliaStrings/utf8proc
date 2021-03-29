@@ -1,10 +1,10 @@
-prefix=PREFIX
+prefix=@PREFIX@
 exec_prefix=${prefix}
-libdir=${prefix}/LIBDIR
-includedir=${prefix}/INCLUDEDIR
+libdir=${prefix}/@LIBDIR@
+includedir=${prefix}/@INCLUDEDIR@
 
 Name: libutf8proc
 Description: UTF8 processing
-Version: VERSION
+Version: @VERSION@
 Libs: -L${libdir} -lutf8proc
 Cflags: -I${includedir} -DUTF8PROC_EXPORTS

@@ -96,11 +96,11 @@ libutf8proc.dylib: libutf8proc.$(MAJOR).dylib
 
 libutf8proc.pc: libutf8proc.pc.in
 	sed \
-		-e 's#PREFIX#$(prefix)#' \
-		-e 's#LIBDIR#$(pkglibdir)#' \
-		-e 's#INCLUDEDIR#$(pkgincludedir)#' \
-		-e 's#VERSION#$(MAJOR).$(MINOR).$(PATCH)#' \
-		libutf8proc.pc.in > libutf8proc.pc
+        -e 's#@PREFIX@#$(prefix)#' \
+        -e 's#@LIBDIR@#$(pkglibdir)#' \
+        -e 's#@INCLUDEDIR@#$(pkgincludedir)#' \
+        -e 's#@VERSION@#$(MAJOR).$(MINOR).$(PATCH)#' \
+        libutf8proc.pc.in > libutf8proc.pc
 
 install: libutf8proc.a libutf8proc.$(SHLIB_EXT) libutf8proc.$(SHLIB_VERS_EXT) libutf8proc.pc
 	mkdir -m 755 -p $(DESTDIR)$(includedir)
