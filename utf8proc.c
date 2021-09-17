@@ -132,7 +132,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(utf8proc_ssize_t errcode) {
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate(
   const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_int32_t *dst
 ) {
-  utf8proc_uint32_t uc;
+  utf8proc_int32_t uc;
   const utf8proc_uint8_t *end;
 
   *dst = -1;
@@ -144,7 +144,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate(
     return 1;
   }
   // Must be between 0xc2 and 0xf4 inclusive to be valid
-  if ((uc - 0xc2) > (0xf4-0xc2)) return UTF8PROC_ERROR_INVALIDUTF8;
+  if ((utf8proc_uint32_t)(uc - 0xc2) > (0xf4-0xc2)) return UTF8PROC_ERROR_INVALIDUTF8;
   if (uc < 0xe0) {         // 2-byte sequence
      // Must have valid continuation character
      if (str >= end || !utf_cont(*str)) return UTF8PROC_ERROR_INVALIDUTF8;
@@ -399,19 +399,19 @@ write_char_decomposed_case(utf8proc_uint16_t idx, utf8proc_int32_t *dst, utf8pro
 UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_tolower(utf8proc_int32_t c)
 {
   utf8proc_int32_t cl = utf8proc_get_property(c)->lowercase_seqindex;
-  return cl != UINT16_MAX ? seqindex_decode_index(cl) : c;
+  return cl != UINT16_MAX ? seqindex_decode_index((utf8proc_uint32_t)cl) : c;
 }
 
 UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_toupper(utf8proc_int32_t c)
 {
   utf8proc_int32_t cu = utf8proc_get_property(c)->uppercase_seqindex;
-  return cu != UINT16_MAX ? seqindex_decode_index(cu) : c;
+  return cu != UINT16_MAX ? seqindex_decode_index((utf8proc_uint32_t)cu) : c;
 }
 
 UTF8PROC_DLLEXPORT utf8proc_int32_t utf8proc_totitle(utf8proc_int32_t c)
 {
   utf8proc_int32_t cu = utf8proc_get_property(c)->titlecase_seqindex;
-  return cu != UINT16_MAX ? seqindex_decode_index(cu) : c;
+  return cu != UINT16_MAX ? seqindex_decode_index((utf8proc_uint32_t)cu) : c;
 }
 
 UTF8PROC_DLLEXPORT int utf8proc_islower(utf8proc_int32_t c)
@@ -433,7 +433,7 @@ UTF8PROC_DLLEXPORT int utf8proc_charwidth(utf8proc_int32_t c) {
 }
 
 UTF8PROC_DLLEXPORT utf8proc_category_t utf8proc_category(utf8proc_int32_t c) {
-  return utf8proc_get_property(c)->category;
+  return (utf8proc_category_t) utf8proc_get_property(c)->category;
 }
 
 UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t c) {
@@ -443,7 +443,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t c) {
 
 #define utf8proc_decompose_lump(replacement_uc) \
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
-  options & ~UTF8PROC_LUMP, last_boundclass)
+  options & ~(unsigned int)UTF8PROC_LUMP, last_boundclass)
 
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, utf8proc_option_t options, int *last_boundclass) {
   const utf8proc_property_t *property;
@@ -758,7 +758,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
   *dstptr = NULL;
   result = utf8proc_decompose_custom(str, strlen, NULL, 0, options, custom_func, custom_data);
   if (result < 0) return result;
-  buffer = (utf8proc_int32_t *) malloc(result * sizeof(utf8proc_int32_t) + 1);
+  buffer = (utf8proc_int32_t *) malloc(((utf8proc_size_t)result) * sizeof(utf8proc_int32_t) + 1);
   if (!buffer) return UTF8PROC_ERROR_NOMEM;
   result = utf8proc_decompose_custom(str, strlen, buffer, result, options, custom_func, custom_data);
   if (result < 0) {

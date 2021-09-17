@@ -11,7 +11,7 @@ PERL=perl
 CFLAGS ?= -O2
 PICFLAG = -fPIC
 C99FLAG = -std=c99
-WCFLAGS = -Wall -Wextra -pedantic
+WCFLAGS = -Wsign-conversion -Wall -Wextra -pedantic
 UCFLAGS = $(CPPFLAGS) $(CFLAGS) $(PICFLAG) $(C99FLAG) $(WCFLAGS) -DUTF8PROC_EXPORTS $(UTF8PROC_DEFINES)
 LDFLAG_SHARED = -shared
 SOFLAG = -Wl,-soname
@@ -25,6 +25,8 @@ SOFLAG = -Wl,-soname
 MAJOR=2
 MINOR=4
 PATCH=1
+
+UNICODE_VERSION ?= 14.0.0
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
@@ -166,7 +168,7 @@ test/custom: test/custom.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) $(LDFLAGS) test/custom.c test/tests.o utf8proc.o -o $@
 
 test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
-	$(CC) $(UCFLAGS) $(LDFLAGS) -DUNICODE_VERSION=`sed -En 's/^#.+UNICODE_VERSION.(.+)/\1/p' utf8proc_data.c` test/misc.c test/tests.o utf8proc.o -o $@
+	$(CC) $(UCFLAGS) $(LDFLAGS) '-DUNICODE_VERSION="$(UNICODE_VERSION)"' test/misc.c test/tests.o utf8proc.o -o $@
 
 check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
