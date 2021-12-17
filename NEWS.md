@@ -1,6 +1,8 @@
 # utf8proc release history #
 
-## Version 2.7.0-alpha ##
+## Version 2.7.0 ##
+
+2021-12-16
 
  - Unicode 14 support ([#233]).
 
