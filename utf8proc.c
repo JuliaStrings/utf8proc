@@ -101,7 +101,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_version(void) {
 }
 
 UTF8PROC_DLLEXPORT const char *utf8proc_unicode_version(void) {
-  return "13.0.0";
+  return "14.0.0";
 }
 
 UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(utf8proc_ssize_t errcode) {
@@ -410,7 +410,7 @@ UTF8PROC_DLLEXPORT int utf8proc_charwidth(utf8proc_int32_t c) {
 }
 
 UTF8PROC_DLLEXPORT utf8proc_category_t utf8proc_category(utf8proc_int32_t c) {
-  return utf8proc_get_property(c)->category;
+  return (utf8proc_category_t) utf8proc_get_property(c)->category;
 }
 
 UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t c) {
