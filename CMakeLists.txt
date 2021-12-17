@@ -1,10 +1,13 @@
-cmake_minimum_required (VERSION 2.8.12)
+cmake_minimum_required (VERSION 3.0.0)
 
 include (utils.cmake)
 
 disallow_intree_builds()
 
-project (utf8proc C)
+if (POLICY CMP0048)
+  cmake_policy (SET CMP0048 NEW)
+endif ()
+project (utf8proc VERSION 2.6.1 LANGUAGES C)
 
 # This is the ABI version number, which may differ from the
 # API version number (defined in utf8proc.h).
@@ -52,16 +55,14 @@ set_target_properties (utf8proc PROPERTIES
 
 if (UTF8PROC_INSTALL)
   include(GNUInstallDirs)
-  mark_as_advanced(CLEAR CMAKE_INSTALL_LIBDIR CMAKE_INSTALL_INCLUDEDIR)
+  install(FILES utf8proc.h DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
   install(TARGETS utf8proc
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}${INSTALL_SUFFIX}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}${INSTALL_SUFFIX})
-
-  install(
-    FILES
-      "${PROJECT_SOURCE_DIR}/utf8proc.h"
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}${INSTALL_SUFFIX})
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_BINDIR}"
+  )
+  configure_file(libutf8proc.pc.cmakein libutf8proc.pc @ONLY)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libutf8proc.pc" DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig")
 endif()
 
 if(UTF8PROC_ENABLE_TESTING)
@@ -101,7 +102,7 @@ if(UTF8PROC_ENABLE_TESTING)
   target_link_libraries(normtest utf8proc)
   add_test(utf8proc.testgraphemetest graphemetest data/GraphemeBreakTest.txt)
   add_test(utf8proc.testnormtest normtest data/NormalizationTest.txt)
-  
+
   if(LIB_FUZZING_ENGINE)
     add_executable(fuzzer utf8proc.h test/fuzzer.c)
     target_link_libraries(fuzzer ${LIB_FUZZING_ENGINE} utf8proc)
