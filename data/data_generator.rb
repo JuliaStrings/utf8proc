@@ -174,13 +174,13 @@ def cpary2c(array)
   return "UINT16_MAX" if array.nil? || array.length == 0
   lencode = array.length - 1 #no sequence has len 0, so we encode len 1 as 0, len 2 as 1, ...
   array = cpary2utf16encoded(array)
-  if lencode >= 7 #we have only 3 bits for the length (which is already cutting it close. might need to change it to 2 bits in future Unicode versions)
+  if lencode >= 3 #we have only 2 bits for the length 
     array = [lencode] + array
-    lencode = 7
+    lencode = 3
   end
   idx = pushary(array)
-  raise "Array index out of bound" if idx > 0x1FFF
-  return "#{idx | (lencode << 13)}"
+  raise "Array index out of bound" if idx > 0x3FFF
+  return "#{idx | (lencode << 14)}"
 end
 def singlecpmap(cp)
   return "UINT16_MAX" if cp == nil

@@ -356,9 +356,9 @@ static utf8proc_int32_t seqindex_decode_index(const utf8proc_uint32_t seqindex)
 
 static utf8proc_ssize_t seqindex_write_char_decomposed(utf8proc_uint16_t seqindex, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, utf8proc_option_t options, int *last_boundclass) {
   utf8proc_ssize_t written = 0;
-  const utf8proc_uint16_t *entry = &utf8proc_sequences[seqindex & 0x1FFF];
-  int len = seqindex >> 13;
-  if (len >= 7) {
+  const utf8proc_uint16_t *entry = &utf8proc_sequences[seqindex & 0x3FFF];
+  int len = seqindex >> 14;
+  if (len >= 3) {
     len = *entry;
     entry++;
   }
