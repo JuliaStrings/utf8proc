@@ -1,6 +1,6 @@
 /* -*- mode: c; c-basic-offset: 2; tab-width: 2; indent-tabs-mode: nil -*- */
 /*
- *  Copyright (c) 2014-2019 Steven G. Johnson, Jiahao Chen, Peter Colberg, Tony Kelman, Scott P. Jones, and other contributors.
+ *  Copyright (c) 2014-2021 Steven G. Johnson, Jiahao Chen, Peter Colberg, Tony Kelman, Scott P. Jones, and other contributors.
  *  Copyright (c) 2009 Public Software Group e. V., Berlin, Germany
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a
