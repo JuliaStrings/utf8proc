@@ -34,3 +34,5 @@
 /msvc_shared/
 /msvc_static/
 /build/
+NEWS-update.jl
+libutf8proc.pc
