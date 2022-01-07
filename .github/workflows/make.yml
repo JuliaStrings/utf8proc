@@ -17,9 +17,12 @@ jobs:
     name: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
+    # note: we need to use findutils rather than system's find
     - name: Install dependencies (MacOS)
       if: matrix.os == 'macos-latest'
-      run: brew install ruby findutils
+      run: |
+        brew install ruby findutils
+        echo "/usr/local/opt/findutils/libexec/gnubin" >> $GITHUB_PATH
 
     - name: Check MANIFEST (Linux)
       if: matrix.os == 'ubuntu-latest'
