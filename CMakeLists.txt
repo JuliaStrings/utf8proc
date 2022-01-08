@@ -11,7 +11,7 @@ project (utf8proc VERSION 2.7.0 LANGUAGES C)
 
 # This is the ABI version number, which may differ from the
 # API version number (defined in utf8proc.h and above).
-# Be sure to also update these in Makefile and MANIFEST!
+# Be sure to also update these in Makefile!
 set(SO_MAJOR 2)
 set(SO_MINOR 5)
 set(SO_PATCH 0)

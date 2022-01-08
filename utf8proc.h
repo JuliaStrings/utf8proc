@@ -64,7 +64,7 @@
  * for prerelease versions.
  *
  * @note The shared-library version number in the Makefile
- *       (and CMakeLists.txt, and MANIFEST) may be different,
+ *       (and CMakeLists.txt) may be different,
  *       being based on ABI compatibility rather than API compatibility.
  */
 /** @{ */

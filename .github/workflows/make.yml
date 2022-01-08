@@ -24,13 +24,6 @@ jobs:
         brew install ruby findutils
         echo "/usr/local/opt/findutils/libexec/gnubin" >> $GITHUB_PATH
 
-    - name: Check MANIFEST (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: make manifest && diff MANIFEST.new MANIFEST
-    - name: Check MANIFEST (macOS)
-      if: matrix.os == 'macos-latest'
-      run: make manifest && diff MANIFEST.new MANIFEST_macos
-
     - name: Run Test
       run: make check
     - name: Check utf8proc_data.c

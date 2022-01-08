@@ -1,8 +1,0 @@
-include/
-include/utf8proc.h
-lib/
-lib/libutf8proc.2.dylib
-lib/libutf8proc.a
-lib/libutf8proc.dylib -> libutf8proc.2.dylib
-lib/pkgconfig/
-lib/pkgconfig/libutf8proc.pc
