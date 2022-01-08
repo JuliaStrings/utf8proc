@@ -17,14 +17,8 @@ jobs:
     name: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
-    # note: we need to use findutils rather than system's find
-    - name: Install dependencies (MacOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew install ruby findutils
-        echo "/usr/local/opt/findutils/libexec/gnubin" >> $GITHUB_PATH
 
-    - name: Run Test
+    - name: Build and run Test
       run: make check
     - name: Check utf8proc_data.c
       run: make data && diff data/utf8proc_data.c.new utf8proc_data.c
