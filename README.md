@@ -38,9 +38,8 @@ For compilation of the C library, run `make`.  You can also install the library 
 Alternatively, you can compile with `cmake`, e.g. by
 ```sh
 mkdir build
-cd build
-cmake ..
-make
+cmake -S . -B build
+cmake --build build
 ```
 
 ### Using other compilers
