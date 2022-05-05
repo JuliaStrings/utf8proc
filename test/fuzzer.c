@@ -5,6 +5,9 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     if(size < 1) return 0;
 
+    /* Avoid timeout with long inputs */
+    if(size > (64 * 1024)) return 0;
+
     if(data[size-1] != '\0') return 0;
 
     const uint8_t* ptr = data;
@@ -54,7 +57,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         options = UTF8PROC_STRIPCC;
         memcpy(copy, data, size);
         utf8proc_normalize_utf32(copy, size, options);
-        
+
         options = 0;
         memcpy(copy, data, size);
         utf8proc_normalize_utf32(copy, size, options);
