@@ -11,7 +11,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     if(data[size-1] != '\0') return 0;
 
     const uint8_t* ptr = data;
-    utf8proc_int32_t c = 0;
+    utf8proc_int32_t c = 0, c_prev = 0, state = 0;
     utf8proc_option_t options;
     utf8proc_ssize_t ret, bytes = 0;
     size_t len = strlen((const char*)data);
@@ -34,6 +34,11 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         utf8proc_category(c);
         utf8proc_category_string(c);
         utf8proc_codepoint_valid(c);
+        
+        utf8proc_grapheme_break(c_prev, c);
+        utf8proc_grapheme_break_stateful(c_prev, c, &state);
+        
+        c_prev = c;
     }
     
     utf8proc_int32_t *copy = size >= 4 ? NULL : malloc(size);
