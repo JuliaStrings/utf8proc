@@ -63,6 +63,10 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         memcpy(copy, data, size);
         utf8proc_normalize_utf32(copy, size, options);
 
+        options = UTF8PROC_LUMP;
+        memcpy(copy, data, size);
+        utf8proc_normalize_utf32(copy, size, options);
+
         options = 0;
         memcpy(copy, data, size);
         utf8proc_normalize_utf32(copy, size, options);
