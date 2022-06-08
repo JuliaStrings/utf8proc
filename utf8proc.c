@@ -365,9 +365,16 @@ static utf8proc_ssize_t seqindex_write_char_decomposed(utf8proc_uint16_t seqinde
   for (; len >= 0; entry++, len--) {
     utf8proc_int32_t entry_cp = seqindex_decode_entry(&entry);
 
-    written += utf8proc_decompose_char(entry_cp, dst+written,
-      (bufsize > written) ? (bufsize - written) : 0, options,
-    last_boundclass);
+    if (!dst){
+      written += utf8proc_decompose_char(entry_cp, dst,
+        (bufsize > written) ? (bufsize - written) : 0, options,
+      last_boundclass);
+    }else{
+      written += utf8proc_decompose_char(entry_cp, dst+written,
+        (bufsize > written) ? (bufsize - written) : 0, options,
+      last_boundclass);
+    }
+
     if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
   }
   return written;
@@ -550,10 +557,18 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
       if (custom_func != NULL) {
         uc = custom_func(uc, custom_data);   /* user-specified custom mapping */
       }
-      decomp_result = utf8proc_decompose_char(
-        uc, buffer + wpos, (bufsize > wpos) ? (bufsize - wpos) : 0, options,
-        &boundclass
-      );
+      if (!buffer){
+        decomp_result = utf8proc_decompose_char(
+          uc, buffer, (bufsize > wpos) ? (bufsize - wpos) : 0, options,
+          &boundclass
+      ); 
+      }else{
+        decomp_result = utf8proc_decompose_char(
+          uc, buffer + wpos, (bufsize > wpos) ? (bufsize - wpos) : 0, options,
+          &boundclass
+        );
+      }
+
       if (decomp_result < 0) return decomp_result;
       wpos += decomp_result;
       /* prohibiting integer overflows due to too long strings: */
