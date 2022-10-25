@@ -78,7 +78,7 @@ utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
 
 libutf8proc.a: utf8proc.o
 	rm -f libutf8proc.a
-	$(AR) rs libutf8proc.a utf8proc.o
+	$(AR) crs libutf8proc.a utf8proc.o
 
 libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH): utf8proc.o
 	$(CC) $(LDFLAGS) $(LDFLAG_SHARED) -o $@ $(SOFLAG) -Wl,libutf8proc.so.$(MAJOR) utf8proc.o
