@@ -1,5 +1,9 @@
 # utf8proc release history #
 
+## Version 2.8.0-alpha ##
+
+ - Unicode 15 support ([#247]).
+
 ## Version 2.7.0 ##
 
 2021-12-16
