@@ -435,3 +435,4 @@ Release of version 1.0.1
 [#205]: https://github.com/JuliaStrings/utf8proc/issues/205
 [#224]: https://github.com/JuliaStrings/utf8proc/issues/224
 [#233]: https://github.com/JuliaStrings/utf8proc/issues/233
+[#247]: https://github.com/JuliaStrings/utf8proc/issues/247
