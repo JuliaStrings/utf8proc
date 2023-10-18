@@ -273,7 +273,8 @@ typedef struct utf8proc_property_struct {
    * Boundclass.
    * @see utf8proc_boundclass_t.
    */
-  unsigned boundclass:8;
+  unsigned boundclass:6;
+  unsigned indic_conjunct_break:2;
 } utf8proc_property_t;
 
 /** Unicode categories. */
@@ -387,6 +388,17 @@ typedef enum {
   UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC = 19,
   UTF8PROC_BOUNDCLASS_E_ZWG = 20, /* UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC + ZWJ */
 } utf8proc_boundclass_t;
+
+/** Indic_Conjunct_Break property. (TR44) */
+typedef enum {
+  UTF8PROC_INDIC_CONJUNCT_BREAK_NONE = 0,
+  UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER = 1,
+  UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT = 2,
+  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND = 3,
+
+  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND_LINKER1 = 4, // used for state in grapheme-break code
+  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND2 = 5, // used for state in grapheme-break code
+} utf8proc_indic_conjunct_break_t;
 
 /**
  * Function pointer type passed to @ref utf8proc_map_custom and

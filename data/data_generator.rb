@@ -97,6 +97,32 @@ $lowercase_list.each_line do |entry|
   end
 end
 
+$icb_linker_list = File.read("DerivedCoreProperties.txt", :encoding => 'utf-8')[/# Indic_Conjunct_Break=Linker.*?# Total code points:/m]
+$icb = Hash.new("UTF8PROC_INDIC_CONJUNCT_BREAK_NONE")
+$icb_linker_list.each_line do |entry|
+  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
+    $1.hex.upto($2.hex) { |e2| $icb[e2] = "UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER" }
+  elsif entry =~ /^[0-9A-F]+/
+    $icb[$&.hex] = "UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER"
+  end
+end
+$icb_consonant_list = File.read("DerivedCoreProperties.txt", :encoding => 'utf-8')[/# Indic_Conjunct_Break=Consonant.*?# Total code points:/m]
+$icb_consonant_list.each_line do |entry|
+  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
+    $1.hex.upto($2.hex) { |e2| $icb[e2] = "UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT" }
+  elsif entry =~ /^[0-9A-F]+/
+    $icb[$&.hex] = "UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT"
+  end
+end
+$icb_extend_list = File.read("DerivedCoreProperties.txt", :encoding => 'utf-8')[/# Indic_Conjunct_Break=Extend.*?# Total code points:/m]
+$icb_extend_list.each_line do |entry|
+  if entry =~ /^([0-9A-F]+)\.\.([0-9A-F]+)/
+    $1.hex.upto($2.hex) { |e2| $icb[e2] = "UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND" }
+  elsif entry =~ /^[0-9A-F]+/
+    $icb[$&.hex] = "UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND"
+  end
+end
+
 $grapheme_boundclass_list = File.read("GraphemeBreakProperty.txt", :encoding => 'utf-8')
 $grapheme_boundclass = Hash.new("UTF8PROC_BOUNDCLASS_OTHER")
 $grapheme_boundclass_list.each_line do |entry|
@@ -174,7 +200,7 @@ def cpary2c(array)
   return "UINT16_MAX" if array.nil? || array.length == 0
   lencode = array.length - 1 #no sequence has len 0, so we encode len 1 as 0, len 2 as 1, ...
   array = cpary2utf16encoded(array)
-  if lencode >= 3 #we have only 2 bits for the length 
+  if lencode >= 3 #we have only 2 bits for the length
     array = [lencode] + array
     lencode = 3
   end
@@ -249,7 +275,8 @@ class UnicodeChar
     "#{$ignorable.include?(code)}, " <<
     "#{%W[Zl Zp Cc Cf].include?(category) and not [0x200C, 0x200D].include?(category)}, " <<
     "#{$charwidth[code]}, 0, " <<
-    "#{$grapheme_boundclass[code]}},\n"
+    "#{$grapheme_boundclass[code]}, " <<
+    "#{$icb[code]}},\n"
   end
 end
 
@@ -415,7 +442,7 @@ end
 $stdout << "};\n\n"
 
 $stdout << "static const utf8proc_property_t utf8proc_properties[] = {\n"
-$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 1, 0, UTF8PROC_BOUNDCLASS_OTHER},\n"
+$stdout << "  {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 1, 0, UTF8PROC_BOUNDCLASS_OTHER, UTF8PROC_INDIC_CONJUNCT_BREAK_NONE},\n"
 properties.each { |line|
   $stdout << line
 }

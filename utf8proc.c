@@ -101,7 +101,7 @@ UTF8PROC_DLLEXPORT const char *utf8proc_version(void) {
 }
 
 UTF8PROC_DLLEXPORT const char *utf8proc_unicode_version(void) {
-  return "15.0.0";
+  return "15.1.0";
 }
 
 UTF8PROC_DLLEXPORT const char *utf8proc_errmsg(utf8proc_ssize_t errcode) {
@@ -288,31 +288,52 @@ static utf8proc_bool grapheme_break_simple(int lbc, int tbc) {
     true; // GB999
 }
 
-static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t *state)
+static utf8proc_bool grapheme_break_extended(int lbc, int tbc, int licb, int ticb, utf8proc_int32_t *state)
 {
   if (state) {
-    int lbc_override;
-    if (*state == UTF8PROC_BOUNDCLASS_START)
-      *state = lbc_override = lbc;
+    int state_bc = *state & 0xff; // 1st byte of state is bound class
+    int state_ibc = *state >> 8; // 2nd byte of state is indic conjunct break
+    if (state_bc == UTF8PROC_BOUNDCLASS_START)
+      state_bc = lbc;
     else
-      lbc_override = *state;
-    utf8proc_bool break_permitted = grapheme_break_simple(lbc_override, tbc);
+      lbc = state_bc;
+    utf8proc_bool break_permitted = grapheme_break_simple(lbc, tbc);
+
+    // Special support for GB9c:
+    if (licb == UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT
+        || state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT
+        || state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND_LINKER1)
+      state_ibc = licb;
+    else if (state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND)
+      state_ibc = licb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER ?
+                  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND_LINKER1 : UTF8PROC_INDIC_CONJUNCT_BREAK_NONE;
+    else if (state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER)
+      state_ibc = licb == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND ?
+                  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND2 : UTF8PROC_INDIC_CONJUNCT_BREAK_NONE;
+    else if (state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND2)
+      state_ibc = licb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER ?
+                  UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER: UTF8PROC_INDIC_CONJUNCT_BREAK_NONE;
+    if (state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER
+        && ticb == UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT)
+      break_permitted = false;
 
     // Special support for GB 12/13 made possible by GB999. After two RI
     // class codepoints we want to force a break. Do this by resetting the
     // second RI's bound class to UTF8PROC_BOUNDCLASS_OTHER, to force a break
     // after that character according to GB999 (unless of course such a break is
     // forbidden by a different rule such as GB9).
-    if (*state == tbc && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
-      *state = UTF8PROC_BOUNDCLASS_OTHER;
+    if (state_bc == tbc && tbc == UTF8PROC_BOUNDCLASS_REGIONAL_INDICATOR)
+      state_bc = UTF8PROC_BOUNDCLASS_OTHER;
     // Special support for GB11 (emoji extend* zwj / emoji)
-    else if (*state == UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC) {
+    else if (state_bc == UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC) {
       if (tbc == UTF8PROC_BOUNDCLASS_EXTEND) // fold EXTEND codepoints into emoji
-        *state = UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC;
+        state_bc = UTF8PROC_BOUNDCLASS_EXTENDED_PICTOGRAPHIC;
       else if (tbc == UTF8PROC_BOUNDCLASS_ZWJ)
-        *state = UTF8PROC_BOUNDCLASS_E_ZWG; // state to record emoji+zwg combo
+        state_bc = UTF8PROC_BOUNDCLASS_E_ZWG; // state to record emoji+zwg combo
       else
-        *state = tbc;
+        state_bc = tbc;
+
+      *state = state_bc + (state_ibc << 8);
     }
     else
       *state = tbc;
@@ -326,8 +347,12 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, utf8proc_int32_t 
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_grapheme_break_stateful(
     utf8proc_int32_t c1, utf8proc_int32_t c2, utf8proc_int32_t *state) {
 
-  return grapheme_break_extended(utf8proc_get_property(c1)->boundclass,
-                                 utf8proc_get_property(c2)->boundclass,
+  const utf8proc_property_t *p1 = utf8proc_get_property(c1);
+  const utf8proc_property_t *p2 = utf8proc_get_property(c2);
+  return grapheme_break_extended(p1->boundclass,
+                                 p2->boundclass,
+                                 p1->indic_conjunct_break,
+                                 p2->indic_conjunct_break,
                                  state);
 }
 
@@ -499,7 +524,12 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
   if (options & UTF8PROC_CHARBOUND) {
     utf8proc_bool boundary;
     int tbc = property->boundclass;
-    boundary = grapheme_break_extended(*last_boundclass, tbc, last_boundclass);
+    /* for now, punt on indic conjunct breaks for UTF8PROC_CHARBOUND; you
+       should use utf8proc_grapheme_break_stateful for full grapheme-break
+       detection these days */
+    boundary = grapheme_break_extended(*last_boundclass, tbc,
+                                       UTF8PROC_INDIC_CONJUNCT_BREAK_NONE, UTF8PROC_INDIC_CONJUNCT_BREAK_NONE,
+                                       last_boundclass);
     if (boundary) {
       if (bufsize >= 1) dst[0] = -1; /* sentinel value for grapheme break */
       if (bufsize >= 2) dst[1] = uc;
