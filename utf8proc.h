@@ -490,8 +490,9 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int
  * - @ref UTF8PROC_STRIPNA   - remove unassigned codepoints
  * @param last_boundclass
  * Pointer to an integer variable containing
- * the previous codepoint's boundary class if the @ref UTF8PROC_CHARBOUND
- * option is used.  Otherwise, this parameter is ignored.
+ * the previous codepoint's (boundclass + indic_conjunct_break << 1) if the @ref UTF8PROC_CHARBOUND
+ * option is used.  If the string is being processed in order, this can be initialized to 0 for
+ * the beginning of the string, and is thereafter updated automatically.  Otherwise, this parameter is ignored.
  *
  * @return
  * In case of success, the number of codepoints written is returned; in case
