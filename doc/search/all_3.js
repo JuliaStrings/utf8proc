@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['ignorable_5',['ignorable',['../structutf8proc__property__struct.html#a92c5ead96b0a8594913dbee297cf75bb',1,'utf8proc_property_struct']]]
+  ['data_20license_0',['Unicode data license',['../md__l_i_c_e_n_s_e.html#autotoc_md2',1,'']]],
+  ['decomp_5ftype_1',['decomp_type',['../structutf8proc__property__struct.html#accca36acf0134cb64a257b2eba13fea0',1,'utf8proc_property_struct']]],
+  ['do_2',['To Do',['../md__r_e_a_d_m_e.html#autotoc_md8',1,'']]]
 ];

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['category_2',['category',['../structutf8proc__property__struct.html#aaf0c114f138f94f7b1b395f98bd3b56a',1,'utf8proc_property_struct']]],
-  ['charwidth_3',['charwidth',['../structutf8proc__property__struct.html#a592c3fb0215a49835be3c12f39b33106',1,'utf8proc_property_struct']]]
+  ['bidi_5fclass_0',['bidi_class',['../structutf8proc__property__struct.html#abd1fde92128233b6dbfdeb70b92c80d9',1,'utf8proc_property_struct']]],
+  ['boundclass_1',['boundclass',['../structutf8proc__property__struct.html#a0b4f5087bd0ea76a375de47dfaa2110b',1,'utf8proc_property_struct']]]
 ];
