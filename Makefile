@@ -22,8 +22,8 @@ SOFLAG = -Wl,-soname
 # compatibility is broken, even if the API is backward-compatible.
 # The API version number is defined in utf8proc.h.
 # Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
-MAJOR=2
-MINOR=6
+MAJOR=3
+MINOR=0
 PATCH=0
 
 OS := $(shell uname)
