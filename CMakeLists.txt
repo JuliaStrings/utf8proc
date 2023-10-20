@@ -7,13 +7,13 @@ disallow_intree_builds()
 if (POLICY CMP0048)
   cmake_policy (SET CMP0048 NEW)
 endif ()
-project (utf8proc VERSION 2.8.0 LANGUAGES C)
+project (utf8proc VERSION 2.9.0 LANGUAGES C)
 
 # This is the ABI version number, which may differ from the
 # API version number (defined in utf8proc.h and above).
 # Be sure to also update these in Makefile and MANIFEST!
-set(SO_MAJOR 2)
-set(SO_MINOR 6)
+set(SO_MAJOR 3)
+set(SO_MINOR 0)
 set(SO_PATCH 0)
 
 option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
