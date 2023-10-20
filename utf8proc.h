@@ -395,9 +395,6 @@ typedef enum {
   UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER = 1,
   UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT = 2,
   UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND = 3,
-
-  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND_LINKER1 = 4, // used for state in grapheme-break code
-  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND2 = 5, // used for state in grapheme-break code
 } utf8proc_indic_conjunct_break_t;
 
 /**
