@@ -39,6 +39,7 @@ int main(int argc, char **argv)
             "  ignorable = %d\n"
             "  control_boundary = %d\n"
             "  boundclass = %d\n"
+            "  indic_conjunct_break = %d\n"
             "  charwidth = %d\n",
         argv[i], (char*) cstr,
         utf8proc_category_string(c),
@@ -55,6 +56,7 @@ int main(int argc, char **argv)
         p->ignorable,
         p->control_boundary,
         p->boundclass,
+        p->indic_conjunct_break,
         utf8proc_charwidth(c));
         free(map);
     }
