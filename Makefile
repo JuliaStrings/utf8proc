@@ -181,6 +181,7 @@ distcheck: dist
 	test `grep "utf8proc VERSION" CMakeLists.txt |cut -d' ' -f 4` = $(VERSION) || exit 1
 	test `grep  libutf8proc.so.$(MAJOR).$(MINOR).$(PATCH) MANIFEST | wc -l` = 3 || exit 1
 	test `grep 'set(SO_' CMakeLists.txt |cut -d' ' -f2 | tr -d ')' | tr '\n' '.'` = $(MAJOR).$(MINOR).$(PATCH). || exit 1
+	rm -rf utf8proc-$(VERSION)
 	tar xzf utf8proc-$(VERSION).tar.gz
 	make -C utf8proc-$(VERSION) check
 	rm -rf utf8proc-$(VERSION)
