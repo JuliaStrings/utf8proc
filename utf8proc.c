@@ -332,12 +332,11 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, int licb, int tic
         state_bc = UTF8PROC_BOUNDCLASS_E_ZWG; // state to record emoji+zwg combo
       else
         state_bc = tbc;
-
-      *state = state_bc + (state_ibc << 8);
     }
     else
-      *state = tbc;
+      state_bc = tbc;
 
+    *state = state_bc + (state_ibc << 8);
     return break_permitted;
   }
   else
