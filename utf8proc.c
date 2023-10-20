@@ -302,17 +302,11 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, int licb, int tic
     // Special support for GB9c:
     if (licb == UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT
         || state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT
-        || state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND_LINKER1)
+        || state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND)
       state_ibc = licb;
-    else if (state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND)
-      state_ibc = licb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER ?
-                  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND_LINKER1 : UTF8PROC_INDIC_CONJUNCT_BREAK_NONE;
     else if (state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER)
       state_ibc = licb == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND ?
-                  UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND2 : UTF8PROC_INDIC_CONJUNCT_BREAK_NONE;
-    else if (state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND2)
-      state_ibc = licb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER ?
-                  UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER: UTF8PROC_INDIC_CONJUNCT_BREAK_NONE;
+                  UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER : licb;
     if (state_ibc == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER
         && ticb == UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT)
       break_permitted = false;
