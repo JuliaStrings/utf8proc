@@ -183,7 +183,7 @@ distcheck: dist
 	test `grep 'set(SO_' CMakeLists.txt |cut -d' ' -f2 | tr -d ')' | tr '\n' '.'` = $(MAJOR).$(MINOR).$(PATCH). || exit 1
 	tar xzf utf8proc-$(VERSION).tar.gz
 	make -C utf8proc-$(VERSION) check
-	rm utf8proc-$(VERSION).tar.gz
+	rm -rf utf8proc-$(VERSION)
 
 check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
