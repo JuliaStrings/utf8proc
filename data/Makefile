@@ -15,6 +15,7 @@ CURLFLAGS = --retry 5 --location
 .DELETE_ON_ERROR:
 
 utf8proc_data.c.new: data_generator.jl rawdata
+	$(JULIA) --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --project=. data_generator.jl > $@
 
 # Unicode data version (must also update utf8proc_unicode_version function)
