@@ -10,7 +10,7 @@ MAKE=make
 JULIA=julia
 CURLFLAGS = --retry 5 --location
 
-.PHONY: clean rawdata
+.PHONY: clean
 
 .DELETE_ON_ERROR:
 
