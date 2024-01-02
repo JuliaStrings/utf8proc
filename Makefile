@@ -73,7 +73,7 @@ manifest: MANIFEST.new
 
 # real targets
 
-data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.rb data/charwidths.jl
+data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.jl
 	$(MAKE) -C data utf8proc_data.c.new
 
 utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
