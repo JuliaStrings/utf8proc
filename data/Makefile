@@ -49,6 +49,13 @@ GraphemeBreakTest.txt:
 emoji-data.txt:
 	$(CURL) $(CURLFLAGS) -o $@ $(URLCACHE)https://unicode.org/Public/$(UNICODE_VERSION)/ucd/emoji/emoji-data.txt
 
+Uppercase.txt: DerivedCoreProperties.txt
+	$(JULIA) -e 'print(match(r"# Derived Property: Uppercase.*?# Total code points:"s, read("DerivedCoreProperties.txt", String)).match)' > $@
+
+Lowercase.txt: DerivedCoreProperties.txt
+	$(JULIA) -e 'print(match(r"# Derived Property: Lowercase.*?# Total code points:"s, read("DerivedCoreProperties.txt", String)).match)' > $@
+
 clean:
 	rm -f UnicodeData.txt EastAsianWidth.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt GraphemeBreakTest.txt emoji-data.txt
+	rm -f Uppercase.txt Lowercase.txt
 	rm -f utf8proc_data.c.new
