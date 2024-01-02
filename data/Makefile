@@ -57,6 +57,6 @@ Lowercase.txt: DerivedCoreProperties.txt
 	$(JULIA) -e 'print(match(r"# Derived Property: Lowercase.*?# Total code points:"s, read("DerivedCoreProperties.txt", String)).match)' > $@
 
 clean:
-	rm -f UnicodeData.txt EastAsianWidth.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt NormalizationTest.txt GraphemeBreakTest.txt emoji-data.txt
+	rm -f $(RAWDATA) NormalizationTest.txt GraphemeBreakTest.txt
 	rm -f Uppercase.txt Lowercase.txt
 	rm -f utf8proc_data.c.new
