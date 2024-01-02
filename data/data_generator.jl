@@ -27,6 +27,12 @@ function collect_codepoints(range_desc, description)
     list
 end
 
+function set_all!(d, keys, value)
+    for k in keys
+        d[k] = value
+    end
+end
+
 #-------------------------------------------------------------------------------
 
 derived_core_properties = read_hex_ranges("DerivedCoreProperties.txt")
@@ -39,15 +45,9 @@ lowercase = Set(collect_codepoints(derived_core_properties, "Lowercase"))
 #-------------------------------------------------------------------------------
 function derive_indic_conjunct_break(derived_core_properties)
     props = Dict{UInt32, String}()
-    for i in collect_codepoints(derived_core_properties, "InCB; Linker")
-        props[i] = "LINKER"
-    end
-    for i in collect_codepoints(derived_core_properties, "InCB; Consonant")
-        props[i] = "CONSONANT"
-    end
-    for i in collect_codepoints(derived_core_properties, "InCB; Extend")
-        props[i] = "EXTEND"
-    end
+    set_all!(props, collect_codepoints(derived_core_properties, "InCB; Linker"),    "LINKER")
+    set_all!(props, collect_codepoints(derived_core_properties, "InCB; Consonant"), "CONSONANT")
+    set_all!(props, collect_codepoints(derived_core_properties, "InCB; Extend"),    "EXTEND")
     props
 end
 
@@ -61,20 +61,13 @@ end
 function read_grapheme_boundclasses(grapheme_break_filename, emoji_data_filename)
     grapheme_boundclass = Dict{UInt32, String}()
     for (r,desc) in read_hex_ranges(grapheme_break_filename)
-        ud = Base.uppercase(desc)
-        for i in r
-            grapheme_boundclass[i] = ud
-        end
+        set_all!(grapheme_boundclass, r, Base.uppercase(desc))
     end
     for (r,desc) in read_hex_ranges(emoji_data_filename)
         if desc == "Extended_Pictographic"
-            for i in r
-                grapheme_boundclass[i] = "EXTENDED_PICTOGRAPHIC"
-            end
+            set_all!(grapheme_boundclass, r, "EXTENDED_PICTOGRAPHIC")
         elseif desc == "Emoji_Modifier"
-            for i in r
-                grapheme_boundclass[i] = "EXTEND"
-            end
+            set_all!(grapheme_boundclass, r, "EXTEND")
         end
     end
     return grapheme_boundclass
@@ -203,9 +196,7 @@ function read_east_asian_widths(filename)
             widthcode == "Na"|| widthcode == "H" ? 1 : # narrow or half-width
             nothing
         if !isnothing(w)
-            for c in rng
-                ea_widths[c] = w
-            end
+            set_all!(ea_widths, rng, w)
         end
     end
     return ea_widths
