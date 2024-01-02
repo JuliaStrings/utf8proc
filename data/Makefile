@@ -14,14 +14,14 @@ CURLFLAGS = --retry 5 --location
 
 .DELETE_ON_ERROR:
 
-utf8proc_data.c.new: data_generator.jl rawdata
+RAWDATA = UnicodeData.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt EastAsianWidth.txt emoji-data.txt
+
+utf8proc_data.c.new: data_generator.jl $(RAWDATA)
 	$(JULIA) --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --project=. data_generator.jl > $@
 
 # Unicode data version (must also update utf8proc_unicode_version function)
 UNICODE_VERSION=15.1.0
-
-rawdata: UnicodeData.txt GraphemeBreakProperty.txt DerivedCoreProperties.txt CompositionExclusions.txt CaseFolding.txt EastAsianWidth.txt emoji-data.txt
 
 UnicodeData.txt:
 	$(CURL) $(CURLFLAGS) -o $@ https://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/UnicodeData.txt
