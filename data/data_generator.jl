@@ -332,21 +332,7 @@ let
     end
 end
 
-function utf16_encode(utf32_seq)
-    enc = UInt16[]
-    for cp in utf32_seq
-        cp::UInt32
-        if cp <= 0xFFFF
-            @assert !(cp & 0b1111100000000000 == 0b1101100000000000)
-            push!(enc, cp)
-        else
-            temp = cp - 0x10000
-            push!(enc, (temp >> 10) | 0b1101100000000000)
-            push!(enc, (temp & 0b0000001111111111) | 0b1101110000000000)
-        end
-    end
-    enc
-end
+utf16_encode(utf32_seq) = transcode(UInt16, transcode(String, utf32_seq))
 
 # Utility for packing all UTF-16 encoded sequences into one big array
 struct UTF16Sequences
