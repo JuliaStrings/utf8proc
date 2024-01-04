@@ -402,13 +402,6 @@ end
 # Many character properties are duplicates. Deduplicate them, constructing a
 # per-character array of indicies into the properties array
 sequences = UTF16Sequences()
-
-# FIXME: Hack to force ordering compat with Ruby code
-for c in char_props
-    encode_sequence!(sequences, c.decomp_mapping)
-    encode_sequence!(sequences, get_case_folding(c.code))
-end
-
 char_table_props = [char_table_properties!(sequences, cp) for cp in char_props]
 
 deduplicated_props = Origin(0)(Vector{eltype(char_table_props)}())
