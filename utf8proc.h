@@ -79,7 +79,7 @@
 #include <stdlib.h>
 
 #if defined(_MSC_VER) && _MSC_VER < 1800
-// MSVC prior to 2013 lacked stdbool.h and inttypes.h
+// MSVC prior to 2013 lacked stdbool.h and stdint.h
 typedef signed char utf8proc_int8_t;
 typedef unsigned char utf8proc_uint8_t;
 typedef short utf8proc_int16_t;
@@ -107,7 +107,7 @@ typedef bool utf8proc_bool;
 #else
 #  include <stddef.h>
 #  include <stdbool.h>
-#  include <inttypes.h>
+#  include <stdint.h>
 typedef int8_t utf8proc_int8_t;
 typedef uint8_t utf8proc_uint8_t;
 typedef int16_t utf8proc_int16_t;
