@@ -95,10 +95,6 @@ end
 exclusions = Set(read_composition_exclusions(r"# \(1\) Script Specifics.*?# Total code points:"s))
 excl_version = Set(read_composition_exclusions(r"# \(2\) Post Composition Version precomposed characters.*?# Total code points:"s))
 
-# FIXME: Replicate a bug in the ruby code
-push!(exclusions, 0)
-push!(excl_version, 0)
-
 #-------------------------------------------------------------------------------
 function read_case_folding(filename)
     case_folding = Dict{UInt32,Vector{UInt32}}()
@@ -396,8 +392,7 @@ function char_table_properties!(sequences, char)
         comp_exclusion       = code in exclusions || code in excl_version,
         ignorable            = code in ignorable,
         control_boundary     = char.category in ("Zl", "Zp", "Cc", "Cf") &&
-                               # FIXME: Ruby bug compat - should be `code in (0x200C, 0x200D)`
-                               !(char.category in (0x200C, 0x200D)),
+                               !(char.code in (0x200C, 0x200D)),
         charwidth            = derive_char_width(code, char.category),
         boundclass           = get_grapheme_boundclass(code),
         indic_conjunct_break = get_indic_conjunct_break(code),
