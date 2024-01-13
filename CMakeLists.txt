@@ -73,8 +73,13 @@ if (UTF8PROC_INSTALL)
       INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc"
       NO_SET_AND_CHECK_MACRO
   )
+  write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config-version.cmake"
+    COMPATIBILITY AnyNewerVersion
+  )
   install (FILES
       "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config.cmake"
+      "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config-version.cmake"
       DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc"
   )
 
