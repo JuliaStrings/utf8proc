@@ -42,6 +42,16 @@ cmake -S . -B build
 cmake --build build
 ```
 
+## Using with CMake
+
+A CMake Config-file package is provided. To use utf8proc in a CMake project:
+
+```cmake
+add_executable (app app.c)
+find_package (utf8proc 2.9.0 REQUIRED)
+target_link_libraries (app PRIVATE utf8proc::utf8proc)
+```
+
 ### Using other compilers
 The included `Makefile` supports GNU/Linux flavors and MacOS with `gcc`-like compilers; Windows users will typically use `cmake`.
 
