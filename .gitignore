@@ -36,3 +36,7 @@
 /build/
 NEWS-update.jl
 libutf8proc.pc
+
+# clangd
+/.cache/
+/compile_commands.json
