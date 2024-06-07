@@ -66,23 +66,22 @@ if (UTF8PROC_INSTALL)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libutf8proc.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
   # Install CMake targets file.
   install(EXPORT utf8proc-targets FILE utf8proc-targets.cmake DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc" NAMESPACE utf8proc::)
-  include (CMakePackageConfigHelpers)
+  include(CMakePackageConfigHelpers)
   configure_package_config_file(
-      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/utf8proc-config.cmake.in"
-      "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config.cmake"
-      INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc"
-      NO_SET_AND_CHECK_MACRO
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/utf8proc-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc"
+    NO_SET_AND_CHECK_MACRO
   )
   write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config-version.cmake"
     COMPATIBILITY AnyNewerVersion
   )
-  install (FILES
-      "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config.cmake"
-      "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config-version.cmake"
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc"
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config-version.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc"
   )
-
 endif()
 
 if(UTF8PROC_ENABLE_TESTING)
