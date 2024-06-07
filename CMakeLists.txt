@@ -75,7 +75,7 @@ if (UTF8PROC_INSTALL)
   )
   write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config-version.cmake"
-    COMPATIBILITY AnyNewerVersion
+    COMPATIBILITY SameMajorVersion
   )
   install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config.cmake"
