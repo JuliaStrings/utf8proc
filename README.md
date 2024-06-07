@@ -42,7 +42,7 @@ cmake -S . -B build
 cmake --build build
 ```
 
-## Using with CMake
+### Using with CMake
 
 A CMake Config-file package is provided. To use utf8proc in a CMake project:
 
