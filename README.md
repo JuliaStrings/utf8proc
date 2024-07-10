@@ -86,3 +86,50 @@ the [utf8proc issues page on Github](https://github.com/JuliaLang/utf8proc/issue
 ## See also
 
 An independent Lua translation of this library, [lua-mojibake](https://github.com/differentprogramming/lua-mojibake), is also available.
+
+## Examples
+
+### Convert codepoint to string
+```c
+// Convert codepoint `a` to utf8 string `str`
+utf8proc_int32_t a = 223;
+utf8proc_uint8_t str[16] = { 0 };
+utf8proc_encode_char(a, str);
+printf("%s\n", str);
+// ß
+```
+
+### Convert string to codepoint
+```c
+// Convert string `str` to pointer to codepoint `a`
+utf8proc_uint8_t str[] = "ß";
+utf8proc_int32_t a;
+utf8proc_iterate(str, -1, &a);
+printf("%d\n", a);
+// 223
+```
+
+### Casefold
+
+```c
+// Convert "ß"  (U+00DF) to its casefold variant "ss"
+utf8proc_uint8_t str[] = "ß";
+utf8proc_uint8_t *fold_str;
+utf8proc_map(str, 0, &fold_str, UTF8PROC_NULLTERM | UTF8PROC_CASEFOLD);
+printf("%s\n", fold_str);
+// ss
+free(fold_str);
+```
+
+### Normalization Form C/D (NFC/NFD)
+```c
+// Decompose "\u00e4\u00f6\u00fc" = "äöü" into "a\u0308o\u0308u\u0308" (= "äöü" via combining char U+0308)
+utf8proc_uint8_t input[] = {0xc3, 0xa4, 0xc3, 0xb6, 0xc3, 0xbc}; // "\u00e4\u00f6\u00fc" = "äöü" in UTF-8
+utf8proc_uint8_t *nfd= utf8proc_NFD(input); // = {0x61, 0xcc, 0x88, 0x6f, 0xcc, 0x88, 0x75, 0xcc, 0x88}
+
+// Compose "a\u0308o\u0308u\u0308" into "\u00e4\u00f6\u00fc" (= "äöü" via precomposed characters)
+utf8proc_uint8_t *nfc= utf8proc_NFC(nfd);
+
+free(nfd);
+free(nfc);
+```
