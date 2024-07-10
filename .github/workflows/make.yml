@@ -18,9 +18,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     # TODO: update makefile to check MANIFEST
-    # - name: Install dependencies (MacOS)
-    #   if: matrix.config.os == 'macos-latest'
-    #   run: brew install ruby findutils
+    - name: Install dependencies (MacOS)
+      if: runner.os == 'macOS'
+      run: brew install julia
 
     - name: Check MANIFEST
       if: matrix.config.os == 'ubuntu-latest'
