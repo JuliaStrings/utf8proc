@@ -20,7 +20,7 @@ developers became involved because they wanted to add Unicode 7 support and othe
 
 (The original utf8proc package also includes Ruby and PostgreSQL plug-ins.
 We removed those from utf8proc in order to focus exclusively on the C
-library for the time being, but plan to add them back in or release them as separate packages.)
+library.)
 
 The utf8proc package is licensed under the
 free/open-source [MIT "expat"
