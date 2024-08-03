@@ -53,6 +53,16 @@ gmake CC=/opt/aCC/bin/aCC CFLAGS="+O2" PICFLAG="+z" C99FLAG="-Ae" WCFLAGS="+w" L
 ```
 To run `gmake install` you will need GNU coreutils for the `install` command, and you may want to pass `prefix=/opt libdir=/opt/lib/hpux32` or similar to change the installation location.
 
+### Using with CMake
+
+A CMake Config-file package is provided. To use utf8proc in a CMake project:
+
+```cmake
+add_executable (app app.c)
+find_package (utf8proc 2.9.0 REQUIRED)
+target_link_libraries (app PRIVATE utf8proc::utf8proc)
+```
+
 ## General Information
 
 The C library is found in this directory after successful compilation
