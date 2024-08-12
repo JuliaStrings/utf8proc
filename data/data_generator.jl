@@ -190,6 +190,7 @@ function read_east_asian_widths(filename)
     for (rng,widthcode) in read_hex_ranges(filename)
         w = widthcode == "W" || widthcode == "F" ? 2 : # wide or full
             widthcode == "Na"|| widthcode == "H" ? 1 : # narrow or half-width
+            widthcode == "A"  ? -1 : # ambiguous width
             nothing
         if !isnothing(w)
             set_all!(ea_widths, rng, w)
@@ -221,7 +222,7 @@ let ea_widths = read_east_asian_widths("EastAsianWidth.txt")
         # Widths from UAX #11: East Asian Width
         eaw = get(ea_widths, code, nothing)
         if !isnothing(eaw)
-            width = eaw
+            width = eaw < 0 ? 1 : eaw
         end
 
         # A few exceptional cases, found by manual comparison to other wcwidth
@@ -241,6 +242,9 @@ let ea_widths = read_east_asian_widths("EastAsianWidth.txt")
         end
 
         return width
+    end
+    global function is_ambiguous_width(code)
+        return get(ea_widths, code, 0) < 0
     end
 end
 
@@ -394,6 +398,7 @@ function char_table_properties!(sequences, char)
         control_boundary     = char.category in ("Zl", "Zp", "Cc", "Cf") &&
                                !(char.code in (0x200C, 0x200D)),
         charwidth            = derive_char_width(code, char.category),
+        ambiguous_width      = is_ambiguous_width(code),
         boundclass           = get_grapheme_boundclass(code),
         indic_conjunct_break = get_indic_conjunct_break(code),
     )
@@ -479,7 +484,7 @@ function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, dedup
 
     print(io, """
         static const utf8proc_property_t utf8proc_properties[] = {
-          {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 1, 0, UTF8PROC_BOUNDCLASS_OTHER, UTF8PROC_INDIC_CONJUNCT_BREAK_NONE},
+          {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 1, 0, 0, UTF8PROC_BOUNDCLASS_OTHER, UTF8PROC_INDIC_CONJUNCT_BREAK_NONE},
         """)
     for prop in deduplicated_props
         print(io, "  {",
@@ -498,6 +503,7 @@ function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, dedup
               prop.ignorable, ", ",
               prop.control_boundary, ", ",
               prop.charwidth, ", ",
+              prop.ambiguous_width, ", ",
               "0, ", # bitfield padding
               c_enum_name("BOUNDCLASS", prop.boundclass), ", ",
               c_enum_name("INDIC_CONJUNCT_BREAK", prop.indic_conjunct_break),
