@@ -236,8 +236,8 @@ let ea_widths = read_east_asian_widths("EastAsianWidth.txt")
             width = 1
         elseif code == 0x2028 || code == 0x2029
             #By definition, should have zero width (on the same line)
-            #0x002028 ' ' category: Zl name: LINE SEPARATOR/
-            #0x002029 ' ' category: Zp name: PARAGRAPH SEPARATOR/
+            #0x002028 '\u2028' category: Zl name: LINE SEPARATOR/
+            #0x002029 '\u2029' category: Zp name: PARAGRAPH SEPARATOR/
             width = 0
         end
 
@@ -310,7 +310,7 @@ let
             end
             offset += 1
             if dm1 in comb2nd_indices_nonbasic
-                offset += 1 
+                offset += 1
             end
         end
         comb1st_indices_firstoffsets[index] = first
@@ -550,4 +550,3 @@ if !isinteractive()
                         comb1st_indices_firstoffsets, comb1st_indices_lastoffsets,
                         comb2nd_indices_sorted_keys, comb_array, comb2nd_indices_nonbasic)
 end
-
