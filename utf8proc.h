@@ -268,7 +268,9 @@ typedef struct utf8proc_property_struct {
   unsigned control_boundary:1;
   /** The width of the codepoint. */
   unsigned charwidth:2;
-  unsigned pad:2;
+  /** East Asian width class A */
+  unsigned ambiguous_width:1;
+  unsigned pad:1;
   /**
    * Boundclass.
    * @see utf8proc_boundclass_t.
@@ -666,6 +668,14 @@ UTF8PROC_DLLEXPORT int utf8proc_isupper(utf8proc_int32_t c);
  * If you want to check for particular types of non-printable characters,
  * (analogous to `isprint` or `iscntrl`), use utf8proc_category(). */
 UTF8PROC_DLLEXPORT int utf8proc_charwidth(utf8proc_int32_t codepoint);
+
+/**
+ * Given a codepoint, return whether it has East Asian width class A (Ambiguous)
+ *
+ * Codepoints with this property are considered to have charwidth 1 (if they are printable)
+ * but some East Asian fonts render them as double width.
+ */
+UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_charwidth_ambiguous(utf8proc_int32_t codepoint);
 
 /**
  * Return the Unicode category for the codepoint (one of the
