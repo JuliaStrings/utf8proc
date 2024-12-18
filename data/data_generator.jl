@@ -259,10 +259,11 @@ end
 comb_mapping = Dict{UInt32, Dict{UInt32, UInt32}}()
 comb_issecond = Set{UInt32}()
 for char in char_props
+    # What happens with decompositions that are longer than 2?
     if isnothing(char.decomp_type) && !isnothing(char.decomp_mapping) &&
             length(char.decomp_mapping) == 2 && !isnothing(char_hash[char.decomp_mapping[1]]) &&
             char_hash[char.decomp_mapping[1]].combining_class == 0 &&
-            char.code ∉ exclusions
+            (char.code ∉ exclusions && char.code ∉ excl_version)
         dm0 = char.decomp_mapping[1]
         dm1 = char.decomp_mapping[2]
         if !haskey(comb_mapping, dm0)
@@ -284,70 +285,6 @@ let
         ind += len
     end
 end
-
-# comb1st_indices = Dict{UInt32,Int}()
-# comb1st_indices_sorted_keys = Origin(0)(UInt32[])
-# comb2nd_indices = Dict{UInt32,Int}()
-# comb2nd_indices_sorted_keys = Origin(0)(UInt32[])
-# comb2nd_indices_length(code::UInt32) = code < 0x8000 ? 1 : 2
-# comb_array = Origin(0)(Vector{Dict{Int,UInt32}}())
-# for (i,char) in enumerate(char_props)
-#     if isnothing(char.decomp_type) && !isnothing(char.decomp_mapping) &&
-#             length(char.decomp_mapping) == 2 && !isnothing(char_hash[char.decomp_mapping[1]]) &&
-#             char_hash[char.decomp_mapping[1]].combining_class == 0 &&
-#             char.code ∉ exclusions
-#         dm0 = char.decomp_mapping[1]
-#         dm1 = char.decomp_mapping[2]
-#         if !haskey(comb1st_indices, dm0)
-#             comb1st_indices[dm0] = length(comb1st_indices)
-#             push!(comb1st_indices_sorted_keys, dm0)
-#             push!(comb_array, Dict{Int,UInt32}())
-#             @assert length(comb1st_indices) == length(comb_array)
-#         end
-#         if !haskey(comb2nd_indices, dm1)
-#             push!(comb2nd_indices_sorted_keys, dm1)
-#             comb2nd_indices[dm1] = length(comb2nd_indices)
-#         end
-#         @assert !haskey(comb_array[comb1st_indices[dm0]], comb2nd_indices[dm1])
-#         comb_array[comb1st_indices[dm0]][comb2nd_indices[dm1]] = char.code
-#     end
-# end
-# 
-# comb_indices = Dict{UInt32,Int}()
-# comb1st_indices_lastoffsets = Origin(0)(zeros(Int, length(comb1st_indices)))
-# comb1st_indices_firstoffsets = Origin(0)(zeros(Int, length(comb1st_indices)))
-# let
-#     cumoffset = 0
-#     for dm0 in comb1st_indices_sorted_keys
-#         index = comb1st_indices[dm0]
-#         first = nothing
-#         last = nothing
-#         offset = 0
-#         for b in eachindex(comb2nd_indices_sorted_keys)
-#             dm1 = comb2nd_indices_sorted_keys[b]
-#             if haskey(comb_array[index], b)
-#                 if isnothing(first)
-#                     first = offset
-#                 end
-#                 last = offset + comb2nd_indices_length(dm1) - 1
-#             end
-#             offset += comb2nd_indices_length(dm1)
-#         end
-#         comb1st_indices_firstoffsets[index] = first
-#         comb1st_indices_lastoffsets[index] = last
-#         @assert !haskey(comb_indices, dm0)
-#         comb_indices[dm0] = 0x4000 | cumoffset
-#         cumoffset += last - first + 1 + 2
-#     end
-# 
-#     offset = 0
-#     for dm1 in comb2nd_indices_sorted_keys
-#         @assert !haskey(comb_indices, dm1)
-#         comb_indices[dm1] = 0x8000 | (comb2nd_indices[dm1] + offset)
-#         @assert comb2nd_indices[dm1] + offset < 0x4000
-#         offset += comb2nd_indices_length(dm1) - 1
-#     end
-# end
 
 utf16_encode(utf32_seq) = transcode(UInt16, transcode(String, utf32_seq))
 
@@ -536,7 +473,7 @@ function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, dedup
     for dm0 in sort!(collect(keys(comb_mapping)))
         for dm1 in sort!(collect(keys(comb_mapping[dm0])))
             code = comb_mapping[dm0][dm1]
-            print(io, "  { ", dm1, ", ", code, " },\n")
+            print(io, "  {", dm1, ", ", code, "},\n")
         end
     end
     print(io, "};\n\n")

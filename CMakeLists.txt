@@ -4,7 +4,7 @@ include (utils.cmake)
 
 disallow_intree_builds()
 
-project (utf8proc VERSION 2.9.0 LANGUAGES C)
+project (utf8proc VERSION 2.10.0 LANGUAGES C)
 
 # This is the ABI version number, which may differ from the
 # API version number (defined in utf8proc.h and above).
