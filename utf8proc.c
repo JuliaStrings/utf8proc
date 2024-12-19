@@ -687,18 +687,18 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
         int idx = starter_property->comb_index;
         if (idx < 0x3FF && current_property->comb_issecond) {
           int len = starter_property->comb_length;
-          utf8proc_int32_t max_second = utf8proc_combinations[idx + len - 1][0];
+          utf8proc_uint32_t max_second = utf8proc_combinations[idx + len - 1][0];
           if (current_char <= max_second) {
             // TODO: binary search? arithmetic search?
             for (int off = 0; off < len; ++off) {
-              utf8proc_int32_t second = utf8proc_combinations[idx + off][0];              
+              utf8proc_uint32_t second = utf8proc_combinations[idx + off][0];
               if (current_char < second) {
                 /* not found */
                 break;
               }
               if (current_char == second) {
                 /* found */
-                utf8proc_int32_t composition = utf8proc_combinations[idx + off][1];
+                utf8proc_uint32_t composition = utf8proc_combinations[idx + off][1];
                 *starter = composition;
                 starter_property = NULL;
                 break;
