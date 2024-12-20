@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     # TODO: update makefile to check MANIFEST
     - name: Install dependencies (MacOS)
       if: runner.os == 'macOS'
@@ -35,7 +35,7 @@ jobs:
     - name: Make lib
       run: make
     - name: Upload shared lib
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: make-${{ matrix.os }}
         path: libutf8proc.*
