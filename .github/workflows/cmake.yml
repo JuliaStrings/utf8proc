@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} - shared=${{ matrix.shared }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Build
       run: |
         mkdir build
@@ -45,7 +45,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: msys2/setup-msys2@v2
       with:
         install: gcc make mingw-w64-x86_64-cmake
