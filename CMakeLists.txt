@@ -10,7 +10,7 @@ project (utf8proc VERSION 2.10.0 LANGUAGES C)
 # API version number (defined in utf8proc.h and above).
 # Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 3)
-set(SO_MINOR 0)
+set(SO_MINOR 1)
 set(SO_PATCH 0)
 
 option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)

@@ -277,7 +277,7 @@ typedef struct utf8proc_property_struct {
    * - `comb_length`: Number of table entries for this first character
    *
    * - `comb_is_second`: As optimization we also record whether this
-   *   characther is the second combining character in any pair. If
+   *   character is the second combining character in any pair. If
    *   not, we can skip the table lookup.
    *
    * A table lookup starts from a given character pair. It first
