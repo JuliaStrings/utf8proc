@@ -266,10 +266,12 @@ typedef struct utf8proc_property_struct {
    * combining pair, and for most, there are only a handful for
    * possible second characters.
    *
-   * The combining table is stored as `utf8proc_uint32_t
-   * utf8proc_combinations[][2]`. That is, it contains a pair `(second
-   * combining character, combined character)` for every character
-   * that can be a first combining character.
+   * The combining table is stored as sparse matrix in the CSR
+   * (compressed sparse row) format. That is, it is stored as two
+   * arrays, `utf8proc_uint32_t utf8proc_combinations_second[]` and
+   * `utf8proc_uint32_t utf8proc_combinations_combined[]`. These
+   * contain the second combining characters and the combined
+   * character of every combining pair.
    *
    * - `comb_index`: Index into the combining table if this character
    *   is the first character in a combining pair, else 0x3ff
