@@ -8,7 +8,6 @@
  - New `utf8proc_charwidth_ambiguous` function to return whether a character has
    East Asian width class A (Ambiguous) ([#270]).
 
-
 ## Version 2.9.0 ##
 
 2023-10-20
