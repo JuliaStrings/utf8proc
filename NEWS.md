@@ -1,5 +1,14 @@
 # utf8proc release history #
 
+## Version 2.10.0 ##
+
+2024-12-31
+
+ - Unicode 16 support ([#277]).
+ - New `utf8proc_charwidth_ambiguous` function to return whether a character has
+   East Asian width class A (Ambiguous) ([#270]).
+
+
 ## Version 2.9.0 ##
 
 2023-10-20
