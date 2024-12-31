@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['original_20utf8proc_20license_0',['Original utf8proc license',['../md__l_i_c_e_n_s_e.html#autotoc_md1',1,'']]],
-  ['other_20compilers_1',['Using other compilers',['../md__r_e_a_d_m_e.html#autotoc_md5',1,'']]]
+  ['ignorable_0',['ignorable',['../structutf8proc__property__struct.html#a92c5ead96b0a8594913dbee297cf75bb',1,'utf8proc_property_struct']]],
+  ['information_1',['General Information',['../md__r_e_a_d_m_e.html#autotoc_md6',1,'']]]
 ];

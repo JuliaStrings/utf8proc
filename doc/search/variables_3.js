@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ignorable_0',['ignorable',['../structutf8proc__property__struct.html#a92c5ead96b0a8594913dbee297cf75bb',1,'utf8proc_property_struct']]]
+  ['decomp_5ftype_0',['decomp_type',['../structutf8proc__property__struct.html#accca36acf0134cb64a257b2eba13fea0',1,'utf8proc_property_struct']]]
 ];
