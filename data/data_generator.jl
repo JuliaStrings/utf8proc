@@ -469,7 +469,7 @@ function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, dedup
     end
     print(io, "};\n\n")
 
-    print(io, "static const utf8proc_uint32_t utf8proc_combinations_second[] = {\n")
+    print(io, "static const utf8proc_int32_t utf8proc_combinations_second[] = {\n")
     for dm0 in sort!(collect(keys(comb_mapping)))
         print(io, " ");
         for dm1 in sort!(collect(keys(comb_mapping[dm0])))
@@ -479,7 +479,7 @@ function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, dedup
     end
     print(io, "};\n\n")
 
-    print(io, "static const utf8proc_uint32_t utf8proc_combinations_combined[] = {\n")
+    print(io, "static const utf8proc_int32_t utf8proc_combinations_combined[] = {\n")
     for dm0 in sort!(collect(keys(comb_mapping)))
         print(io, " ");
         for dm1 in sort!(collect(keys(comb_mapping[dm0])))
