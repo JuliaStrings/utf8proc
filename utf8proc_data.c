@@ -16316,7 +16316,7 @@ static const utf8proc_property_t utf8proc_properties[] = {
   {UTF8PROC_CATEGORY_CF, 0, UTF8PROC_BIDI_CLASS_BN, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, 1023, 0, false, false, false, true, true, 0, false, 0, UTF8PROC_BOUNDCLASS_EXTEND, UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND},
 };
 
-static const utf8proc_uint32_t utf8proc_combinations_second[] = {
+static const utf8proc_int32_t utf8proc_combinations_second[] = {
   824,
   824,
   824,
@@ -16710,7 +16710,7 @@ static const utf8proc_uint32_t utf8proc_combinations_second[] = {
   93543,
 };
 
-static const utf8proc_uint32_t utf8proc_combinations_combined[] = {
+static const utf8proc_int32_t utf8proc_combinations_combined[] = {
   8814,
   8800,
   8815,

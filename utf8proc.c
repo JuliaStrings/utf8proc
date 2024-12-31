@@ -646,14 +646,13 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
   }
   if (options & UTF8PROC_COMPOSE) {
     utf8proc_int32_t *starter = NULL;
-    utf8proc_int32_t current_char;
-    const utf8proc_property_t *starter_property = NULL, *current_property;
+    const utf8proc_property_t *starter_property = NULL;
     utf8proc_propval_t max_combining_class = -1;
     utf8proc_ssize_t rpos;
     utf8proc_ssize_t wpos = 0;
     for (rpos = 0; rpos < length; rpos++) {
-      current_char = buffer[rpos];
-      current_property = unsafe_get_property(current_char);
+      utf8proc_int32_t current_char = buffer[rpos];
+      const utf8proc_property_t *current_property = unsafe_get_property(current_char);
       if (starter && current_property->combining_class > max_combining_class) {
         /* combination perhaps possible */
         utf8proc_int32_t hangul_lindex;
@@ -687,18 +686,18 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
         int idx = starter_property->comb_index;
         if (idx < 0x3FF && current_property->comb_issecond) {
           int len = starter_property->comb_length;
-          utf8proc_uint32_t max_second = utf8proc_combinations_second[idx + len - 1];
+          utf8proc_int32_t max_second = utf8proc_combinations_second[idx + len - 1];
           if (current_char <= max_second) {
             // TODO: binary search? arithmetic search?
             for (int off = 0; off < len; ++off) {
-              utf8proc_uint32_t second = utf8proc_combinations_second[idx + off];
+              utf8proc_int32_t second = utf8proc_combinations_second[idx + off];
               if (current_char < second) {
                 /* not found */
                 break;
               }
               if (current_char == second) {
                 /* found */
-                utf8proc_uint32_t composition = utf8proc_combinations_combined[idx + off];
+                utf8proc_int32_t composition = utf8proc_combinations_combined[idx + off];
                 *starter = composition;
                 starter_property = NULL;
                 break;
