@@ -524,9 +524,12 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
     }
   }
   if (options & UTF8PROC_CHARBOUND) {
+    /* hack for systems with int that isn't 32-bit */
+    utf8proc_int32_t last_boundclass_hack;
     utf8proc_bool boundary;
     boundary = grapheme_break_extended(0, property->boundclass, 0, property->indic_conjunct_break,
-                                       last_boundclass);
+                                       &last_boundclass_hack);
+    *last_boundclass = last_boundclass_hack;
     if (boundary) {
       if (bufsize >= 1) dst[0] = -1; /* sentinel value for grapheme break */
       if (bufsize >= 2) dst[1] = uc;
