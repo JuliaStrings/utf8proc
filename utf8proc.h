@@ -71,7 +71,7 @@
 /** The MAJOR version number (increased when backwards API compatibility is broken). */
 #define UTF8PROC_VERSION_MAJOR 2
 /** The MINOR version number (increased when new functionality is added in a backwards-compatible manner). */
-#define UTF8PROC_VERSION_MINOR 9
+#define UTF8PROC_VERSION_MINOR 10
 /** The PATCH version (increased for fixes that do not change the API). */
 #define UTF8PROC_VERSION_PATCH 0
 /** @} */
@@ -255,7 +255,43 @@ typedef struct utf8proc_property_struct {
   utf8proc_uint16_t uppercase_seqindex;
   utf8proc_uint16_t lowercase_seqindex;
   utf8proc_uint16_t titlecase_seqindex;
-  utf8proc_uint16_t comb_index;
+  /**
+   * Character combining table.
+   *
+   * The character combining table is formally indexed by two
+   * characters, the first and second character that might form a
+   * combining pair. The table entry then contains the combined
+   * character. Most character pairs cannot be combined. There are
+   * about 1,000 characters that can be the first character in a
+   * combining pair, and for most, there are only a handful for
+   * possible second characters.
+   *
+   * The combining table is stored as sparse matrix in the CSR
+   * (compressed sparse row) format. That is, it is stored as two
+   * arrays, `utf8proc_uint32_t utf8proc_combinations_second[]` and
+   * `utf8proc_uint32_t utf8proc_combinations_combined[]`. These
+   * contain the second combining characters and the combined
+   * character of every combining pair.
+   *
+   * - `comb_index`: Index into the combining table if this character
+   *   is the first character in a combining pair, else 0x3ff
+   *
+   * - `comb_length`: Number of table entries for this first character
+   *
+   * - `comb_is_second`: As optimization we also record whether this
+   *   character is the second combining character in any pair. If
+   *   not, we can skip the table lookup.
+   *
+   * A table lookup starts from a given character pair. It first
+   * checks whether the first character is stored in the table
+   * (checking whether the index is 0x3ff) and whether the second
+   * index is stored in the table (looking at `comb_is_second`). If
+   * so, the `comb_length` table entries will be checked sequentially
+   * for a match.
+   */
+  utf8proc_uint16_t comb_index:10;
+  utf8proc_uint16_t comb_length:5;
+  utf8proc_uint16_t comb_issecond:1;
   unsigned bidi_mirrored:1;
   unsigned comp_exclusion:1;
   /**
@@ -268,7 +304,9 @@ typedef struct utf8proc_property_struct {
   unsigned control_boundary:1;
   /** The width of the codepoint. */
   unsigned charwidth:2;
-  unsigned pad:2;
+  /** East Asian width class A */
+  unsigned ambiguous_width:1;
+  unsigned pad:1;
   /**
    * Boundclass.
    * @see utf8proc_boundclass_t.
@@ -666,6 +704,14 @@ UTF8PROC_DLLEXPORT int utf8proc_isupper(utf8proc_int32_t c);
  * If you want to check for particular types of non-printable characters,
  * (analogous to `isprint` or `iscntrl`), use utf8proc_category(). */
 UTF8PROC_DLLEXPORT int utf8proc_charwidth(utf8proc_int32_t codepoint);
+
+/**
+ * Given a codepoint, return whether it has East Asian width class A (Ambiguous)
+ *
+ * Codepoints with this property are considered to have charwidth 1 (if they are printable)
+ * but some East Asian fonts render them as double width.
+ */
+UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_charwidth_ambiguous(utf8proc_int32_t codepoint);
 
 /**
  * Return the Unicode category for the codepoint (one of the

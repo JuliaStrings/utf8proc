@@ -190,6 +190,7 @@ function read_east_asian_widths(filename)
     for (rng,widthcode) in read_hex_ranges(filename)
         w = widthcode == "W" || widthcode == "F" ? 2 : # wide or full
             widthcode == "Na"|| widthcode == "H" ? 1 : # narrow or half-width
+            widthcode == "A"  ? -1 : # ambiguous width
             nothing
         if !isnothing(w)
             set_all!(ea_widths, rng, w)
@@ -221,7 +222,7 @@ let ea_widths = read_east_asian_widths("EastAsianWidth.txt")
         # Widths from UAX #11: East Asian Width
         eaw = get(ea_widths, code, nothing)
         if !isnothing(eaw)
-            width = eaw
+            width = eaw < 0 ? 1 : eaw
         end
 
         # A few exceptional cases, found by manual comparison to other wcwidth
@@ -235,12 +236,15 @@ let ea_widths = read_east_asian_widths("EastAsianWidth.txt")
             width = 1
         elseif code == 0x2028 || code == 0x2029
             #By definition, should have zero width (on the same line)
-            #0x002028 ' ' category: Zl name: LINE SEPARATOR/
-            #0x002029 ' ' category: Zp name: PARAGRAPH SEPARATOR/
+            #0x002028 '\u2028' category: Zl name: LINE SEPARATOR/
+            #0x002029 '\u2029' category: Zp name: PARAGRAPH SEPARATOR/
             width = 0
         end
 
         return width
+    end
+    global function is_ambiguous_width(code)
+        return get(ea_widths, code, 0) < 0
     end
 end
 
@@ -252,79 +256,33 @@ end
 # decompressed on the C side at runtime.
 
 # Inverse decomposition mapping tables for combining two characters into a single one.
-comb1st_indices = Dict{UInt32,Int}()
-comb1st_indices_sorted_keys = Origin(0)(UInt32[])
-comb2nd_indices = Dict{UInt32,Int}()
-comb2nd_indices_sorted_keys = Origin(0)(UInt32[])
-comb2nd_indices_nonbasic = Set{UInt32}()
-comb_array = Origin(0)(Vector{Dict{Int,UInt32}}())
+comb_mapping = Dict{UInt32, Dict{UInt32, UInt32}}()
+comb_issecond = Set{UInt32}()
 for char in char_props
+    # What happens with decompositions that are longer than 2?
     if isnothing(char.decomp_type) && !isnothing(char.decomp_mapping) &&
             length(char.decomp_mapping) == 2 && !isnothing(char_hash[char.decomp_mapping[1]]) &&
             char_hash[char.decomp_mapping[1]].combining_class == 0 &&
-            char.code ∉ exclusions
+            (char.code ∉ exclusions && char.code ∉ excl_version)
         dm0 = char.decomp_mapping[1]
         dm1 = char.decomp_mapping[2]
-        if !haskey(comb1st_indices, dm0)
-            comb1st_indices[dm0] = length(comb1st_indices)
-            push!(comb1st_indices_sorted_keys, dm0)
-            push!(comb_array, Dict{Int,UInt32}())
-            @assert length(comb1st_indices) == length(comb_array)
+        if !haskey(comb_mapping, dm0)
+            comb_mapping[dm0] = Dict{UInt32, UInt32}()
         end
-        if !haskey(comb2nd_indices, dm1)
-            push!(comb2nd_indices_sorted_keys, dm1)
-            comb2nd_indices[dm1] = length(comb2nd_indices)
-        end
-        @assert !haskey(comb_array[comb1st_indices[dm0]], comb2nd_indices[dm1])
-        comb_array[comb1st_indices[dm0]][comb2nd_indices[dm1]] = char.code
-        if char.code > 0xFFFF
-            push!(comb2nd_indices_nonbasic, dm1)
-        end
+        comb_mapping[dm0][dm1] = char.code
+        push!(comb_issecond, dm1)
     end
 end
 
-comb_indices = Dict{UInt32,Int}()
-comb1st_indices_lastoffsets = Origin(0)(zeros(Int, length(comb1st_indices)))
-comb1st_indices_firstoffsets = Origin(0)(zeros(Int, length(comb1st_indices)))
+comb_index = Dict{UInt32, UInt32}()
+comb_length = Dict{UInt32, UInt32}()
 let
-    cumoffset = 0
-    for dm0 in comb1st_indices_sorted_keys
-        index = comb1st_indices[dm0]
-        first = nothing
-        last = nothing
-        offset = 0
-        for b in eachindex(comb2nd_indices_sorted_keys)
-            dm1 = comb2nd_indices_sorted_keys[b]
-            if haskey(comb_array[index], b)
-                if isnothing(first)
-                    first = offset
-                end
-                last = offset
-                if dm1 in comb2nd_indices_nonbasic
-                    last += 1
-                end
-            end
-            offset += 1
-            if dm1 in comb2nd_indices_nonbasic
-                offset += 1 
-            end
-        end
-        comb1st_indices_firstoffsets[index] = first
-        comb1st_indices_lastoffsets[index] = last
-        @assert !haskey(comb_indices, dm0)
-        comb_indices[dm0] = cumoffset
-        cumoffset += last - first + 1 + 2
-    end
-
-    offset = 0
-    for dm1 in comb2nd_indices_sorted_keys
-        @assert !haskey(comb_indices, dm1)
-        comb_indices[dm1] = 0x8000 | (comb2nd_indices[dm1] + offset)
-        @assert comb2nd_indices[dm1] + offset <= 0x4000
-        if dm1 in comb2nd_indices_nonbasic
-            comb_indices[dm1] |= 0x4000
-            offset += 1
-        end
+    ind = 0
+    for dm0 in sort!(collect(keys(comb_mapping)))
+        comb_index[dm0] = ind
+        len = length(comb_mapping[dm0])
+        comb_length[dm0] = len
+        ind += len
     end
 end
 
@@ -387,13 +345,16 @@ function char_table_properties!(sequences, char)
         uppercase_seqindex   = encode_sequence!(sequences, char.uppercase_mapping),
         lowercase_seqindex   = encode_sequence!(sequences, char.lowercase_mapping),
         titlecase_seqindex   = encode_sequence!(sequences, char.titlecase_mapping),
-        comb_index           = get(comb_indices, code, typemax(UInt16)),
+        comb_index           = get(comb_index, code, 0x3FF), # see utf8proc_property_struct::comb_index
+        comb_length          = get(comb_length, code, 0),
+        comb_issecond        = code in comb_issecond,
         bidi_mirrored        = char.bidi_mirrored,
         comp_exclusion       = code in exclusions || code in excl_version,
         ignorable            = code in ignorable,
         control_boundary     = char.category in ("Zl", "Zp", "Cc", "Cf") &&
                                !(char.code in (0x200C, 0x200D)),
         charwidth            = derive_char_width(code, char.category),
+        ambiguous_width      = is_ambiguous_width(code),
         boundclass           = get_grapheme_boundclass(code),
         indic_conjunct_break = get_indic_conjunct_break(code),
     )
@@ -468,8 +429,7 @@ function c_uint16(seqindex)
 end
 
 function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, deduplicated_props,
-                             comb1st_indices_firstoffsets, comb1st_indices_lastoffsets,
-                             comb2nd_indices_sorted_keys, comb_array, comb2nd_indices_nonbasic)
+                             comb_index, comb_length, comb_issecond)
     print(io, "static const utf8proc_uint16_t utf8proc_sequences[] = ")
     write_c_index_array(io, sequences.storage, 8)
     print(io, "static const utf8proc_uint16_t utf8proc_stage1table[] = ")
@@ -479,7 +439,7 @@ function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, dedup
 
     print(io, """
         static const utf8proc_property_t utf8proc_properties[] = {
-          {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  false,false,false,false, 1, 0, UTF8PROC_BOUNDCLASS_OTHER, UTF8PROC_INDIC_CONJUNCT_BREAK_NONE},
+          {0, 0, 0, 0, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  0x3FF,0,false,  false,false,false,false, 1, 0, 0, UTF8PROC_BOUNDCLASS_OTHER, UTF8PROC_INDIC_CONJUNCT_BREAK_NONE},
         """)
     for prop in deduplicated_props
         print(io, "  {",
@@ -493,11 +453,14 @@ function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, dedup
               c_uint16(prop.lowercase_seqindex), ", ",
               c_uint16(prop.titlecase_seqindex), ", ",
               c_uint16(prop.comb_index), ", ",
+              c_uint16(prop.comb_length), ", ",
+              prop.comb_issecond, ", ",
               prop.bidi_mirrored, ", ",
               prop.comp_exclusion, ", ",
               prop.ignorable, ", ",
               prop.control_boundary, ", ",
               prop.charwidth, ", ",
+              prop.ambiguous_width, ", ",
               "0, ", # bitfield padding
               c_enum_name("BOUNDCLASS", prop.boundclass), ", ",
               c_enum_name("INDIC_CONJUNCT_BREAK", prop.indic_conjunct_break),
@@ -506,34 +469,24 @@ function print_c_data_tables(io, sequences, prop_page_indices, prop_pages, dedup
     end
     print(io, "};\n\n")
 
-    print(io, "static const utf8proc_uint16_t utf8proc_combinations[] = {\n  ")
-    i = 0
-    for a in eachindex(comb1st_indices_firstoffsets)
-        offset = 0
-        print(io, comb1st_indices_firstoffsets[a], ", ", comb1st_indices_lastoffsets[a], ", ")
-        for b in eachindex(comb2nd_indices_sorted_keys)
-            dm1 = comb2nd_indices_sorted_keys[b]
-            if offset > comb1st_indices_lastoffsets[a]
-                break
-            end
-            if offset >= comb1st_indices_firstoffsets[a]
-                i += 1
-                if i == 8
-                    i = 0
-                    print(io, "\n  ")
-                end
-                v = get(comb_array[a], b, 0)
-                if dm1 in comb2nd_indices_nonbasic
-                    print(io, (v & 0xFFFF0000) >> 16, ", ")
-                end
-                print(io, v & 0xFFFF, ", ")
-            end
-            offset += 1
-            if dm1 in comb2nd_indices_nonbasic
-                offset += 1
-            end
+    print(io, "static const utf8proc_int32_t utf8proc_combinations_second[] = {\n")
+    for dm0 in sort!(collect(keys(comb_mapping)))
+        print(io, " ");
+        for dm1 in sort!(collect(keys(comb_mapping[dm0])))
+            print(io, " ", dm1, ",")
         end
-        print(io, "\n")
+        print(io, "\n");
+    end
+    print(io, "};\n\n")
+
+    print(io, "static const utf8proc_int32_t utf8proc_combinations_combined[] = {\n")
+    for dm0 in sort!(collect(keys(comb_mapping)))
+        print(io, " ");
+        for dm1 in sort!(collect(keys(comb_mapping[dm0])))
+            code = comb_mapping[dm0][dm1]
+            print(io, " ", code, ",")
+        end
+        print(io, "\n");
     end
     print(io, "};\n\n")
 end
@@ -541,7 +494,5 @@ end
 
 if !isinteractive()
     print_c_data_tables(stdout, sequences, prop_page_indices, prop_pages, deduplicated_props,
-                        comb1st_indices_firstoffsets, comb1st_indices_lastoffsets,
-                        comb2nd_indices_sorted_keys, comb_array, comb2nd_indices_nonbasic)
+                        comb_index, comb_length, comb_issecond)
 end
-
