@@ -33,6 +33,21 @@ jobs:
         path: |
           build/libutf8proc.*
           build/Debug/utf8proc.*
+    - name: Test Consuming (Windows)
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+        cmake --install build --prefix tmp/install --config Debug
+        cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install
+        cmake --build test/app/build
+        $env:PATH+=";$PWD/tmp/install/bin"
+        test/app/build/Debug/app.exe
+    - name: Test Consuming (Unix)
+      if: ${{ matrix.os != 'windows-latest' }}
+      run: |
+        cmake --install build --prefix tmp/install
+        cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install
+        cmake --build test/app/build
+        test/app/build/app
 
   mingw:
     strategy:
@@ -62,3 +77,10 @@ jobs:
       with:
         name: windows-mingw64
         path: build/libutf8proc.*
+    - name: Test Consuming
+      run: |
+        cmake --install build --prefix tmp/install
+        cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install -G'MSYS Makefiles'
+        cmake --build test/app/build
+        export PATH="$PATH:$(pwd)/tmp/install/bin"
+        test/app/build/app.exe

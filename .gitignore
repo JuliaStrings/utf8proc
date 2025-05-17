@@ -28,6 +28,7 @@
 /test/case
 /test/iscase
 /test/custom
+/test/app/build
 /tmp/
 /mingw_static/
 /mingw_shared/
