@@ -21,7 +21,7 @@ jobs:
     - name: Build
       run: |
         mkdir build
-        cmake -S . -B build -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DUTF8PROC_ENABLE_TESTING=ON
+        cmake -S . -B build -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DUTF8PROC_ENABLE_TESTING=ON -DCMAKE_INSTALL_PREFIX=tmp/install
         cmake --build build
     - name: Run Test
       run: ctest --test-dir build -V
@@ -36,7 +36,7 @@ jobs:
     - name: Test Consuming (Windows)
       if: runner.os = 'Windows'
       run: |
-        cmake --install build --prefix tmp/install --config Debug
+        cmake --install build --config Debug
         cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install
         cmake --build test/app/build
         $Env:PATH = "$PWD\tmp\install\bin;$Env:PATH"
@@ -44,7 +44,7 @@ jobs:
     - name: Test Consuming (Unix)
       if: runner.os != 'Windows'
       run: |
-        cmake --install build --prefix tmp/install
+        cmake --install build
         cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install
         cmake --build test/app/build
         test/app/build/app
@@ -67,7 +67,7 @@ jobs:
     - name: Build
       run: |
         mkdir build
-        cmake -S . -B build -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DUTF8PROC_ENABLE_TESTING=ON -G'MSYS Makefiles'
+        cmake -S . -B build -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DUTF8PROC_ENABLE_TESTING=ON -G'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=tmp/install
         cmake --build build
     - name: Run Test
       run: ctest --test-dir build -V
@@ -79,7 +79,7 @@ jobs:
         path: build/libutf8proc.*
     - name: Test Consuming
       run: |
-        cmake --install build --prefix tmp/install
+        cmake --install build
         cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install -G'MSYS Makefiles'
         cmake --build test/app/build
         PATH="$(pwd)/tmp/install/bin:$PATH"
