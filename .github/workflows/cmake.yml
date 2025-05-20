@@ -39,7 +39,7 @@ jobs:
         cmake --install build --prefix tmp/install --config Debug
         cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install
         cmake --build test/app/build
-        $env:PATH+=";$PWD/tmp/install/bin"
+        $Env:PATH = "$PWD\tmp\install\bin;$Env:PATH"
         test/app/build/Debug/app.exe
     - name: Test Consuming (Unix)
       if: ${{ matrix.os != 'windows-latest' }}
