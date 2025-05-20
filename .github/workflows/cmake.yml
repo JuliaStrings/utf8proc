@@ -34,7 +34,7 @@ jobs:
           build/libutf8proc.*
           build/Debug/utf8proc.*
     - name: Test Consuming (Windows)
-      if: runner.os = 'Windows'
+      if: runner.os == 'Windows'
       run: |
         cmake --install build --config Debug
         cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install
