@@ -82,5 +82,5 @@ jobs:
         cmake --install build --prefix tmp/install
         cmake -S test/app -B test/app/build -DCMAKE_INSTALL_PREFIX=tmp/install -G'MSYS Makefiles'
         cmake --build test/app/build
-        export PATH="$PATH:$(pwd)/tmp/install/bin"
+        PATH="$(pwd)/tmp/install/bin:$PATH"
         test/app/build/app.exe
