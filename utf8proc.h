@@ -517,7 +517,7 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int
  * @param dst the destination buffer.
  * @param bufsize the size of the destination buffer.
  * @param options one or more of the following flags:
- * - @ref UTF8PROC_REJECTNA  - return an error `codepoint` is unassigned
+ * - @ref UTF8PROC_REJECTNA  - return an error if `codepoint` is unassigned
  * - @ref UTF8PROC_IGNORE    - strip "default ignorable" codepoints
  * - @ref UTF8PROC_CASEFOLD  - apply Unicode casefolding
  * - @ref UTF8PROC_COMPAT    - replace certain codepoints with their
@@ -531,6 +531,11 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int
  * the previous codepoint's (boundclass + indic_conjunct_break << 1) if the @ref UTF8PROC_CHARBOUND
  * option is used.  If the string is being processed in order, this can be initialized to 0 for
  * the beginning of the string, and is thereafter updated automatically.  Otherwise, this parameter is ignored.
+ *
+ * In the current version of utf8proc, the maximum destination buffer with the @ref UTF8PROC_DECOMPOSE
+ * option is 4 elements (or double that with @ref UTF8PROC_CHARBOUND), so this is a good default size.
+ * However, this may increase in future Unicode versions, so you should always check the return value
+ * as described below.
  *
  * @return
  * In case of success, the number of codepoints written is returned; in case
