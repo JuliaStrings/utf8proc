@@ -23,5 +23,5 @@ extern size_t lineno;
 
 void check(int cond, const char *format, ...);
 size_t skipspaces(const unsigned char *buf, size_t i);
-size_t encode(unsigned char *dest, const unsigned char *buf);
+size_t encode(unsigned char *dest, size_t *dest_len, const unsigned char *buf);
 size_t simple_getline(unsigned char buf[8192], FILE *f);
