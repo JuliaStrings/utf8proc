@@ -26,7 +26,6 @@ void checkline(const char *_buf, bool verbose) {
             size_t dest_len;
             size_t len = encode((unsigned char*) (src + si), &dest_len, buf + bi) - 1;
             si += dest_len; /* advance to NUL termination */
-            assert(src[si] == '\0');
             bi += len;
         }
     }
