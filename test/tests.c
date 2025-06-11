@@ -38,7 +38,7 @@ size_t encode(unsigned char *dest, size_t *dest_len, const unsigned char *buf)
                ; /* find end of hex input */
           if (j == i) { /* no codepoint found */
                dest[d] = 0; /* NUL-terminate destination string */
-               *dest_len = d;
+               *dest_len = (size_t)d;
                return i + 1;
           }
           check(sscanf((char *) (buf + i), "%x", (unsigned int *)&c) == 1, "invalid hex input %s", buf+i);
