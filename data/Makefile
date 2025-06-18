@@ -21,7 +21,7 @@ utf8proc_data.c.new: data_generator.jl $(RAWDATA)
 	$(JULIA) --project=. data_generator.jl > $@
 
 # Unicode data version (must also update utf8proc_unicode_version function)
-UNICODE_VERSION=16.0.0
+UNICODE_VERSION=17.0.0
 
 UnicodeData.txt:
 	$(CURL) $(CURLFLAGS) -o $@ https://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/UnicodeData.txt
