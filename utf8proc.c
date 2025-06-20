@@ -688,8 +688,9 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
           int len = starter_property->comb_length;
           utf8proc_int32_t max_second = utf8proc_combinations_second[idx + len - 1];
           if (current_char <= max_second) {
+            int off;
             // TODO: binary search? arithmetic search?
-            for (int off = 0; off < len; ++off) {
+            for (off = 0; off < len; ++off) {
               utf8proc_int32_t second = utf8proc_combinations_second[idx + off];
               if (current_char < second) {
                 /* not found */
