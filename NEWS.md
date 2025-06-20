@@ -1,5 +1,11 @@
 # utf8proc release history #
 
+## Version 2.11.0 ##
+
+2025-06-20
+
+ - Unicode 17 support ([#292]).
+
 ## Version 2.10.0 ##
 
 2024-12-31

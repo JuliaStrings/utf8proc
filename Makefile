@@ -27,7 +27,7 @@ MINOR=1
 PATCH=0
 
 # api version (also in utf8proc.h and CMakeLists.txt)
-VERSION=2.10.0
+VERSION=2.11.0
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
