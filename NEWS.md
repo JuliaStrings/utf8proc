@@ -1,6 +1,6 @@
 # utf8proc release history #
 
-## Version 2.11.0 ##
+## Version 2.11.0-alpha ##
 
 TBD — awaiting final Unicode 17 release.
 
