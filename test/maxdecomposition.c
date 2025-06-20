@@ -1,7 +1,7 @@
 #include "tests.h"
 
 /* Check the maximum decomposed size returned by utf8proc_decompose_char with UTF8PROC_DECOMPOSE,
-   in order to give a hint in the documentation.  The documentation hint will need to be updated if this changes. */
+   in order to give a hint in the documentation.  The hint will need to be updated if this changes. */
 
 int main(void)
 {
