@@ -23,7 +23,7 @@ SOFLAG = -Wl,-soname
 # The API version number is defined in utf8proc.h.
 # Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
 MAJOR=3
-MINOR=1
+MINOR=2
 PATCH=0
 
 # api version (also in utf8proc.h and CMakeLists.txt)
