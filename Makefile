@@ -59,7 +59,7 @@ clean:
 ifneq ($(OS),Darwin)
 	rm -f libutf8proc.so.$(MAJOR)
 endif
-	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case test/custom test/misc test/iscase
+	rm -f test/tests.o test/normtest test/graphemetest test/printproperty test/charwidth test/valid test/iterate test/case test/custom test/misc test/iscase test/maxdecomposition
 	rm -rf MANIFEST.new tmp
 	$(MAKE) -C bench clean
 	$(MAKE) -C data clean
@@ -171,6 +171,9 @@ test/custom: test/custom.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) $(LDFLAGS) -DUNICODE_VERSION='"'`$(PERL) -ne "/^UNICODE_VERSION=/ and print $$';" data/Makefile`'"' test/misc.c test/tests.o utf8proc.o -o $@
 
+test/maxdecomposition: test/maxdecomposition.c test/tests.o utf8proc.o utf8proc.h test/tests.h
+	$(CC) $(UCFLAGS) $(LDFLAGS) -DUNICODE_VERSION='"'`$(PERL) -ne "/^UNICODE_VERSION=/ and print $$';" data/Makefile`'"' test/maxdecomposition.c test/tests.o utf8proc.o -o $@
+
 # make release tarball from master branch
 dist:
 	git archive master --prefix=utf8proc-$(VERSION)/ -o utf8proc-$(VERSION).tar.gz
@@ -186,7 +189,7 @@ distcheck: dist
 	make -C utf8proc-$(VERSION) check
 	rm -rf utf8proc-$(VERSION)
 
-check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
+check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/maxdecomposition test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
@@ -197,3 +200,4 @@ check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercas
 	test/case
 	test/iscase data/Lowercase.txt data/Uppercase.txt
 	test/custom
+	test/maxdecomposition
