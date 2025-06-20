@@ -2,7 +2,7 @@
 
 ## Version 2.11.0 ##
 
-2025-06-20
+TBD — awaiting final Unicode 17 release.
 
  - Unicode 17 support ([#292]).
 
