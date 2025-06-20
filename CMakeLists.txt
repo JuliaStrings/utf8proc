@@ -5,13 +5,13 @@ include (utils.cmake)
 disallow_intree_builds()
 
 # API version - be sure to update utf8proc.h and Makefile, too!
-project (utf8proc VERSION 2.10.0 LANGUAGES C)
+project (utf8proc VERSION 2.11.0 LANGUAGES C)
 
 # This is the ABI version number, which may differ from the
 # API version number (defined in utf8proc.h and above).
 # Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 3)
-set(SO_MINOR 1)
+set(SO_MINOR 2)
 set(SO_PATCH 0)
 
 option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
