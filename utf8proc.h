@@ -150,7 +150,7 @@ typedef enum {
   UTF8PROC_STABLE    = (1<<1),
   /** Compatibility decomposition (i.e. formatting information is lost). */
   UTF8PROC_COMPAT    = (1<<2),
-  /** Return a result with decomposed characters. */
+  /** Return a result with composed characters. */
   UTF8PROC_COMPOSE   = (1<<3),
   /** Return a result with decomposed characters. */
   UTF8PROC_DECOMPOSE = (1<<4),
