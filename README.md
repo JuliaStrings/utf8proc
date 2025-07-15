@@ -14,13 +14,11 @@ Software Group, the [Julia developers](http://julialang.org/) have
 taken over development of utf8proc, since the original developers have
 moved to other projects.
 
-(utf8proc is used for basic Unicode
+utf8proc is used for basic Unicode
 support in the [Julia language](http://julialang.org/), and the Julia
-developers became involved because they wanted to add Unicode 7 support and other features.)
+developers became involved because they wanted to add Unicode 7 support and other features; it is now regularly updated to keep up with recent Unicode releases.
 
-(The original utf8proc package also includes Ruby and PostgreSQL plug-ins.
-We removed those from utf8proc in order to focus exclusively on the C
-library.)
+There are also utf8proc wrappers for [Ruby](https://www.ruby-toolbox.com/projects/utf8_proc) and [Rust](https://docs.rs/utf8proc/latest/utf8proc/) ([github](https://github.com/Techcable/utf8proc.rs)).  (The original utf8proc package also included PostgreSQL bindings.)
 
 The utf8proc package is licensed under the
 free/open-source [MIT "expat"
