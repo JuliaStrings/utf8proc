@@ -71,6 +71,24 @@ UTF8PROC_DLLEXPORT const utf8proc_int8_t utf8proc_utf8class[256] = {
   3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
   4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0 };
 
+static void *utf8proc_malloc(void *context, size_t size) {
+  return malloc(size);
+}
+
+static void utf8proc_free(void *context, void *ptr) {
+  free(ptr);
+}
+
+static void *utf8proc_realloc(void *context, void *ptr, size_t size) {
+  return realloc(ptr, size);
+}
+
+UTF8PROC_DLLEXPORT const utf8proc_allocator_t utf8proc_default_allocator = {
+  NULL,
+  &utf8proc_malloc,
+  &utf8proc_realloc,
+  &utf8proc_free };
+
 #define UTF8PROC_HANGUL_SBASE 0xAC00
 #define UTF8PROC_HANGUL_LBASE 0x1100
 #define UTF8PROC_HANGUL_VBASE 0x1161
@@ -753,35 +771,51 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_reencode(utf8proc_int32_t *buffer, 
 }
 
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map(
-  const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_uint8_t **dstptr, utf8proc_option_t options
+  const utf8proc_uint8_t *str, utf8proc_ssize_t strlen,
+  utf8proc_uint8_t **dstptr, utf8proc_option_t options
 ) {
-    return utf8proc_map_custom(str, strlen, dstptr, options, NULL, NULL);
+  return utf8proc_map_custom(str, strlen, dstptr, options, NULL, NULL);
 }
 
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
-  const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_uint8_t **dstptr, utf8proc_option_t options,
+  const utf8proc_uint8_t *str, utf8proc_ssize_t strlen,
+  utf8proc_uint8_t **dstptr, utf8proc_option_t options,
   utf8proc_custom_func custom_func, void *custom_data
+) {
+  return utf8proc_map_alloc(
+    str, strlen,
+    dstptr, options,
+    custom_func, custom_data,
+    utf8proc_default_allocator
+  );
+}
+
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_alloc(
+  const utf8proc_uint8_t *str, utf8proc_ssize_t strlen,
+  utf8proc_uint8_t **dstptr, utf8proc_option_t options,
+  utf8proc_custom_func custom_func, void *custom_data,
+  utf8proc_allocator_t alloc
 ) {
   utf8proc_int32_t *buffer;
   utf8proc_ssize_t result;
   *dstptr = NULL;
   result = utf8proc_decompose_custom(str, strlen, NULL, 0, options, custom_func, custom_data);
   if (result < 0) return result;
-  buffer = (utf8proc_int32_t *) malloc(((utf8proc_size_t)result) * sizeof(utf8proc_int32_t) + 1);
+  buffer = (utf8proc_int32_t *) alloc.malloc(alloc.context, ((utf8proc_size_t)result) * sizeof(utf8proc_int32_t) + 1);
   if (!buffer) return UTF8PROC_ERROR_NOMEM;
   result = utf8proc_decompose_custom(str, strlen, buffer, result, options, custom_func, custom_data);
   if (result < 0) {
-    free(buffer);
+    alloc.free(alloc.context, buffer);
     return result;
   }
   result = utf8proc_reencode(buffer, result, options);
   if (result < 0) {
-    free(buffer);
+    alloc.free(alloc.context, buffer);
     return result;
   }
   {
     utf8proc_int32_t *newptr;
-    newptr = (utf8proc_int32_t *) realloc(buffer, (size_t)result+1);
+    newptr = (utf8proc_int32_t *) alloc.realloc(alloc.context, buffer, (size_t)result+1);
     if (newptr) buffer = newptr;
   }
   *dstptr = (utf8proc_uint8_t *)buffer;

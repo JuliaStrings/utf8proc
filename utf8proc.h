@@ -443,6 +443,18 @@ typedef enum {
 typedef utf8proc_int32_t (*utf8proc_custom_func)(utf8proc_int32_t codepoint, void *data);
 
 /**
+ * Custom allocator callbacks.
+ */
+typedef struct utf8proc_allocator_struct {
+  void *context;
+  void *(*malloc)(void *, size_t);
+  void *(*realloc)(void *, void *, size_t);
+  void (*free)(void *, void *);
+} utf8proc_allocator_t;
+
+UTF8PROC_DLLEXPORT extern const utf8proc_allocator_t utf8proc_default_allocator;
+
+/**
  * Array containing the byte lengths of a UTF-8 encoded codepoint based
  * on the first byte.
  */
@@ -762,6 +774,16 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map(
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
   const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_uint8_t **dstptr, utf8proc_option_t options,
   utf8proc_custom_func custom_func, void *custom_data
+);
+
+/**
+ * Like `utf8proc_map_custom`, but also takes custom allocator callbacks.
+ */
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_alloc(
+  const utf8proc_uint8_t *str, utf8proc_ssize_t strlen,
+  utf8proc_uint8_t **dstptr, utf8proc_option_t options,
+  utf8proc_custom_func custom_func, void *custom_data,
+  utf8proc_allocator_t alloc
 );
 
 /** @name Unicode normalization
