@@ -315,6 +315,48 @@ typedef struct utf8proc_property_struct {
   unsigned indic_conjunct_break:2;
 } utf8proc_property_t;
 
+/** Every `combining_class` in any valid `utf8proc_property_t` is nonnegative and less than or equal to this. */
+#define UTF8PROC_COMBINING_CLASS_MAX 255
+
+/** Struct for a read-only view of a UTF-8 string. A len of -1 means null-terminated. */
+typedef struct utf8proc_string8_view_struct {
+  const utf8proc_uint8_t *ptr;
+  utf8proc_ssize_t len;
+} utf8proc_string8_view_t;
+
+/**
+ * Struct for an in+out view of a string and an associated error.
+ * Use by @ref utf8proc_isequal_normalized to determine equivalence
+ * or longest common sequence, or to report an error and know which
+ * string had the error and where.
+ */
+typedef struct utf8proc_processing_state_struct {
+  /**
+   * The source UTF-8 string which is being read from.
+   * The contents of the string are never modified but it is expected
+   * that the view itself (pointer and length) will be updated to the
+   * remainder of the string which hasn't yet been successfully read.
+   * This will become an empty string once fully read.
+   */
+  utf8proc_string8_view_t str;
+  /**
+   * Any error from string processing. This is set to 0 when reading
+   * starts and left untouched unless there is an error. When set,
+   * the `str` member will be updated to no further than the source
+   * of the error, though there can still be some distance between
+   * the start of `str` and the actual source of the error depending
+   * on algorithm and string contents (e.g. combining chars). Use
+   * the `str_at_error` member instead to know the actual start
+   * of the problematic sequence.
+   */
+  utf8proc_ssize_t error;
+  /**
+   * The actual position of the error (if any) or an empty string
+   * otherwise.
+   */
+  utf8proc_string8_view_t str_at_error;
+} utf8proc_processing_state_t;
+
 /** Unicode categories. */
 typedef enum {
   UTF8PROC_CATEGORY_CN  = 0, /**< Other, not assigned */
@@ -786,6 +828,37 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC(const utf8proc_uint8_t *str);
  **/
 UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_Casefold(const utf8proc_uint8_t *str);
 /** @} */
+
+/**
+ * Algorithm for efficiently comparing two strings for equality while ignoring
+ * differences in Unicode normalization. If a mismatch is found or an error
+ * occurs, the `str` members are updated to the remainder of each string,
+ * not further than the first difference or error. If the strings are equal,
+ * both `str` members will become empty.
+ *
+ * You can also use this function for finding the longest common starting
+ * sequence, and you can apply your own methodology for handling or skipping
+ * over invalid UTF-8 sequences found in each provided string. Just be aware
+ * that due to how Unicode combining characters work, the error could be
+ * potentially quite far ahead of where the updated string views point. Use
+ * the `str_at_error` members to help with analyzing errors.
+ */
+UTF8PROC_DLLEXPORT void utf8proc_isequal_normalized(utf8proc_processing_state_t *a, utf8proc_processing_state_t *b, utf8proc_option_t options);
+
+/**
+ * Like utf8proc_isequal_normalized(), but also takes `custom_func` mapping
+ * functions that are called on each codepoint in their corresponding string
+ * before any other transformations (along with a `custom_data` pointer that
+ * is passed through to `custom_func`). The `custom_func` arguments are ignored
+ * if they are `NULL`. See @ref utf8proc_custom_func for more info.
+ * 
+ * Exercise caution: due to how Unicode combining characters work, the algorithm
+ * may backtrack and resume processing at an earlier point of the string without
+ * warning.
+ */
+UTF8PROC_DLLEXPORT void utf8proc_isequal_normalized_custom(utf8proc_processing_state_t *a, utf8proc_processing_state_t *b, utf8proc_option_t options,
+  utf8proc_custom_func a_custom_func, void *a_custom_data, utf8proc_custom_func b_custom_func, void *b_custom_data
+);
 
 #ifdef __cplusplus
 }
