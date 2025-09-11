@@ -4,7 +4,7 @@
 
 2025-09-10
 
- - Unicode 17 support ([#292]).
+ - Unicode 17 support ([#292], [#294]).
 
  - Documentation improvements ([#295], [#291]).
 
@@ -468,4 +468,5 @@ Release of version 1.0.1
 [#284]: https://github.com/JuliaStrings/utf8proc/issues/284
 [#291]: https://github.com/JuliaStrings/utf8proc/issues/291
 [#292]: https://github.com/JuliaStrings/utf8proc/issues/292
+[#294]: https://github.com/JuliaStrings/utf8proc/issues/294
 [#295]: https://github.com/JuliaStrings/utf8proc/issues/295
