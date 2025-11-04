@@ -598,7 +598,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
       if (uc1 < 0) {
         /* skip grapheme break */
         pos++;
-        continue
+        continue;
       }
       uc2 = buffer[pos+1];
       if (uc2 < 0) {
