@@ -4,7 +4,7 @@
 
 2025-11-04
 
- - Correct out-of-bounds memory access ([#311]).
+ - Correct out-of-bounds memory access when calling `utf8proc_map` with both `UTF8PROC_CHARBOUND` and `UTF8PROC_DECOMPOSE` ([#311]).
 
 ## Version 2.11.0 ##
 
