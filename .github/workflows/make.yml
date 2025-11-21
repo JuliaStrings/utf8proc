@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     # TODO: update makefile to check MANIFEST
     - name: Install dependencies (MacOS)
       if: runner.os == 'macOS'
