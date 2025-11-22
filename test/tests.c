@@ -8,7 +8,10 @@ void check(int cond, const char *format, ...)
 {
      if (!cond) {
           va_list args;
-          fprintf(stderr, "line %zd: ", lineno);
+          if (lineno)
+               fprintf(stderr, "FAILED at line %zd: ", lineno);
+          else
+               fprintf(stderr, "FAILED: ");
           va_start(args, format);
           vfprintf(stderr, format, args);
           va_end(args);
@@ -57,4 +60,41 @@ size_t simple_getline(unsigned char buf[8192], FILE *f) {
     }
     buf[i] = 0;
     return i;
+}
+
+void print_escaped(FILE* f, const utf8proc_uint8_t *utf8) {
+     fprintf(f, "\"");
+     while (*utf8) {
+          utf8proc_int32_t codepoint;
+          utf8 += utf8proc_iterate(utf8, -1, &codepoint);
+          if (codepoint < 0x10000)
+               fprintf(f, "\\u%04x", codepoint);
+          else
+               fprintf(f, "\\U%06x", codepoint);
+     }
+     fprintf(f, "\"");
+}
+
+void print_string_and_escaped(FILE* f, const utf8proc_uint8_t *utf8) {
+     fprintf(f, "\"%s\" (", (const char *) utf8);
+     print_escaped(f, utf8);
+     fprintf(f, ")");
+}
+
+void check_compare(const char *transformation,
+                   const utf8proc_uint8_t *input, const utf8proc_uint8_t *expected,
+                   utf8proc_uint8_t *received, int free_received) {
+     int passed = !strcmp((const char *) received, (const char *) expected);
+     FILE *f = passed ? stdout : stderr;
+     fprintf(f, "%s: %s ", passed ? "PASSED" : "FAILED", transformation);
+     print_string_and_escaped(f, input);
+     fprintf(f, " -> ");
+     print_string_and_escaped(f, received);
+     if (!passed) {
+          fprintf(f, " != expected ");
+          print_string_and_escaped(f, expected);
+     }
+     fprintf(f, "\n");
+     if (free_received) free(received);
+     if (!passed) exit(1);
 }
