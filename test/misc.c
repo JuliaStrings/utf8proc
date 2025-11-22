@@ -25,10 +25,30 @@ static void issue102(void) /* #102 */
     check_compare("NFKC_Casefold", input, correct, utf8proc_NFKC_Casefold(input), 1);
 }
 
+static void issue317(void) /* #317 */
+{
+    utf8proc_uint8_t input[] = {0xec, 0xa3, 0xa0, 0xe1, 0x86, 0xa7, 0x00}; /* "\uc8e0\u11a7" */
+    utf8proc_uint8_t combined[] = {0xec, 0xa3, 0xa, 0x00}; /* "\uc8e1" */
+    utf8proc_int32_t codepoint;
+
+    /* inputs that should *not* be combined* */
+    check_compare("NFC", input, input, utf8proc_NFC(input), 1);
+    utf8proc_encode_char(0x11c3, input+3);
+    check_compare("NFC", input, input, utf8proc_NFC(input), 1);
+
+    /* inputs that *should* be combined (TCOUNT-1 chars starting at TBASE+1) */
+    for (codepoint = 0x11a8; codepoint < 0x11c3; ++codepoint) {
+        utf8proc_encode_char(codepoint, input+3);
+        utf8proc_encode_char(0xc8e0 + (codepoint - 0x11a7), combined);
+        check_compare("NFC", input, combined, utf8proc_NFC(input), 1);
+    }
+}
+
 int main(void)
 {
     issue128();
     issue102();
+    issue317();
 #ifdef UNICODE_VERSION
     printf("Unicode version: Makefile has %s, has API %s\n", UNICODE_VERSION, utf8proc_unicode_version());
     check(!strcmp(UNICODE_VERSION, utf8proc_unicode_version()), "utf8proc_unicode_version mismatch");
