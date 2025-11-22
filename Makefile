@@ -24,10 +24,10 @@ SOFLAG = -Wl,-soname
 # Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
 MAJOR=3
 MINOR=2
-PATCH=1
+PATCH=2
 
 # api version (also in utf8proc.h and CMakeLists.txt)
-VERSION=2.11.1
+VERSION=2.11.2
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
