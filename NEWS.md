@@ -4,7 +4,7 @@
 
 2025-12-21
 
-- Correct out-of-bounds memory access when calling `utf8proc_map` with both `UTF8PROC_CHARBOUND` and `UTF8PROC_COMPOSE` ([#???]).
+- Correct out-of-bounds memory access when calling `utf8proc_map` with both `UTF8PROC_CHARBOUND` and `UTF8PROC_COMPOSE` ([#323]).
 
 ## Version 2.11.2 ##
 
