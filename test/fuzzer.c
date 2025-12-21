@@ -93,5 +93,8 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     utf8proc_map(data, len, &str, UTF8PROC_CHARBOUND | UTF8PROC_DECOMPOSE);
     free(str);
 
+    utf8proc_map(data, len, &str, UTF8PROC_CHARBOUND | UTF8PROC_COMPOSE);
+    free(str);
+
     return 0;
 }
