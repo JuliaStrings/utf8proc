@@ -832,3 +832,327 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_Casefold(const utf8proc_uint8
     UTF8PROC_COMPOSE | UTF8PROC_COMPAT | UTF8PROC_CASEFOLD | UTF8PROC_IGNORE));
   return retval;
 }
+
+UTF8PROC_DLLEXPORT void utf8proc_isequal_normalized_custom(utf8proc_processing_state_t *a, utf8proc_processing_state_t *b, utf8proc_option_t options,
+  utf8proc_custom_func a_custom_func, void *a_custom_data, utf8proc_custom_func b_custom_func, void *b_custom_data
+) {
+  const utf8proc_bool a_len_terminated = (a->str.len >= 0);
+  const utf8proc_bool b_len_terminated = (b->str.len >= 0);
+  /* which source string(s) we need to read more from */
+  utf8proc_bool a_consume = true;
+  utf8proc_bool b_consume = true;
+  /* structure to simplify rollback for combining char multipass processing */
+  const utf8proc_ssize_t decomposed_max_len = 8;
+  struct {
+    /* results of utf8proc_iterate */
+    utf8proc_int32_t codepoint;
+    utf8proc_ssize_t consumed;
+    /* results of utf8proc_decompose_char */
+    utf8proc_int32_t decomposed[8];
+    utf8proc_ssize_t decomposed_len;
+    int last_boundclass;
+    /* combing class tracking state */
+    utf8proc_ssize_t decomposed_pos;
+    utf8proc_propval_t combining_class;
+  } a_decomposing_current = {0},
+    b_decomposing_current = {0},
+    a_decomposing_combining_start = {0},
+    b_decomposing_combining_start = {0},
+    a_decomposing_combining_end = {0},
+    b_decomposing_combining_end = {0};
+  /* combining class tracking state */
+  utf8proc_ssize_t pos = 0;
+  utf8proc_bool combining_initialized = false;
+  utf8proc_propval_t combining_class_current = 0;
+  utf8proc_propval_t combining_class_next = 0;
+  utf8proc_string8_view_t a_combining_start = a->str;
+  utf8proc_string8_view_t b_combining_start = b->str;
+  utf8proc_string8_view_t a_combining_end = a->str;
+  utf8proc_string8_view_t b_combining_end = b->str;
+  utf8proc_uint8_t combining_classes_finished[(UTF8PROC_COMBINING_CLASS_MAX + 1 + CHAR_BIT)/CHAR_BIT] = {0};
+  const utf8proc_ssize_t combining_classes_finished_len = sizeof(combining_classes_finished)/sizeof(combining_classes_finished[0]);
+  /* initialize/clear error state */
+  a->error = 0;
+  b->error = 0;
+  a->str_at_error.ptr = NULL;
+  b->str_at_error.ptr = NULL;
+  a->str_at_error.len = 0;
+  b->str_at_error.len = 0;
+  /* force compatible options:
+     - must use UTF8PROC_DECOMPOSE, not UTF8PROC_COMPOSE.
+     - we choose when to add UTF8PROC_NULLTERM on a case-by-case basis (not needed currently).
+     - can't use UTF8PROC_CHARBOUND because it would break `unsafe_get_property`. */
+  options = (utf8proc_option_t)((options & ~(unsigned int)(UTF8PROC_COMPOSE|UTF8PROC_NULLTERM|UTF8PROC_CHARBOUND))|UTF8PROC_DECOMPOSE);
+  /* primary loop: each iteration pulls data from one or both strings */
+  while (1) {
+    /* read a code point from each - utf8proc_iterate handles null termination with negative length on its own */
+    if (a_consume) a_decomposing_current.consumed = utf8proc_iterate(a->str.ptr, a->str.len, &a_decomposing_current.codepoint);
+    if (b_consume) b_decomposing_current.consumed = utf8proc_iterate(b->str.ptr, b->str.len, &b_decomposing_current.codepoint);
+    /* check for errors, roll back string views if needed */
+    if (a_decomposing_current.consumed < 0) {
+      a->error = a_decomposing_current.consumed;
+      a->str_at_error = a->str;
+    }
+    if (b_decomposing_current.consumed < 0) {
+      b->error = b_decomposing_current.consumed;
+      b->str_at_error = b->str;
+    }
+    if (a->error || b->error) {
+      if (combining_initialized) {
+        a->str = a_combining_start;
+        b->str = b_combining_start;
+      }
+      return;
+    }
+    /* if we reach the end of one string, we may still need to process more
+       of the other due to ignorable sequences, and the combining class code
+       needs to make a judgement upon reaching the end of a combining sequence.
+       so from this point forward code must be guarded against this possibility. */
+    if (!combining_initialized && a_decomposing_current.consumed == 0 && b_decomposing_current.consumed == 0) {
+      /* true end of both strings, must be equal */
+      return;
+    }
+    /* apply each code point filter */
+    if (a_custom_func && a_consume && a_decomposing_current.consumed) a_decomposing_current.codepoint = a_custom_func(a_decomposing_current.codepoint, a_custom_data);
+    if (b_custom_func && b_consume && b_decomposing_current.consumed) b_decomposing_current.codepoint = b_custom_func(b_decomposing_current.codepoint, b_custom_data);
+    /* ASCII fast path is only suitable if we consumed both at once and not in combining mode */
+    if (!combining_initialized && a_consume && b_consume && a_decomposing_current.consumed && b_decomposing_current.consumed
+    && a_decomposing_current.codepoint < 0x80 && b_decomposing_current.codepoint < 0x80) {
+      /* fast path for common ASCII case */
+      if (options & UTF8PROC_CASEFOLD) {
+        if (0x41 <= a_decomposing_current.codepoint && a_decomposing_current.codepoint <= 0x5A) a_decomposing_current.codepoint += 0x20;
+        if (0x41 <= b_decomposing_current.codepoint && b_decomposing_current.codepoint <= 0x5A) b_decomposing_current.codepoint += 0x20;
+      }
+      if (a_decomposing_current.codepoint != b_decomposing_current.codepoint) {
+        /* mismatch detected */
+        return;
+      }
+      /* equal so far */
+      a->str.ptr += a_decomposing_current.consumed;
+      a->str.len -= a_decomposing_current.consumed * a_len_terminated;
+      b->str.ptr += b_decomposing_current.consumed;
+      b->str.len -= b_decomposing_current.consumed * b_len_terminated;
+      a_consume = true;
+      b_consume = true;
+      continue;
+    }
+    /* now time to decompose */
+    #define UTF8PROC_LAMBDA(ab) \
+    if (ab##_consume && ab##_decomposing_current.consumed) { \
+      /* we got a code point, decompose it */ \
+      ab##_decomposing_current.decomposed_len = utf8proc_decompose_char(ab##_decomposing_current.codepoint, \
+        ab##_decomposing_current.decomposed, decomposed_max_len, options, &ab##_decomposing_current.last_boundclass); \
+      ab##_decomposing_current.decomposed_pos = 0; \
+      ab##_consume = false; \
+      /* check for errors */ \
+      if (ab##_decomposing_current.decomposed_len < 0) { \
+        ab->error = ab##_decomposing_current.decomposed_len; \
+        ab->str_at_error = ab->str; \
+      } else if (ab##_decomposing_current.decomposed_len > decomposed_max_len) { \
+        /* should never happen in practice, just for static analysis. */ \
+        ab->error = UTF8PROC_ERROR_OVERFLOW; \
+        ab->str_at_error = ab->str; \
+      } else if (ab##_decomposing_current.decomposed_len == 0) { \
+        /* ignorable sequence, need to consume more */ \
+        ab->str.ptr += ab##_decomposing_current.consumed; \
+        ab->str.len -= ab##_decomposing_current.consumed * ab##_len_terminated; \
+        ab##_consume = true; \
+      } \
+    } else { \
+      ab##_consume = false; \
+    }
+    /* run the above for both strings */
+    UTF8PROC_LAMBDA(a);
+    UTF8PROC_LAMBDA(b);
+    #undef UTF8PROC_LAMBDA
+    /* check for errors, roll back string views if needed */
+    if (a->error || b->error) {
+      if (combining_initialized) {
+        a->str = a_combining_start;
+        b->str = b_combining_start;
+      }
+      return;
+    }
+    /* check for ignorable sequences */
+    if (a_consume || b_consume) {
+      continue;
+    }
+    /* now that ignorable sequences have been handled, check for end of either string */
+    if (!combining_initialized && (a_decomposing_current.consumed == 0 || b_decomposing_current.consumed == 0)) {
+      /* one or both strings ended, either equal or inequal */
+      return;
+    }
+    /* at this point both decomposed buffers need to be compared. when the
+       strings are fully normalized, the decomposed chars are sorted in
+       order of combining class, which could mean having to sort the entire
+       decomposed string in the worst case. since we only need to compare
+       them as-if they are normalized, we can just go one combining class
+       at a time. we have to be careful around ends of strings to make
+       sure the string views are properly updated to NOT FURTHER THAN the
+       first difference in the strings, which may be a large combining seq.
+       */
+    while (1) {
+      /* do we need to decompose more? */
+      if (a_decomposing_current.consumed && a_decomposing_current.decomposed_pos >= a_decomposing_current.decomposed_len) {
+        a_consume = true;
+        a->str.ptr += a_decomposing_current.consumed;
+        a->str.len -= a_decomposing_current.consumed * a_len_terminated;
+      }
+      if (b_decomposing_current.consumed && b_decomposing_current.decomposed_pos >= b_decomposing_current.decomposed_len) {
+        b_consume = true;
+        b->str.ptr += b_decomposing_current.consumed;
+        b->str.len -= b_decomposing_current.consumed * b_len_terminated;
+      }
+      if (a_consume || b_consume) {
+        /* use outer loop to pull more data */
+        break;
+      }
+      /* get the combining class of each current code point, or 0 for end of string */
+      if (a_decomposing_current.consumed) {
+        a_decomposing_current.combining_class = unsafe_get_property(a_decomposing_current.decomposed[a_decomposing_current.decomposed_pos])->combining_class;
+      } else {
+        a_decomposing_current.combining_class = 0;
+      }
+      if (b_decomposing_current.consumed) {
+        b_decomposing_current.combining_class = unsafe_get_property(b_decomposing_current.decomposed[b_decomposing_current.decomposed_pos])->combining_class;
+      } else {
+        b_decomposing_current.combining_class = 0;
+      }
+      /* static analysis guards, always false in practice */
+      if (a_decomposing_current.combining_class/CHAR_BIT >= combining_classes_finished_len) {
+        a->error = UTF8PROC_ERROR_OVERFLOW;
+        a->str_at_error = a->str;
+      }
+      if (b_decomposing_current.combining_class/CHAR_BIT >= combining_classes_finished_len) {
+        b->error = UTF8PROC_ERROR_OVERFLOW;
+        b->str_at_error = b->str;
+      }
+      if (a->error || b->error) {
+        if (combining_initialized) {
+          a->str = a_combining_start;
+          b->str = b_combining_start;
+        }
+        return;
+      }
+      /* do either have a combining class of 0 (non-combining)? */
+      if (a_decomposing_current.combining_class == 0 || b_decomposing_current.combining_class == 0) {
+        if (combining_initialized) {
+          /* we've reached the end of the combining sequence */
+          if (a_decomposing_current.combining_class == 0) {
+            a_combining_end = a->str;
+            a_decomposing_combining_end = a_decomposing_current;
+          }
+          if (b_decomposing_current.combining_class == 0) {
+            b_combining_end = b->str;
+            b_decomposing_combining_end = b_decomposing_current;
+          }
+          if (combining_class_next != 0) {
+            /* prepare for the next pass */
+            utf8proc_uint8_t *elem = &(combining_classes_finished[combining_class_current/CHAR_BIT]);
+            const utf8proc_uint8_t mask = (utf8proc_uint8_t)(1 << (combining_class_current % CHAR_BIT));
+            *elem |= mask;
+            combining_class_current = combining_class_next;
+            combining_class_next = 0;
+            /* roll back for next pass */
+            a->str = a_combining_start;
+            b->str = b_combining_start;
+            a_decomposing_current = a_decomposing_combining_start;
+            b_decomposing_current = b_decomposing_combining_start;
+            continue;
+          }
+          /* else exit combining mode */
+          if (a_combining_end.ptr == a_combining_start.ptr && a_decomposing_combining_end.decomposed_pos == a_decomposing_combining_start.decomposed_pos
+          ||  b_combining_end.ptr == b_combining_start.ptr && b_decomposing_combining_end.decomposed_pos == b_decomposing_combining_start.decomposed_pos) {
+            /* didn't reach the end of one of the sequences yet - mismatch detected */
+            a->str = a_combining_start;
+            b->str = b_combining_start;
+            return;
+          }
+          /* roll forward to the ends of the combining sequence */
+          a->str = a_combining_end;
+          b->str = b_combining_end;
+          a_decomposing_current = a_decomposing_combining_end;
+          b_decomposing_current = b_decomposing_combining_end;
+          /* resume normal processing in outer loop */
+          combining_initialized = false;
+          break;
+        }
+        /* else not in combining mode and at least one is non-combining */
+        if (a_decomposing_current.combining_class != b_decomposing_current.combining_class) {
+          /* mismatch detected */
+          return;
+        }
+        /* both are non-combining,compare the decomposed buffers */
+        if (a_decomposing_current.decomposed[a_decomposing_current.decomposed_pos] != b_decomposing_current.decomposed[b_decomposing_current.decomposed_pos]) {
+          /* mismatch detected */
+          return;
+        }
+        /* equal so far */
+        ++a_decomposing_current.decomposed_pos;
+        ++b_decomposing_current.decomposed_pos;
+        continue;
+      }
+      /* both nonzero combining class, initialize combining mode:
+         we go one combining class at a time, comparing the decomposed chars
+         of that class in order while consuming more from the input strings
+         as needed and noting the next class until we reach a non-combining
+         char. then, if there's another combining class, we roll back and
+         start from the beginning of the sequence again. */
+      if (!combining_initialized) {
+        combining_class_current = a_decomposing_current.combining_class;
+        combining_class_next = ((a_decomposing_current.combining_class == b_decomposing_current.combining_class)? 0 : b_decomposing_current.combining_class);
+        a_combining_start = a->str;
+        b_combining_start = b->str;
+        a_combining_end = a->str;
+        b_combining_end = b->str;
+        a_decomposing_combining_end = a_decomposing_combining_start = a_decomposing_current;
+        b_decomposing_combining_end = b_decomposing_combining_start = b_decomposing_current;
+        for (pos = 0; pos < combining_classes_finished_len; ++pos) {
+          combining_classes_finished[pos] = 0;
+        }
+        combining_initialized = true;
+      }
+      /* pull more data from one or both until we get both to be current class */
+      if (a_decomposing_current.combining_class != combining_class_current) {
+        /* is this an unseen class we can target next? */
+        if (combining_class_next == 0) {
+          const utf8proc_uint8_t elem = combining_classes_finished[a_decomposing_current.combining_class/CHAR_BIT];
+          const utf8proc_uint8_t mask = (utf8proc_uint8_t)(1 << (a_decomposing_current.combining_class % CHAR_BIT));
+          if ((elem & mask) == 0) {
+            combining_class_next = a_decomposing_current.combining_class;
+          }
+        }
+        ++a_decomposing_current.decomposed_pos;
+      }
+      if (b_decomposing_current.combining_class != combining_class_current) {
+        /* is this an unseen class we can target next? */
+        if (combining_class_next == 0) {
+          const utf8proc_uint8_t elem = combining_classes_finished[b_decomposing_current.combining_class/CHAR_BIT];
+          const utf8proc_uint8_t mask = (utf8proc_uint8_t)(1 << (b_decomposing_current.combining_class % CHAR_BIT));
+          if ((elem & mask) == 0) {
+            combining_class_next = b_decomposing_current.combining_class;
+          }
+        }
+        ++b_decomposing_current.decomposed_pos;
+      }
+      if (a_decomposing_current.combining_class != combining_class_current || b_decomposing_current.combining_class != combining_class_current) {
+        continue;
+      }
+      /* both are the current combining class, compare the decomposed buffers */
+      if (a_decomposing_current.decomposed[a_decomposing_current.decomposed_pos] != b_decomposing_current.decomposed[b_decomposing_current.decomposed_pos]) {
+        /* mismatch detected, roll back string views and exit */
+        a->str = a_combining_start;
+        b->str = b_combining_start;
+        return;
+      }
+      /* equal so far */
+      ++a_decomposing_current.decomposed_pos;
+      ++b_decomposing_current.decomposed_pos;
+      continue;
+    }
+  }
+}
+
+UTF8PROC_DLLEXPORT void utf8proc_isequal_normalized(utf8proc_processing_state_t *a, utf8proc_processing_state_t *b, utf8proc_option_t options) {
+  utf8proc_isequal_normalized_custom(a, b, options, NULL, NULL, NULL, NULL);
+}
