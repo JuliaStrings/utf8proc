@@ -22,6 +22,7 @@ add_library (utf8proc
   utf8proc.c
   utf8proc.h
 )
+add_library (utf8proc::utf8proc ALIAS utf8proc)
 
 # expose header path, for when this is part of a larger cmake project
 target_include_directories(utf8proc PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
