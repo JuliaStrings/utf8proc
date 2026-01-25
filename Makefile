@@ -118,6 +118,15 @@ ifneq ($(OS),Darwin)
 	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
 endif
 
+uninstall:
+	$(RM) $(DESTDIR)$(includedir)/utf8proc.h
+	$(RM) $(DESTDIR)$(libdir)/libutf8proc.a
+	$(RM) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
+	$(RM) $(DESTDIR)$(pkgconfigdir)/libutf8proc.pc
+ifneq ($(OS),Darwin)
+	$(RM) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
+endif
+
 MANIFEST.new:
 	rm -rf tmp
 	$(MAKE) install prefix=/usr DESTDIR=$(PWD)/tmp
