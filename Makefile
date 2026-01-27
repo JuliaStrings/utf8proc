@@ -31,6 +31,7 @@ VERSION=2.11.3
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
+  FIND=gfind
   SHLIB_EXT = dylib
   SHLIB_VERS_EXT = $(MAJOR).dylib
 else # GNU/Linux, at least (Windows should probably use cmake)
@@ -49,7 +50,7 @@ pkgincludedir=$(includedir:$(prefix)/%=%)
 
 # meta targets
 
-.PHONY: all clean data update manifest install
+.PHONY: all clean data update manifest install test_install_uninstall
 
 all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
@@ -183,6 +184,9 @@ test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 test/maxdecomposition: test/maxdecomposition.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) $(LDFLAGS) -DUNICODE_VERSION='"'`$(PERL) -ne "/^UNICODE_VERSION=/ and print $$';" data/Makefile`'"' test/maxdecomposition.c test/tests.o utf8proc.o -o $@
 
+test_install_uninstall: manifest
+	./test/install_uninstall.sh
+
 # make release tarball from master branch
 dist:
 	git archive master --prefix=utf8proc-$(VERSION)/ -o utf8proc-$(VERSION).tar.gz
@@ -198,7 +202,7 @@ distcheck: dist
 	make -C utf8proc-$(VERSION) check
 	rm -rf utf8proc-$(VERSION)
 
-check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/maxdecomposition test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
+check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/maxdecomposition test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o test_install_uninstall
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
