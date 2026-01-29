@@ -22,7 +22,7 @@ fi
 cut -d ' ' -f 1 MANIFEST.new | while read -r installed_file; do
   [ -d "$install_dir/$installed_file" ] && continue
 	if [ -f "$install_dir/$installed_file" ]; then
-		echo "FAILED: make install of "$installed_file"" >&2
+		echo "FAILED: make uninstall of "$installed_file"" >&2
 		rm -rf "$install_dir"
 		exit 1
 	fi
