@@ -31,7 +31,6 @@ VERSION=2.11.3
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X
-  FIND=gfind
   SHLIB_EXT = dylib
   SHLIB_VERS_EXT = $(MAJOR).dylib
 else # GNU/Linux, at least (Windows should probably use cmake)
