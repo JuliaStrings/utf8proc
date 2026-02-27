@@ -35,7 +35,7 @@ jobs:
     - name: Make lib
       run: make
     - name: Upload shared lib
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: make-${{ matrix.os }}
         path: libutf8proc.*

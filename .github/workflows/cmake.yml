@@ -27,7 +27,7 @@ jobs:
       run: ctest --test-dir build -V
     - name: Upload shared lib
       if: matrix.shared == 'ON'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ matrix.os }}
         path: |
@@ -73,7 +73,7 @@ jobs:
       run: ctest --test-dir build -V
     - name: Upload shared lib
       if: matrix.shared == 'ON'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: windows-mingw64
         path: build/libutf8proc.*
