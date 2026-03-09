@@ -38,13 +38,6 @@ endif()
 
 target_compile_definitions(utf8proc PRIVATE "UTF8PROC_EXPORTS")
 
-if (NOT MSVC)
-  set_target_properties(
-    utf8proc PROPERTIES
-    COMPILE_FLAGS "-O2 -std=c99 -pedantic -Wall"
-  )
-endif ()
-
 set_target_properties (utf8proc PROPERTIES
   POSITION_INDEPENDENT_CODE ON
   VERSION "${SO_MAJOR}.${SO_MINOR}.${SO_PATCH}"
