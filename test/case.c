@@ -68,8 +68,8 @@ int main(int argc, char **argv)
      check(!strcmp((char*)s1, "ss") &&
            !strcmp((char*)s2, "ss"),
            "incorrect 0x00df/0x1e9e casefold normalization");
-     free(s1);
-     free(s2);
+     utf8proc_free(s1);
+     utf8proc_free(s2);
      printf("More up-to-date than OS unicode tables for %d tests.\n", better);
      printf("utf8proc case conversion tests SUCCEEDED.\n");
      return 0;

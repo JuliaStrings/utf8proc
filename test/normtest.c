@@ -4,7 +4,7 @@
     unsigned char *src_norm = (unsigned char*) utf8proc_ ## NRM((utf8proc_uint8_t*) src);      \
     check(!strcmp((char *) norm, (char *) src_norm),                                  \
           "normalization failed for %s -> %s", src, norm);          \
-    free(src_norm);                                                 \
+    utf8proc_free(src_norm);                                                 \
 }
 
 int main(int argc, char **argv)

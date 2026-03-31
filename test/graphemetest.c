@@ -58,7 +58,7 @@ void checkline(const char *_buf, bool verbose) {
             check(!strcmp((char*)g, (char*)src),
                 "grapheme mismatch: \"%s\" instead of \"%s\"", (char*)g, (char*)src);
         }
-        free(g);
+        utf8proc_free(g);
     }
 
     if (si) { /* test manual calls to utf8proc_grapheme_break_stateful */
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
         glen = utf8proc_map(input, 6, &g, UTF8PROC_CHARBOUND);
         check(!strcmp((char*)g, (char*)output), "mishandled u+ffff and u+fffe grapheme breaks");
         check(glen != 6, "mishandled u+ffff and u+fffe grapheme breaks");
-        free(g);
+        utf8proc_free(g);
     };
 
     /* https://github.com/JuliaLang/julia/issues/37680 */

@@ -62,7 +62,7 @@ int main(int argc, char **argv)
         p->boundclass,
         p->indic_conjunct_break,
         utf8proc_charwidth(c));
-        free(map);
+        utf8proc_free(map);
     }
     return 0;
 }

@@ -9,7 +9,7 @@ int main(int argc, char **argv)
 {
 	 int i, j;
 	 int options = 0;
-	 
+
 	 for (i = 1; i < argc; ++i) {
 		  if (!strcmp(argv[i], "-nfkc")) {
 			   options |= UTF8PROC_STABLE|UTF8PROC_COMPOSE|UTF8PROC_COMPAT;
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 		  mytime start = gettime();
 		  for (j = 0; j < 100; ++j) {
 			   utf8proc_map(src, len, &dest, options);
-			   free(dest);
+			   utf8proc_free(dest);
 		  }
 		  printf("%s: %g\n", argv[i], elapsed(gettime(), start) / 100);
 		  free(src);
