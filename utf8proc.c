@@ -837,6 +837,6 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_Casefold(const utf8proc_uint8
   return retval;
 }
 
-UTF8PROC_DLLEXPORT  void utf8proc_free(utf8proc_uint8_t *ptr) {
+UTF8PROC_DLLEXPORT void utf8proc_free(utf8proc_uint8_t *ptr) {
   free(ptr);
 }
