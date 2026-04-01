@@ -126,7 +126,7 @@ utf8proc_uint8_t *fold_str;
 utf8proc_map(str, 0, &fold_str, UTF8PROC_NULLTERM | UTF8PROC_CASEFOLD);
 printf("%s\n", fold_str);
 // ss
-free(fold_str);
+utf8proc_free(fold_str);
 ```
 
 ### Normalization Form C/D (NFC/NFD)
@@ -138,6 +138,6 @@ utf8proc_uint8_t *nfd= utf8proc_NFD(input); // = {0x61, 0xcc, 0x88, 0x6f, 0xcc, 
 // Compose "a\u0308o\u0308u\u0308" into "\u00e4\u00f6\u00fc" (= "äöü" via precomposed characters)
 utf8proc_uint8_t *nfc= utf8proc_NFC(nfd);
 
-free(nfd);
-free(nfc);
+utf8proc_free(nfd);
+utf8proc_free(nfc);
 ```

@@ -750,6 +750,8 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t codepoi
  *
  * @note The memory of the new UTF-8 string will have been allocated
  * with `malloc`, and should therefore be deallocated with `free`.
+ * However, it is safer to deallocate it with @ref utf8proc_free in
+ * case your application is linked to a different C library than utf8proc.
  *
  * @note `utf8proc_map` simply calls `utf8proc_decompose` followed by `utf8proc_reencode`,
  * and applications requiring greater control over memory allocation should instead call
@@ -760,7 +762,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map(
 );
 
 /**
- * Like utf8proc_map(), but also takes a `custom_func` mapping function
+ * Like @ref utf8proc_map, but also takes a `custom_func` mapping function
  * that is called on each codepoint in `str` before any other transformations
  * (along with a `custom_data` pointer that is passed through to `custom_func`).
  * The `custom_func` argument is ignored if it is `NULL`.
@@ -776,6 +778,11 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
  * NFKC_Casefold normalized version of the null-terminated string `str`.  These
  * are shortcuts to calling utf8proc_map() with @ref UTF8PROC_NULLTERM
  * combined with @ref UTF8PROC_STABLE and flags indicating the normalization.
+ *
+ * @note The memory of the new UTF-8 string will have been allocated
+ * with `malloc`, and should therefore be deallocated with `free`.
+ * However, it is safer to deallocate it with @ref utf8proc_free in
+ * case your application is linked to a different C library than utf8proc.
  */
 /** @{ */
 /** NFD normalization (@ref UTF8PROC_DECOMPOSE). */
@@ -792,6 +799,14 @@ UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC(const utf8proc_uint8_t *str);
  **/
 UTF8PROC_DLLEXPORT utf8proc_uint8_t *utf8proc_NFKC_Casefold(const utf8proc_uint8_t *str);
 /** @} */
+
+/**
+ * Deallocate memory allocated and returned by @ref utf8proc_map and similar functions
+ * (which simply calls the `free` function from the underlying C library linked to utf8proc).
+ * It is safer to call `utf8proc_free` than calling `free` directly, in case your application
+ * is linked to a different C library with incompatible `malloc` and `free` functions.
+ */
+UTF8PROC_DLLEXPORT void utf8proc_free(utf8proc_uint8_t *ptr);
 
 #ifdef __cplusplus
 }

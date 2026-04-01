@@ -95,6 +95,6 @@ void check_compare(const char *transformation,
           print_string_and_escaped(f, expected);
      }
      fprintf(f, "\n");
-     if (free_received) free(received);
+     if (free_received) utf8proc_free(received);
      if (!passed) exit(1);
 }
