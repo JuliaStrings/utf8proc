@@ -18,7 +18,7 @@ utf8proc is used for basic Unicode
 support in the [Julia language](http://julialang.org/), and the Julia
 developers became involved because they wanted to add Unicode 7 support and other features; it is now regularly updated to keep up with recent Unicode releases.
 
-There are also utf8proc wrappers for [Ruby](https://www.ruby-toolbox.com/projects/utf8_proc) and [Rust](https://docs.rs/utf8proc/latest/utf8proc/) ([github](https://github.com/Techcable/utf8proc.rs)).  (The original utf8proc package also included PostgreSQL bindings.)
+There are also utf8proc wrappers for [Ruby](https://www.ruby-toolbox.com/projects/utf8_proc), [Rust](https://docs.rs/utf8proc/latest/utf8proc/) ([github](https://github.com/Techcable/utf8proc.rs)) and [Swift](https://codeberg.org/Cyberbeni/swift-utf8proc).  (The original utf8proc package also included PostgreSQL bindings.)
 
 The utf8proc package is licensed under the
 free/open-source [MIT "expat"
