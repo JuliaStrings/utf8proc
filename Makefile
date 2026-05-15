@@ -49,7 +49,7 @@ pkgincludedir=$(includedir:$(prefix)/%=%)
 
 # meta targets
 
-.PHONY: all clean data update manifest install
+.PHONY: all clean data update manifest install test_install_uninstall
 
 all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
@@ -118,6 +118,15 @@ ifneq ($(OS),Darwin)
 	ln -f -s libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
 endif
 
+uninstall:
+	$(RM) $(DESTDIR)$(includedir)/utf8proc.h
+	$(RM) $(DESTDIR)$(libdir)/libutf8proc.a
+	$(RM) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_VERS_EXT) $(DESTDIR)$(libdir)/libutf8proc.$(SHLIB_EXT)
+	$(RM) $(DESTDIR)$(pkgconfigdir)/libutf8proc.pc
+ifneq ($(OS),Darwin)
+	$(RM) $(DESTDIR)$(libdir)/libutf8proc.so.$(MAJOR)
+endif
+
 MANIFEST.new:
 	rm -rf tmp
 	$(MAKE) install prefix=/usr DESTDIR=$(PWD)/tmp
@@ -174,6 +183,9 @@ test/misc: test/misc.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 test/maxdecomposition: test/maxdecomposition.c test/tests.o utf8proc.o utf8proc.h test/tests.h
 	$(CC) $(UCFLAGS) $(LDFLAGS) -DUNICODE_VERSION='"'`$(PERL) -ne "/^UNICODE_VERSION=/ and print $$';" data/Makefile`'"' test/maxdecomposition.c test/tests.o utf8proc.o -o $@
 
+test_install_uninstall: manifest
+	./test/install_uninstall.sh
+
 # make release tarball from master branch
 dist:
 	git archive master --prefix=utf8proc-$(VERSION)/ -o utf8proc-$(VERSION).tar.gz
@@ -189,7 +201,7 @@ distcheck: dist
 	make -C utf8proc-$(VERSION) check
 	rm -rf utf8proc-$(VERSION)
 
-check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/maxdecomposition test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o
+check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/maxdecomposition test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o test_install_uninstall
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
