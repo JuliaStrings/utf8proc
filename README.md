@@ -40,6 +40,8 @@ cmake -S . -B build
 cmake --build build
 ```
 
+You can also build the library with [Bazel](https://bazel.build/).
+
 ### Using other compilers
 The included `Makefile` supports GNU/Linux flavors and MacOS with `gcc`-like compilers; Windows users will typically use `cmake`.
 
@@ -59,6 +61,30 @@ A CMake Config-file package is provided. To use utf8proc in a CMake project:
 add_executable (app app.c)
 find_package (utf8proc 2.9.0 REQUIRED)
 target_link_libraries (app PRIVATE utf8proc::utf8proc)
+```
+
+### Using with Bazel
+
+Add utf8proc to your `MODULE.bazel`:
+
+```starlark
+bazel_dep(name = "utf8proc")  # add version = "x.y.z" to pin a specific version
+git_override(
+    module_name = "utf8proc",
+    remote = "https://github.com/JuliaStrings/utf8proc",
+    # pin to a commit for reproducible builds; branch shown here for convenience
+    branch = "master",
+)
+```
+
+and depend on `@utf8proc//:utf8proc`:
+
+```starlark
+cc_binary(
+    name = "app",
+    srcs = ["app.c"],
+    deps = ["@utf8proc//:utf8proc"],
+)
 ```
 
 ## General Information

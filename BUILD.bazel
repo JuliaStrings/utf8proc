@@ -1,0 +1,43 @@
+load("@bazel_skylib//lib:selects.bzl", "selects")
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc/toolchains:compiler_flag.bzl", "compiler_flag")
+
+compiler_flag(name = "compiler")
+
+config_setting(
+    name = "compiler_msvc",
+    flag_values = {":compiler": "msvc-cl"},
+)
+
+config_setting(
+    name = "compiler_clang_cl",
+    flag_values = {":compiler": "clang-cl"},
+)
+
+selects.config_setting_group(
+    name = "msvc_like",
+    match_any = [
+        ":compiler_msvc",
+        ":compiler_clang_cl",
+    ],
+)
+
+# MSVC has no /std:c99, so /std:c11 is the lowest flag that guarantees >= C99.
+UTF8PROC_COPTS = select({
+    "//:msvc_like": ["/std:c11"],
+    "//conditions:default": ["-std=c99"],
+})
+
+cc_library(
+    name = "utf8proc",
+    srcs = ["utf8proc.c"],
+    hdrs = ["utf8proc.h"],
+    copts = UTF8PROC_COPTS,
+
+    # utf8proc_data.c is included by utf8proc.c 
+    textual_hdrs = ["utf8proc_data.c"],
+    defines = ["UTF8PROC_STATIC"],
+    local_defines = ["UTF8PROC_EXPORTS"],
+
+    visibility = ["//visibility:public"],
+)

@@ -41,3 +41,6 @@ libutf8proc.pc
 # clangd
 /.cache/
 /compile_commands.json
+
+# bazel
+/bazel-*
