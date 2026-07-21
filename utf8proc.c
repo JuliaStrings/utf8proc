@@ -433,7 +433,7 @@ UTF8PROC_DLLEXPORT int utf8proc_charwidth(utf8proc_int32_t c) {
 }
 
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_charwidth_ambiguous(utf8proc_int32_t c) {
-  return utf8proc_get_property(c)->ambiguous_width;
+  return (utf8proc_bool) utf8proc_get_property(c)->ambiguous_width;
 }
 
 UTF8PROC_DLLEXPORT utf8proc_category_t utf8proc_category(utf8proc_int32_t c) {
