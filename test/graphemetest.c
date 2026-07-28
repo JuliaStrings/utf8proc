@@ -100,6 +100,7 @@ int main(int argc, char **argv)
     }
     fclose(f);
     printf("Passed tests after %zd lines!\n", lineno);
+    lineno = 0; /* no line numbers for subsequent tests */
 
     printf("Performing regression tests...\n");
 
@@ -125,7 +126,7 @@ int main(int argc, char **argv)
     checkline("/ 0915 0300 094d 0300 094d 0924 / 0915 /", true);
     checkline("/ 0915 0300 0300 / 0924 / 0915 /", true);
     checkline("/ 0915 0300 094d 0300 / 0078 /", true);
-    checkline("/ 0300 094d 0300 / 0924 / 0915 /", true);
+    checkline("/ 0300 094d 0300 0924 / 0915 /", true);
 
     check(utf8proc_grapheme_break(0x03b1, 0x03b2), "failed 03b1 / 03b2 test");
     check(!utf8proc_grapheme_break(0x03b1, 0x0302), "failed 03b1 0302 test");
