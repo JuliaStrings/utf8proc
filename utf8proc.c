@@ -549,77 +549,36 @@ static void canonical_order_reverse(utf8proc_int32_t *buffer, utf8proc_ssize_t f
   }
 }
 
-static utf8proc_ssize_t canonical_order_rotate(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t middle, utf8proc_ssize_t last) {
-  utf8proc_ssize_t result = first + (last - middle);
+static void canonical_order_rotate(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t middle, utf8proc_ssize_t last) {
 
-  if (first == middle || middle == last) return result;
+  if (first == middle || middle == last) return;
 
   canonical_order_reverse(buffer, first, middle);
   canonical_order_reverse(buffer, middle, last);
   canonical_order_reverse(buffer, first, last);
-
-  return result;
 }
 
-static utf8proc_ssize_t canonical_order_lower_bound(const utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t last, utf8proc_propval_t value) {
-  while (first < last) {
-    utf8proc_ssize_t middle = first + (last - first) / 2;
+/* Stable in-place partition by one combining-class bit. */
+static utf8proc_ssize_t canonical_order_partition(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t last, unsigned int mask) {
+  utf8proc_ssize_t length = last - first;
 
-    if (canonical_combining_class(buffer[middle]) < value)
-      first = middle + 1;
-    else
-      last = middle;
+  if (length == 0) return first;
+  if (length == 1)
+    return first + ((canonical_combining_class(buffer[first]) & mask) == 0);
+
+  {
+    utf8proc_ssize_t middle = first + length / 2;
+    utf8proc_ssize_t left = canonical_order_partition(buffer, first, middle, mask);
+    utf8proc_ssize_t right = canonical_order_partition(buffer, middle, last, mask);
+    utf8proc_ssize_t zeroes_right = right - middle;
+
+    canonical_order_rotate(buffer, left, middle, right);
+    return left + zeroes_right;
   }
-
-  return first;
 }
 
-static utf8proc_ssize_t canonical_order_upper_bound(const utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t last, utf8proc_propval_t value) {
-  while (first < last) {
-    utf8proc_ssize_t middle = first + (last - first) / 2;
-
-    if (value < canonical_combining_class(buffer[middle]))
-      last = middle;
-    else
-      first = middle + 1;
-  }
-
-  return first;
-}
-
-static void canonical_order_merge(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t middle, utf8proc_ssize_t last) {
-  utf8proc_ssize_t first_cut, second_cut, new_middle;
-  utf8proc_ssize_t first_length = middle - first;
-  utf8proc_ssize_t second_length = last - middle;
-
-  if (first_length == 0 || second_length == 0) return;
-  if (canonical_combining_class(buffer[middle - 1]) <= canonical_combining_class(buffer[middle])) return;
-
-  if (last - first == 2) {
-    if (canonical_combining_class(buffer[middle]) < canonical_combining_class(buffer[first])) {
-      utf8proc_int32_t temp = buffer[first];
-      buffer[first] = buffer[middle];
-      buffer[middle] = temp;
-    }
-    return;
-  }
-
-  if (first_length > second_length) {
-    first_cut = first + first_length / 2;
-    second_cut = canonical_order_lower_bound(buffer, middle, last, canonical_combining_class(buffer[first_cut]));
-  }
-  else {
-    second_cut = middle + second_length / 2;
-    first_cut = canonical_order_upper_bound(buffer, first, middle, canonical_combining_class(buffer[second_cut]));
-  }
-
-  new_middle = canonical_order_rotate(buffer, first_cut, middle, second_cut);
-  canonical_order_merge(buffer, first, first_cut, new_middle);
-  canonical_order_merge(buffer, new_middle, second_cut, last);
-}
-
-/* Keep short common-case runs cheap; use a stable in-place merge for long runs
- * so canonical ordering stays allocation-free without quadratic behavior. */
+/* Canonical combining classes fit in 8 bits. Stable LSD radix passes keep
+ * equal-class marks in input order without heap allocation. */
 static void canonical_order_sort(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t last) {
   utf8proc_ssize_t length = last - first;
 
@@ -642,11 +601,10 @@ static void canonical_order_sort(utf8proc_int32_t *buffer, utf8proc_ssize_t firs
     }
   }
   else {
-    utf8proc_ssize_t middle = first + length / 2;
+    unsigned int mask;
 
-    canonical_order_sort(buffer, first, middle);
-    canonical_order_sort(buffer, middle, last);
-    canonical_order_merge(buffer, first, middle, last);
+    for (mask = 1; mask <= 0x80; mask <<= 1)
+      canonical_order_partition(buffer, first, last, mask);
   }
 }
 
