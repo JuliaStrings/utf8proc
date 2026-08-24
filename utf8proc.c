@@ -537,6 +537,97 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
   return 1;
 }
 
+static utf8proc_propval_t canonical_combining_class(utf8proc_int32_t uc) {
+  return unsafe_get_property(uc)->combining_class;
+}
+
+static void canonical_order_reverse(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t last) {
+  while (first < --last) {
+    utf8proc_int32_t temp = buffer[first];
+    buffer[first++] = buffer[last];
+    buffer[last] = temp;
+  }
+}
+
+static void canonical_order_rotate(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t middle, utf8proc_ssize_t last) {
+
+  if (first == middle || middle == last) return;
+
+  canonical_order_reverse(buffer, first, middle);
+  canonical_order_reverse(buffer, middle, last);
+  canonical_order_reverse(buffer, first, last);
+}
+
+/* Stable in-place partition by one combining-class bit. */
+static utf8proc_ssize_t canonical_order_partition(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t last, unsigned int mask) {
+  utf8proc_ssize_t length = last - first;
+
+  if (length == 0) return first;
+  if (length == 1)
+    return first + ((canonical_combining_class(buffer[first]) & mask) == 0);
+
+  {
+    utf8proc_ssize_t middle = first + length / 2;
+    utf8proc_ssize_t left = canonical_order_partition(buffer, first, middle, mask);
+    utf8proc_ssize_t right = canonical_order_partition(buffer, middle, last, mask);
+    utf8proc_ssize_t zeroes_right = right - middle;
+
+    canonical_order_rotate(buffer, left, middle, right);
+    return left + zeroes_right;
+  }
+}
+
+/* Canonical combining classes fit in 8 bits. Stable LSD radix passes keep
+ * equal-class marks in input order without heap allocation. */
+static void canonical_order_sort(utf8proc_int32_t *buffer, utf8proc_ssize_t first, utf8proc_ssize_t last) {
+  utf8proc_ssize_t length = last - first;
+
+  if (length < 2) return;
+
+  if (length <= 16) {
+    utf8proc_ssize_t i;
+
+    for (i = first + 1; i < last; ++i) {
+      utf8proc_int32_t current = buffer[i];
+      utf8proc_propval_t current_class = canonical_combining_class(current);
+      utf8proc_ssize_t j = i;
+
+      while (j > first && canonical_combining_class(buffer[j - 1]) > current_class) {
+        buffer[j] = buffer[j - 1];
+        --j;
+      }
+
+      buffer[j] = current;
+    }
+  }
+  else {
+    unsigned int mask;
+
+    for (mask = 1; mask <= 0x80; mask <<= 1)
+      canonical_order_partition(buffer, first, last, mask);
+  }
+}
+
+static void canonical_order(utf8proc_int32_t *buffer, utf8proc_ssize_t length) {
+  utf8proc_ssize_t pos = 0;
+
+  while (pos < length) {
+    utf8proc_ssize_t first;
+
+    while (pos < length &&
+           (buffer[pos] < 0 || canonical_combining_class(buffer[pos]) == 0))
+      ++pos;
+
+    first = pos;
+
+    while (pos < length && buffer[pos] >= 0 &&
+           canonical_combining_class(buffer[pos]) > 0)
+      ++pos;
+
+    canonical_order_sort(buffer, first, pos);
+  }
+}
+
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
   const utf8proc_uint8_t *str, utf8proc_ssize_t strlen,
   utf8proc_int32_t *buffer, utf8proc_ssize_t bufsize, utf8proc_option_t options
@@ -590,33 +681,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
     }
   }
   if ((options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) && bufsize >= wpos) {
-    utf8proc_ssize_t pos = 0;
-    while (pos < wpos-1) {
-      utf8proc_int32_t uc1, uc2;
-      const utf8proc_property_t *property1, *property2;
-      uc1 = buffer[pos];
-      if (uc1 < 0) {
-        /* skip grapheme break */
-        pos++;
-        continue;
-      }
-      uc2 = buffer[pos+1];
-      if (uc2 < 0) {
-        /* cannot recombine; skip grapheme break */
-        pos+=2;
-        continue;
-      }
-      property1 = unsafe_get_property(uc1);
-      property2 = unsafe_get_property(uc2);
-      if (property1->combining_class > property2->combining_class &&
-          property2->combining_class > 0) {
-        buffer[pos] = uc2;
-        buffer[pos+1] = uc1;
-        if (pos > 0) pos--; else pos++;
-      } else {
-        pos++;
-      }
-    }
+    canonical_order(buffer, wpos);
   }
   return wpos;
 }
