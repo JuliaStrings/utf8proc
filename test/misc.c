@@ -44,11 +44,23 @@ static void issue317(void) /* #317 */
     }
 }
 
+static void issue103(void) /* #103 */
+{
+    /* UTF8PROC_SSIZE_MAX should be the largest value of utf8proc_ssize_t.
+       Since utf8proc_ssize_t is a two's-complement signed type the same
+       size as utf8proc_size_t, that value is all bits set shifted right by one. */
+    utf8proc_ssize_t computed = (utf8proc_ssize_t)((utf8proc_size_t)-1 >> 1);
+    check(UTF8PROC_SSIZE_MAX == computed,
+          "UTF8PROC_SSIZE_MAX (%lld) != computed max (%lld)",
+          (long long)UTF8PROC_SSIZE_MAX, (long long)computed);
+}
+
 int main(void)
 {
     issue128();
     issue102();
     issue317();
+    issue103();
 #ifdef UNICODE_VERSION
     printf("Unicode version: Makefile has %s, has API %s\n", UNICODE_VERSION, utf8proc_unicode_version());
     check(!strcmp(UNICODE_VERSION, utf8proc_unicode_version()), "utf8proc_unicode_version mismatch");
