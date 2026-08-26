@@ -120,6 +120,18 @@ typedef bool utf8proc_bool;
 #endif
 #include <limits.h>
 
+/** The maximum value representable by the ::utf8proc_ssize_t type, useful
+ *  for checked conversions from ::utf8proc_size_t (or size_t) lengths. */
+#if defined(_MSC_VER) && _MSC_VER < 1800
+#  ifdef _WIN64
+#    define UTF8PROC_SSIZE_MAX _I64_MAX
+#  else
+#    define UTF8PROC_SSIZE_MAX INT_MAX
+#  endif
+#else
+#  define UTF8PROC_SSIZE_MAX PTRDIFF_MAX
+#endif
+
 #ifdef UTF8PROC_STATIC
 #  ifndef UTF8PROC_DLLEXPORT
 #    define UTF8PROC_DLLEXPORT
