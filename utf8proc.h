@@ -143,7 +143,9 @@ extern "C" {
 #endif
 
 /**
- * Option flags used by several functions in the library.
+ * Option flags used by several functions in the library.  For
+ * `unsigned int options` arguments, you can pass a bitwise-or of these
+ * enumerated constants.
  */
 typedef enum {
   /** The given UTF-8 input is NULL terminated. */
