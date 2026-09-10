@@ -8,7 +8,7 @@
 int main(int argc, char **argv)
 {
 	 int i, j;
-	 int options = 0;
+	 unsigned int options = 0;
 
 	 for (i = 1; i < argc; ++i) {
 		  if (!strcmp(argv[i], "-nfkc")) {
