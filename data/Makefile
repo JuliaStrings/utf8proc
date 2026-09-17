@@ -60,3 +60,4 @@ clean:
 	rm -f $(RAWDATA) NormalizationTest.txt GraphemeBreakTest.txt
 	rm -f Uppercase.txt Lowercase.txt
 	rm -f utf8proc_data.c.new
+	rm -f Manifest.toml
