@@ -71,9 +71,9 @@
 /** The MAJOR version number (increased when backwards API compatibility is broken). */
 #define UTF8PROC_VERSION_MAJOR 2
 /** The MINOR version number (increased when new functionality is added in a backwards-compatible manner). */
-#define UTF8PROC_VERSION_MINOR 11
+#define UTF8PROC_VERSION_MINOR 12
 /** The PATCH version (increased for fixes that do not change the API). */
-#define UTF8PROC_VERSION_PATCH 3
+#define UTF8PROC_VERSION_PATCH 0
 /** @} */
 
 #include <stdlib.h>
@@ -530,7 +530,7 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int
  * - @ref UTF8PROC_STRIPNA   - remove unassigned codepoints
  * @param last_boundclass
  * Pointer to an integer variable containing
- * the previous codepoint's (boundclass + indic_conjunct_break << 1) if the @ref UTF8PROC_CHARBOUND
+ * the previous codepoint's (boundclass + (indic_conjunct_break << 8)) if the @ref UTF8PROC_CHARBOUND
  * option is used.  If the string is being processed in order, this can be initialized to 0 for
  * the beginning of the string, and is thereafter updated automatically.  Otherwise, this parameter is ignored.
  *

@@ -5,14 +5,14 @@ include (utils.cmake)
 disallow_intree_builds()
 
 # API version - be sure to update utf8proc.h and Makefile, too!
-project (utf8proc VERSION 2.11.3 LANGUAGES C)
+project (utf8proc VERSION 2.12.0 LANGUAGES C)
 
 # This is the ABI version number, which may differ from the
 # API version number (defined in utf8proc.h and above).
 # Be sure to also update these in Makefile and MANIFEST!
 set(SO_MAJOR 3)
-set(SO_MINOR 2)
-set(SO_PATCH 3)
+set(SO_MINOR 3)
+set(SO_PATCH 0)
 
 option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
 option(UTF8PROC_ENABLE_TESTING "Enable testing of utf8proc" Off)
@@ -79,7 +79,7 @@ endif()
 if(UTF8PROC_ENABLE_TESTING)
   enable_testing()
   file(MAKE_DIRECTORY data)
-  set(UNICODE_VERSION 17.0.0)
+  set(UNICODE_VERSION 18.0.0)
   file(DOWNLOAD https://www.unicode.org/Public/${UNICODE_VERSION}/ucd/NormalizationTest.txt ${CMAKE_BINARY_DIR}/data/NormalizationTest.txt SHOW_PROGRESS)
   file(DOWNLOAD https://www.unicode.org/Public/${UNICODE_VERSION}/ucd/auxiliary/GraphemeBreakTest.txt ${CMAKE_BINARY_DIR}/data/GraphemeBreakTest.txt SHOW_PROGRESS)
   add_executable(case test/tests.h test/tests.c utf8proc.h test/case.c)
