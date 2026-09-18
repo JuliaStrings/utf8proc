@@ -1,0 +1,31 @@
+name: Zig
+
+on:
+  push:
+    branches:
+      - master
+      - 'release-*'
+  pull_request:
+  # run on all pr
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v7
+
+    - uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29 # v2.2.1
+      with:
+        version: 0.16.0
+
+    - name: Build static lib
+      run: zig build
+
+    - name: Check build output
+      run: |
+        if ! test -e "zig-out/lib/libutf8proc.a"; then
+          exit 1
+        fi

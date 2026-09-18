@@ -1,0 +1,14 @@
+.{
+    .name = .utf8proc,
+    .fingerprint = 0xdcddf08dbb8954c4,
+    .version = "2.12.0",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "utf8proc.h",
+        "utf8proc.c",
+        "utf8proc_data.c",
+        "README.md",
+        "LICENSE.md",
+    },
+}
