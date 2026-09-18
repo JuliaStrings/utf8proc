@@ -35,6 +35,7 @@
 /msvc_shared/
 /msvc_static/
 /build/
+Manifest.toml
 NEWS-update.jl
 libutf8proc.pc
 

@@ -23,11 +23,11 @@ SOFLAG = -Wl,-soname
 # The API version number is defined in utf8proc.h.
 # Be sure to also update these ABI versions in MANIFEST and CMakeLists.txt!
 MAJOR=3
-MINOR=2
-PATCH=3
+MINOR=3
+PATCH=0
 
 # api version (also in utf8proc.h and CMakeLists.txt)
-VERSION=2.11.3
+VERSION=2.12.0
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin) # MacOS X

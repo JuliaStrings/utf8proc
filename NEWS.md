@@ -1,5 +1,14 @@
 # utf8proc release history #
 
+## Version 2.12.0 ##
+
+unreleased
+
+ - Unicode 18 support.  This includes the revision of rule GB9c in UAX #29,
+   which no longer requires an `Indic_Conjunct_Break=Consonant` in front of
+   the linker; as a consequence, `U+1CF5`, `U+1CF6`, and `U+11A3A` (which
+   became `InCB=Linker` in Unicode 18) now join with a following consonant.
+
 ## Version 2.11.3 ##
 
 2025-12-30
