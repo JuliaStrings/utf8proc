@@ -662,8 +662,9 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
     utf8proc_ssize_t wpos = 0;
     for (rpos = 0; rpos < length; rpos++) {
       utf8proc_int32_t current_char = buffer[rpos];
-      if (current_char < 0) {
-        /* skip grapheme break */
+      if (current_char < 0 || current_char >= 0x110000) {
+        /* skip grapheme-break sentinel or out-of-range codepoint;
+           unsafe_get_property would OOB on utf8proc_stage1table (idx = uc >> 8) */
         continue;
       }
       const utf8proc_property_t *current_property = unsafe_get_property(current_char);
