@@ -12,7 +12,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 
     const uint8_t* ptr = data;
     utf8proc_int32_t c = 0, c_prev = 0, state = 0;
-    utf8proc_option_t options;
+    unsigned int options;
     utf8proc_ssize_t ret, bytes = 0;
     utf8proc_uint8_t *str = NULL;
     size_t len = strlen((const char*)data);
