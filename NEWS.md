@@ -13,6 +13,13 @@ unreleased
   they are generally bitwise "or" of `enum` values; this should be backwards
   binary compatible ([#353]).
 
+- New `utf8proc_free` function to free memory allocated by utf8proc ([#338]).
+  (You can also use your own memory allocator by calling lower-level APIs.)
+
+- [Zig](https://ziglang.org/learn/build-system/) build scripts ([#351]).
+
+- Minor build-system improvements ([#326], [#327], [#334], [#338]).
+
 ## Version 2.11.3 ##
 
 2025-12-30
@@ -504,5 +511,10 @@ Release of version 1.0.1
 [#311]: https://github.com/JuliaStrings/utf8proc/issues/311
 [#317]: https://github.com/JuliaStrings/utf8proc/issues/317
 [#323]: https://github.com/JuliaStrings/utf8proc/issues/323
+[#326]: https://github.com/JuliaStrings/utf8proc/issues/326
+[#327]: https://github.com/JuliaStrings/utf8proc/issues/327
+[#334]: https://github.com/JuliaStrings/utf8proc/issues/334
+[#338]: https://github.com/JuliaStrings/utf8proc/issues/338
+[#351]: https://github.com/JuliaStrings/utf8proc/issues/351
 [#353]: https://github.com/JuliaStrings/utf8proc/issues/353
 [#354]: https://github.com/JuliaStrings/utf8proc/issues/354
