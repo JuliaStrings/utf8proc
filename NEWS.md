@@ -4,10 +4,8 @@
 
 unreleased
 
- - Unicode 18 support ([#354]).  This includes the revision of rule GB9c in UAX #29,
-   which no longer requires an `Indic_Conjunct_Break=Consonant` in front of
-   the linker; as a consequence, `U+1CF5`, `U+1CF6`, and `U+11A3A` (which
-   became `InCB=Linker` in Unicode 18) now join with a following consonant.
+ - Unicode 18 support ([#354]).  (This includes the modified grapheme-break rule
+   GB9c in UAX #29, which removes some grapheme breaks for Indic characters).
 
 - `options` arguments are changed from an `enum` to `unsigned int`, since
   they are generally bitwise "or" of `enum` values; this should be backwards
