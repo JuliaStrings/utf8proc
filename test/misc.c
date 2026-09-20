@@ -44,11 +44,51 @@ static void issue317(void) /* #317 */
     }
 }
 
+static void canonical_order_long(void)
+{
+    enum { groups = 64 };
+    utf8proc_uint8_t input[groups * 8 + 2];
+    utf8proc_uint8_t *output;
+    size_t i, pos = 0;
+
+    check(utf8proc_get_property(0x0301)->combining_class == 230, "unexpected combining class for U+0301");
+    check(utf8proc_get_property(0x0307)->combining_class == 230, "unexpected combining class for U+0307");
+    check(utf8proc_get_property(0x0327)->combining_class == 202, "unexpected combining class for U+0327");
+
+    input[pos++] = 'a';
+    for (i = 0; i < groups; ++i) {
+        input[pos++] = 0xcc; input[pos++] = 0x81; /* U+0301, CCC 230 */
+        input[pos++] = 0xcc; input[pos++] = 0xa7; /* U+0327, CCC 202 */
+        input[pos++] = 0xcc; input[pos++] = 0x87; /* U+0307, CCC 230 */
+        input[pos++] = 0xcc; input[pos++] = 0xa7; /* U+0327, CCC 202 */
+    }
+    input[pos] = 0;
+
+    output = utf8proc_NFD(input);
+    check(output != NULL, "NFD allocation failed");
+
+    pos = 0;
+    check(output[pos++] == 'a', "starter changed during canonical ordering");
+    for (i = 0; i < groups * 2; ++i) {
+        check(output[pos++] == 0xcc && output[pos++] == 0xa7,
+              "CCC 202 mark not ordered before CCC 230 marks");
+    }
+    for (i = 0; i < groups; ++i) {
+        check(output[pos++] == 0xcc && output[pos++] == 0x81,
+              "equal-CCC order changed for U+0301");
+        check(output[pos++] == 0xcc && output[pos++] == 0x87,
+              "equal-CCC order changed for U+0307");
+    }
+    check(output[pos] == 0, "unexpected bytes after reordered sequence");
+    utf8proc_free(output);
+}
+
 int main(void)
 {
     issue128();
     issue102();
     issue317();
+    canonical_order_long();
 #ifdef UNICODE_VERSION
     printf("Unicode version: Makefile has %s, has API %s\n", UNICODE_VERSION, utf8proc_unicode_version());
     check(!strcmp(UNICODE_VERSION, utf8proc_unicode_version()), "utf8proc_unicode_version mismatch");
