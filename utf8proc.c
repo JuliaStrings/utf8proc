@@ -663,8 +663,15 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
     for (rpos = 0; rpos < length; rpos++) {
       utf8proc_int32_t current_char = buffer[rpos];
       if (current_char < 0 || current_char >= 0x110000) {
-        /* skip grapheme-break sentinel or out-of-range codepoint;
-           unsafe_get_property would OOB on utf8proc_stage1table (idx = uc >> 8) */
+        /* grapheme-break sentinel or out-of-range codepoint: pass it through
+           unchanged, but never compose across it, since we cannot inspect it
+           (unsafe_get_property would OOB on utf8proc_stage1table, idx = uc >> 8).
+           utf8proc_reencode drops what cannot be encoded, so this is invisible
+           to utf8proc_map. */
+        buffer[wpos++] = current_char;
+        starter = NULL;
+        starter_property = NULL;
+        max_combining_class = -1;
         continue;
       }
       const utf8proc_property_t *current_property = unsafe_get_property(current_char);
