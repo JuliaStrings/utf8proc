@@ -607,9 +607,6 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
  * @return
  * In case of success, the length (in codepoints) of the normalized UTF-32 string is
  * returned; otherwise, a negative error code is returned (utf8proc_errmsg()).
- *
- * @warning The entries of the array pointed to by `str` have to be in the
- *          range `0x0000` to `0x10FFFF`. Otherwise, the program might crash!
  */
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *buffer, utf8proc_ssize_t length, unsigned int options);
 
