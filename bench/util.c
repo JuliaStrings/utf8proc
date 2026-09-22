@@ -15,8 +15,7 @@ uint8_t *readfile(const char *filename, size_t *len)
 	 FILE *f = fopen(filename, "r");
 	 if (!f) return NULL;
 	 uint8_t *s = (uint8_t *) malloc(sizeof(uint8_t) * *len);
-	 if (!s) return NULL;
-	 if (fread(s, 1, *len, f) != *len) {
+	 if (s && fread(s, 1, *len, f) != *len) {
 		  free(s);
 		  s = NULL;
 	 }
