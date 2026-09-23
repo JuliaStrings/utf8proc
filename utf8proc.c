@@ -170,6 +170,35 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate(
   return 4;
 }
 
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_iterate_graphemes(
+  const utf8proc_uint8_t *str, utf8proc_int32_t *read_bytes, utf8proc_ssize_t strlen,
+  utf8proc_uint32_t *start, utf8proc_uint32_t *end
+) {
+  int n, break_state = 0;
+  utf8proc_int32_t codepoint, prev_codepoint = 0;
+  if (*read_bytes == strlen)
+    return 0;
+  *start = *read_bytes;
+  while (1) {
+    n = utf8proc_iterate(str + *read_bytes, strlen - *read_bytes, &codepoint);
+    if (*read_bytes == strlen) {
+      codepoint = 0;  // Final dummy codepoint
+    } else
+    if (codepoint == -1) {
+      return n;
+    }
+    *read_bytes = *read_bytes + n;
+    if (prev_codepoint != 0 && (true == utf8proc_grapheme_break_stateful(
+          prev_codepoint, codepoint, &break_state)) ) {
+      *read_bytes = *read_bytes - n;
+      *end = *read_bytes;  // The last byte (not inclusive) of this grapheme
+      return 1;
+    }
+    prev_codepoint = codepoint;
+  }
+  // Unreachable
+}
+
 UTF8PROC_DLLEXPORT utf8proc_bool utf8proc_codepoint_valid(utf8proc_int32_t uc) {
     return (((utf8proc_uint32_t)uc)-0xd800 > 0x07ff) && ((utf8proc_uint32_t)uc < 0x110000);
 }
