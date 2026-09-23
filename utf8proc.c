@@ -382,8 +382,7 @@ static utf8proc_ssize_t seqindex_write_char_decomposed(utf8proc_uint16_t seqinde
     utf8proc_int32_t entry_cp = seqindex_decode_entry(&entry);
 
     written += utf8proc_decompose_char(entry_cp, dst ? dst+written : dst,
-      (bufsize > written) ? (bufsize - written) : 0, options,
-    last_boundclass);
+      (bufsize > written) ? (bufsize - written) : 0, options, last_boundclass);
     if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
   }
   return written;
