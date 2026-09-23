@@ -5,7 +5,7 @@
 2025-09-23
 
  - Unicode 18 support ([#354]).  (This includes the modified grapheme-break rule
-   GB9c in UAX #29, which removes some grapheme breaks for Indic characters).
+   GB9c in UAX #29, which removes some grapheme breaks for Indic characters.)
 
 - `options` arguments are changed from an `enum` to `unsigned int`, since
   they are generally bitwise "or" of `enum` values; this should be backwards
