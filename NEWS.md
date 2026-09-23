@@ -24,7 +24,7 @@
 
 - [Zig](https://ziglang.org/learn/build-system/) build scripts ([#351]).
 
-- Minor build-system improvements ([#326], [#327], [#334], [#338]).
+- Minor build-system improvements ([#326], [#327], [#334]).
 
 ## Version 2.11.3 ##
 
