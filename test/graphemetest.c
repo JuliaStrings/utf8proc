@@ -100,6 +100,7 @@ int main(int argc, char **argv)
     }
     fclose(f);
     printf("Passed tests after %zd lines!\n", lineno);
+    lineno = 0; /* no line numbers for subsequent tests */
 
     printf("Performing regression tests...\n");
 

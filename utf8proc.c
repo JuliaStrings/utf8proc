@@ -294,7 +294,7 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, int licb, int tic
     int state_bc, state_icb; /* boundclass and indic_conjunct_break state */
     if (*state == 0) { /* state initialization */
       state_bc = lbc;
-      state_icb = licb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER ? licb : UTF8PROC_INDIC_CONJUNCT_BREAK_NONE;
+      state_icb = licb;
     }
     else { /* lbc and licb are already encoded in *state */
       state_bc = *state & 0xff;  // 1st byte of state is bound class
@@ -305,16 +305,9 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, int licb, int tic
        !(state_icb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER
         && ticb == UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT); // GB9c
 
-    // Special support for GB9c, which since Unicode 18 reads
-    //     \p{InCB=Linker} \p{InCB=Extend}* x \p{InCB=Consonant}
-    // We are in LINKER state iff the last character was a linker, or was an
-    // extender preceded (transitively) by a linker.  (Before Unicode 18 the
-    // rule additionally required a consonant in front of the linker.)
-    if (ticb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER)
-      state_icb = UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER;
-    else if (!(ticb == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND
-               && state_icb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER))
-      state_icb = UTF8PROC_INDIC_CONJUNCT_BREAK_NONE;
+    // Special support for GB9c.  Don't break between linker + 0+ extend chars and consonant.
+    // We enter LINKER state after a linker and stay in it for extend chars.
+    state_icb = (state_icb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER && ticb == UTF8PROC_INDIC_CONJUNCT_BREAK_EXTEND) ? state_icb : ticb;
 
     // Special support for GB 12/13 made possible by GB999. After two RI
     // class codepoints we want to force a break. Do this by resetting the
