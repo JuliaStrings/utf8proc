@@ -44,11 +44,55 @@ static void issue317(void) /* #317 */
     }
 }
 
+/* check that utf8proc_normalize_utf32 passes uninterpretable codepoints through
+   rather than deleting them, and never composes across one */
+static void check_normalize_utf32(const char *name,
+                                  const utf8proc_int32_t *input, utf8proc_ssize_t len,
+                                  const utf8proc_int32_t *expected, utf8proc_ssize_t expected_len)
+{
+    utf8proc_int32_t buffer[8];
+    utf8proc_ssize_t i, result;
+
+    check(len <= (utf8proc_ssize_t) (sizeof(buffer)/sizeof(*buffer)), "%s: test buffer too small", name);
+    for (i = 0; i < len; ++i) buffer[i] = input[i];
+    result = utf8proc_normalize_utf32(buffer, len, UTF8PROC_COMPOSE);
+    check(result == expected_len, "%s: returned length %zd, expected %zd", name, result, expected_len);
+    for (i = 0; i < expected_len; ++i)
+        check(buffer[i] == expected[i], "%s: buffer[%zd] = 0x%x, expected 0x%x",
+              name, i, buffer[i], expected[i]);
+}
+
+static void issue288(void) /* #288 */
+{
+    /* baseline: composition still happens */
+    {
+        utf8proc_int32_t input[] = {0x0041, 0x0301};        /* "A" + combining acute */
+        utf8proc_int32_t expected[] = {0x00c1};             /* "\u00c1" */
+        check_normalize_utf32("compose", input, 2, expected, 1);
+    }
+
+    /* an out-of-range codepoint is preserved, and blocks composition across it
+       (unsafe_get_property would read past utf8proc_stage1table) */
+    {
+        utf8proc_int32_t input[] = {0x0041, 0x110000, 0x0301};
+        check_normalize_utf32("out-of-range codepoint", input, 3, input, 3);
+    }
+
+    /* likewise the grapheme-break sentinel written by utf8proc_decompose_char */
+    {
+        utf8proc_int32_t input[] = {0x0041, -1, 0x0301};
+        check_normalize_utf32("grapheme-break sentinel", input, 3, input, 3);
+    }
+
+    printf("PASSED: utf8proc_normalize_utf32 preserves uninterpretable codepoints\n");
+}
+
 int main(void)
 {
     issue128();
     issue102();
     issue317();
+    issue288();
 #ifdef UNICODE_VERSION
     printf("Unicode version: Makefile has %s, has API %s\n", UNICODE_VERSION, utf8proc_unicode_version());
     check(!strcmp(UNICODE_VERSION, utf8proc_unicode_version()), "utf8proc_unicode_version mismatch");
