@@ -783,15 +783,24 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
 ) {
   utf8proc_int32_t *buffer;
   utf8proc_ssize_t result;
+  utf8proc_ssize_t bufsize;
   *dstptr = NULL;
-  result = utf8proc_decompose_custom(str, strlen, NULL, 0, options, custom_func, custom_data);
-  if (result < 0) return result;
-  buffer = (utf8proc_int32_t *) malloc(((utf8proc_size_t)result) * sizeof(utf8proc_int32_t) + 1);
+  bufsize = utf8proc_decompose_custom(str, strlen, NULL, 0, options, custom_func, custom_data);
+  if (bufsize < 0) return bufsize;
+  buffer = (utf8proc_int32_t *) malloc(((utf8proc_size_t)bufsize) * sizeof(utf8proc_int32_t) + 1);
   if (!buffer) return UTF8PROC_ERROR_NOMEM;
-  result = utf8proc_decompose_custom(str, strlen, buffer, result, options, custom_func, custom_data);
+  result = utf8proc_decompose_custom(str, strlen, buffer, bufsize, options, custom_func, custom_data);
   if (result < 0) {
     free(buffer);
     return result;
+  }
+  /* a custom_func that returns different results across the two decompose
+     passes can make the second pass longer than the buffer we sized from the
+     first; reencode would then read and write past the allocation, so bail
+     out instead of corrupting the heap */
+  if (result > bufsize) {
+    free(buffer);
+    return UTF8PROC_ERROR_OVERFLOW;
   }
   result = utf8proc_reencode(buffer, result, options);
   if (result < 0) {
