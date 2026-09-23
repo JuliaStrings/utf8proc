@@ -2,9 +2,9 @@
 
 ## Version 2.12.0 ##
 
-2025-09-23
+2026-09-23
 
- - Unicode 18 support ([#354]).  (This includes the modified grapheme-break rule
+- Unicode 18 support ([#354]).  (This includes the modified grapheme-break rule
    GB9c in UAX #29, which removes some grapheme breaks for Indic characters.)
 
 - `options` arguments are changed from an `enum` to `unsigned int`, since
