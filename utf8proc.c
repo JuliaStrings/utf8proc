@@ -381,9 +381,10 @@ static utf8proc_ssize_t seqindex_write_char_decomposed(utf8proc_uint16_t seqinde
   for (; len >= 0; entry++, len--) {
     utf8proc_int32_t entry_cp = seqindex_decode_entry(&entry);
 
-    written += utf8proc_decompose_char(entry_cp, dst ? dst+written : dst,
+    utf8proc_ssize_t decomp_result = utf8proc_decompose_char(entry_cp, dst ? dst+written : dst,
       (bufsize > written) ? (bufsize - written) : 0, options, last_boundclass);
-    if (written < 0) return UTF8PROC_ERROR_OVERFLOW;
+    if (decomp_result < 0) return decomp_result;
+    written += decomp_result;
   }
   return written;
 }
@@ -555,11 +556,12 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
     int boundclass = UTF8PROC_BOUNDCLASS_START;
     while (1) {
       if (options & UTF8PROC_NULLTERM) {
-        rpos += utf8proc_iterate(str + rpos, -1, &uc);
+        utf8proc_ssize_t nread = utf8proc_iterate(str + rpos, -1, &uc);
         /* checking of return value is not necessary,
            as 'uc' is < 0 in case of error */
         if (uc < 0) return UTF8PROC_ERROR_INVALIDUTF8;
-        if (rpos < 0) return UTF8PROC_ERROR_OVERFLOW;
+        if (nread > (utf8proc_ssize_t)SSIZE_MAX - rpos) return UTF8PROC_ERROR_OVERFLOW;
+        rpos += nread;
         if (uc == 0) break;
       } else {
         if (rpos >= strlen) break;
@@ -574,11 +576,10 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
         &boundclass
       );
       if (decomp_result < 0) return decomp_result;
-      wpos += decomp_result;
       /* prohibiting integer overflows due to too long strings: */
-      if (wpos < 0 ||
-          wpos > (utf8proc_ssize_t)(SSIZE_MAX/sizeof(utf8proc_int32_t)/2))
+      if (decomp_result > (utf8proc_ssize_t)(SSIZE_MAX/sizeof(utf8proc_int32_t)/2) - wpos)
         return UTF8PROC_ERROR_OVERFLOW;
+      wpos += decomp_result;
     }
   }
   if ((options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) && bufsize >= wpos) {
@@ -781,15 +782,24 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
 ) {
   utf8proc_int32_t *buffer;
   utf8proc_ssize_t result;
+  utf8proc_ssize_t bufsize;
   *dstptr = NULL;
-  result = utf8proc_decompose_custom(str, strlen, NULL, 0, options, custom_func, custom_data);
-  if (result < 0) return result;
-  buffer = (utf8proc_int32_t *) malloc(((utf8proc_size_t)result) * sizeof(utf8proc_int32_t) + 1);
+  bufsize = utf8proc_decompose_custom(str, strlen, NULL, 0, options, custom_func, custom_data);
+  if (bufsize < 0) return bufsize;
+  buffer = (utf8proc_int32_t *) malloc(((utf8proc_size_t)bufsize) * sizeof(utf8proc_int32_t) + 1);
   if (!buffer) return UTF8PROC_ERROR_NOMEM;
-  result = utf8proc_decompose_custom(str, strlen, buffer, result, options, custom_func, custom_data);
+  result = utf8proc_decompose_custom(str, strlen, buffer, bufsize, options, custom_func, custom_data);
   if (result < 0) {
     free(buffer);
     return result;
+  }
+  /* a custom_func that returns different results across the two decompose
+     passes can make the second pass longer than the buffer we sized from the
+     first; reencode would then read and write past the allocation, so bail
+     out instead of corrupting the heap */
+  if (result > bufsize) {
+    free(buffer);
+    return UTF8PROC_ERROR_OVERFLOW;
   }
   result = utf8proc_reencode(buffer, result, options);
   if (result < 0) {
