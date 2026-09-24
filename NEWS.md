@@ -12,7 +12,8 @@ unreleased
   binary compatible ([#353]).
 
 - `int *last_boundclass` parameter of `utf8proc_decompose_char` is changed to
-  a `utf8proc_int32_t *` (affecting very few systems, in practice) ([#363]).
+  a `utf8proc_int32_t *` (affecting only rare systems where `int` is not 32 bits, on
+  which the `last_boundclass` argument would have produced incorrect results) ([#363]).
 
 - New `utf8proc_free` function to free memory allocated by utf8proc ([#338]).
   (You can also use your own memory allocator by calling lower-level APIs.)
