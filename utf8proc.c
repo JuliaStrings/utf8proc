@@ -553,7 +553,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
     utf8proc_int32_t uc;
     utf8proc_ssize_t rpos = 0;
     utf8proc_ssize_t decomp_result;
-    int boundclass = UTF8PROC_BOUNDCLASS_START;
+    utf8proc_int32_t boundclass = UTF8PROC_BOUNDCLASS_START;
     while (1) {
       if (options & UTF8PROC_NULLTERM) {
         utf8proc_ssize_t nread = utf8proc_iterate(str + rpos, -1, &uc);
