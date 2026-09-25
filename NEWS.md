@@ -2,7 +2,7 @@
 
 ## Version 2.12.0 ##
 
-2026-09-24
+2026-09-25
 
 - Unicode 18 support ([#354]).  (This includes the modified grapheme-break rule
    GB9c in UAX #29, which removes some grapheme breaks for Indic characters.)
