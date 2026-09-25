@@ -292,6 +292,8 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, int licb, int tic
 {
   if (state) {
     int state_bc, state_icb; /* boundclass and indic_conjunct_break state */
+    utf8proc_bool break_permitted;
+
     if (*state == 0) { /* state initialization */
       state_bc = lbc;
       state_icb = licb;
@@ -301,7 +303,7 @@ static utf8proc_bool grapheme_break_extended(int lbc, int tbc, int licb, int tic
       state_icb = *state >> 8;   // 2nd byte of state is indic conjunct break
     }
 
-    utf8proc_bool break_permitted = grapheme_break_simple(state_bc, tbc) &&
+    break_permitted = grapheme_break_simple(state_bc, tbc) &&
        !(state_icb == UTF8PROC_INDIC_CONJUNCT_BREAK_LINKER
         && ticb == UTF8PROC_INDIC_CONJUNCT_BREAK_CONSONANT); // GB9c
 
@@ -655,6 +657,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
     utf8proc_ssize_t rpos;
     utf8proc_ssize_t wpos = 0;
     for (rpos = 0; rpos < length; rpos++) {
+      const utf8proc_property_t *current_property;
       utf8proc_int32_t current_char = buffer[rpos];
       if (current_char < 0 || current_char >= 0x110000) {
         /* grapheme-break sentinel or out-of-range codepoint: pass it through
@@ -668,8 +671,9 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
         max_combining_class = -1;
         continue;
       }
-      const utf8proc_property_t *current_property = unsafe_get_property(current_char);
+      current_property = unsafe_get_property(current_char);
       if (starter && current_property->combining_class > max_combining_class) {
+        int idx;
         /* combination perhaps possible */
         utf8proc_int32_t hangul_lindex;
         utf8proc_int32_t hangul_sindex;
@@ -702,7 +706,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
              valid. */
           starter_property = unsafe_get_property(*starter);
         }
-        int idx = starter_property->comb_index;
+        idx = starter_property->comb_index;
         if (idx < 0x3FF && current_property->comb_issecond) {
           int len = starter_property->comb_length;
           utf8proc_int32_t max_second = utf8proc_combinations_second[idx + len - 1];
