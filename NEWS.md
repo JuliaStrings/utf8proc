@@ -2,10 +2,10 @@
 
 ## Version 2.12.0 ##
 
-unreleased
+2026-09-25
 
- - Unicode 18 support ([#354]).  (This includes the modified grapheme-break rule
-   GB9c in UAX #29, which removes some grapheme breaks for Indic characters).
+- Unicode 18 support ([#354]).  (This includes the modified grapheme-break rule
+   GB9c in UAX #29, which removes some grapheme breaks for Indic characters.)
 
 - `options` arguments are changed from an `enum` to `unsigned int`, since
   they are generally bitwise "or" of `enum` values; this should be backwards
@@ -28,7 +28,7 @@ unreleased
 
 - [Zig](https://ziglang.org/learn/build-system/) build scripts ([#351]).
 
-- Minor build-system improvements ([#326], [#327], [#334], [#338]).
+- Minor build-system improvements ([#326], [#327], [#334]).
 
 ## Version 2.11.3 ##
 
