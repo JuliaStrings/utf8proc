@@ -32,7 +32,7 @@ static void testbytes(utf8proc_uint8_t *buf, utf8proc_ssize_t len, utf8proc_ssiz
 
 int main(int argc, char **argv)
 {
-    utf8proc_int32_t byt;
+    utf8proc_uint8_t byt;
     utf8proc_uint8_t buf[16];
 
     (void) argc; (void) argv; /* unused */
@@ -50,9 +50,9 @@ int main(int argc, char **argv)
     CHECKVALID(2, 0xbe, 3);
     CHECKVALID(2, 0xbf, 3);
     // Check 0x??fffe & 0x??ffff
-    for (byt = 0x1fffe; byt < 0x110000; byt += 0x10000) {
-        buf[0] = 0xf0 | (byt >> 18);
-        buf[1] = 0x80 | ((byt >> 12) & 0x3f);
+    for (utf8proc_int32_t u = 0x1fffe; u < 0x110000; u += 0x10000) {
+        buf[0] = 0xf0 | ((utf8proc_uint8_t) (u >> 18));
+        buf[1] = 0x80 | ((utf8proc_uint8_t) ((u >> 12) & 0x3f));
         CHECKVALID(3, 0xbe, 4);
         CHECKVALID(3, 0xbf, 4);
     }
@@ -68,12 +68,12 @@ int main(int argc, char **argv)
     }
 
     // Test lead bytes
-    for (byt = 0xc0; byt <= 0xff; byt++) {
+    for (byt = 0xc0; byt > 0x00; byt++) {
 	// Single lead byte at end of string
         CHECKINVALID(0, byt, 1);
         // Lead followed by non-continuation character < 0x80
-        CHECKINVALID(1, 65, 2);
-	// Lead followed by non-continuation character > 0xbf
+        CHECKINVALID(1, 0x41, 2);
+        // Lead followed by non-continuation character > 0xbf
         CHECKINVALID(1, 0xc0, 2);
     }
 
@@ -135,7 +135,7 @@ int main(int argc, char **argv)
         // Lead followed by only 1 continuation byte
         CHECKINVALID(0, byt, 2);
         // Lead ended by non-continuation character < 0x80
-        CHECKINVALID(2, 65, 3);
+        CHECKINVALID(2, 0x41, 3);
         // Lead ended by non-continuation character > 0xbf
         CHECKINVALID(2, 0xc0, 3);
     }
@@ -155,7 +155,7 @@ int main(int argc, char **argv)
         // Lead followed by only 2 continuation bytes
         CHECKINVALID(0, byt, 3);
         // Lead followed by non-continuation character < 0x80
-        CHECKINVALID(3, 65, 4);
+        CHECKINVALID(3, 0x41, 4);
         // Lead followed by non-continuation character > 0xbf
         CHECKINVALID(3, 0xc0, 4);
 
