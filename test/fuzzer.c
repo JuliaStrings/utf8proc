@@ -42,34 +42,34 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         c_prev = c;
     }
 
-    utf8proc_int32_t *copy = size >= 4 ? NULL : malloc(size);
+    utf8proc_int32_t *copy = size >= 4 ? malloc(size) : NULL;
 
     if(copy)
     {
-        size /= 4;
+        size /= 4; /* number of utf8proc_int32_t code points that fit in copy */
 
         options = UTF8PROC_STRIPCC | UTF8PROC_NLF2LS | UTF8PROC_NLF2PS;
-        memcpy(copy, data, size);
+        memcpy(copy, data, size * sizeof(utf8proc_int32_t));
         utf8proc_normalize_utf32(copy, size, options);
 
         options = UTF8PROC_STRIPCC | UTF8PROC_NLF2LS;
-        memcpy(copy, data, size);
+        memcpy(copy, data, size * sizeof(utf8proc_int32_t));
         utf8proc_normalize_utf32(copy, size, options);
 
         options = UTF8PROC_STRIPCC | UTF8PROC_NLF2PS;
-        memcpy(copy, data, size);
+        memcpy(copy, data, size * sizeof(utf8proc_int32_t));
         utf8proc_normalize_utf32(copy, size, options);
 
         options = UTF8PROC_STRIPCC;
-        memcpy(copy, data, size);
+        memcpy(copy, data, size * sizeof(utf8proc_int32_t));
         utf8proc_normalize_utf32(copy, size, options);
 
         options = UTF8PROC_LUMP;
-        memcpy(copy, data, size);
+        memcpy(copy, data, size * sizeof(utf8proc_int32_t));
         utf8proc_normalize_utf32(copy, size, options);
 
         options = 0;
-        memcpy(copy, data, size);
+        memcpy(copy, data, size * sizeof(utf8proc_int32_t));
         utf8proc_normalize_utf32(copy, size, options);
 
         free(copy);
