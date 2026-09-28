@@ -26,7 +26,6 @@ static void testbytes(utf8proc_uint8_t *buf, utf8proc_ssize_t len, utf8proc_ssiz
             fprintf(stderr, " 0x%02x", tmp[i]);
         }
         fprintf(stderr, " -> %zd\n", ret);
-        exit(1);
         error++;
     }
 }
