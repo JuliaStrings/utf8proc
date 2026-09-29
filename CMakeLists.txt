@@ -34,6 +34,7 @@ else()
   target_compile_definitions(utf8proc PUBLIC "UTF8PROC_STATIC")
   if (MSVC)
     set_target_properties(utf8proc PROPERTIES OUTPUT_NAME "utf8proc_static")
+    target_link_options(utf8proc PRIVATE "/NODEFAULTLIB:library")
   endif()
 endif()
 
