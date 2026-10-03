@@ -49,7 +49,7 @@ pkgincludedir=$(includedir:$(prefix)/%=%)
 
 # meta targets
 
-.PHONY: all clean data update manifest install test_install_uninstall
+.PHONY: all clean data update manifest install test_install_uninstall test_parallel_make
 
 all: libutf8proc.a libutf8proc.$(SHLIB_EXT)
 
@@ -73,7 +73,7 @@ manifest: MANIFEST.new
 
 # real targets
 
-data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.jl
+data/utf8proc_data.c.new: libutf8proc.$(SHLIB_EXT) data/data_generator.jl data/DerivedCoreProperties.txt
 	$(MAKE) -C data utf8proc_data.c.new
 
 utf8proc.o: utf8proc.h utf8proc.c utf8proc_data.c
@@ -141,10 +141,14 @@ data/NormalizationTest.txt:
 data/GraphemeBreakTest.txt:
 	$(MAKE) -C data GraphemeBreakTest.txt
 
-data/Lowercase.txt:
+# These recursive makes share a download; schedule it only once at this level.
+data/DerivedCoreProperties.txt:
+	$(MAKE) -C data DerivedCoreProperties.txt
+
+data/Lowercase.txt: data/DerivedCoreProperties.txt
 	$(MAKE) -C data Lowercase.txt
 
-data/Uppercase.txt:
+data/Uppercase.txt: data/DerivedCoreProperties.txt
 	$(MAKE) -C data Uppercase.txt
 
 test/tests.o: test/tests.c test/tests.h utf8proc.h
@@ -186,6 +190,9 @@ test/maxdecomposition: test/maxdecomposition.c test/tests.o utf8proc.o utf8proc.
 test_install_uninstall: manifest
 	./test/install_uninstall.sh
 
+test_parallel_make:
+	$(SHELL) test/parallel_make.sh
+
 # make release tarball from master branch
 dist:
 	git archive master --prefix=utf8proc-$(VERSION)/ -o utf8proc-$(VERSION).tar.gz
@@ -201,7 +208,7 @@ distcheck: dist
 	make -C utf8proc-$(VERSION) check
 	rm -rf utf8proc-$(VERSION)
 
-check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/maxdecomposition test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o test_install_uninstall
+check: test/normtest data/NormalizationTest.txt data/Lowercase.txt data/Uppercase.txt test/graphemetest data/GraphemeBreakTest.txt test/printproperty test/case test/iscase test/custom test/charwidth test/misc test/maxdecomposition test/valid test/iterate bench/bench.c bench/util.c bench/util.h utf8proc.o test_install_uninstall test_parallel_make
 	$(MAKE) -C bench
 	test/normtest data/NormalizationTest.txt
 	test/graphemetest data/GraphemeBreakTest.txt
