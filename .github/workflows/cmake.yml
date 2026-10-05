@@ -14,14 +14,15 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
         shared: ["ON", "OFF"]
+        includedir: ["include", "headers"]
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} - shared=${{ matrix.shared }}
+    name: ${{ matrix.os }} - shared=${{ matrix.shared }} - includedir=${{ matrix.includedir }}
     steps:
     - uses: actions/checkout@v7
     - name: Build
       run: |
         mkdir build
-        cmake -S . -B build -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DUTF8PROC_ENABLE_TESTING=ON -DCMAKE_INSTALL_PREFIX=tmp/install
+        cmake -S . -B build -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DUTF8PROC_ENABLE_TESTING=ON -DCMAKE_INSTALL_PREFIX=tmp/install -DCMAKE_INSTALL_INCLUDEDIR=${{ matrix.includedir }}
         cmake --build build
     - name: Run Test
       run: ctest --test-dir build -V
@@ -29,7 +30,7 @@ jobs:
       if: matrix.shared == 'ON'
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ matrix.os }}
+        name: ${{ matrix.os }}-${{ matrix.includedir }}
         path: |
           build/libutf8proc.*
           build/Debug/utf8proc.*
