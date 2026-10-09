@@ -139,6 +139,18 @@ int main(int argc, char **argv)
         }
     };
 
+    /* UTF8PROC_STRIPCC must not strip the 0xff markers of UTF8PROC_CHARBOUND */
+    {
+        utf8proc_uint8_t input[] = {0x61,0x0a,0x62,0x01,0x63,0x00}; /* "a\nb\x01c" */
+        utf8proc_uint8_t output[] = {0xff,0x61,0xff,0x20,0xff,0x62,0xff,0x63,0x00};
+        utf8proc_ssize_t glen;
+        utf8proc_uint8_t *g;
+        glen = utf8proc_map(input, 0, &g, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | UTF8PROC_STRIPCC);
+        check(glen == 8, "CHARBOUND|STRIPCC returned length %zd, expected 8", glen);
+        check(!strcmp((char*)g, (char*)output), "CHARBOUND|STRIPCC dropped grapheme markers");
+        utf8proc_free(g);
+    };
+
     /* https://github.com/JuliaLang/julia/issues/37680 */
     checkline("/ 1f1f8 1f1ea / 1f1f8 1f1ea /", true); /* Two swedish flags after each other */
     checkline("/ 1f926 1f3fc 200d 2642 fe0f /", true); /* facepalm + pale skin + zwj + male sign + FE0F */
