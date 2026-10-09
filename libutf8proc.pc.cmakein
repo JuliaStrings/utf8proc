@@ -7,4 +7,4 @@ Name: libutf8proc
 Description: UTF8 processing
 Version: @PROJECT_VERSION@
 Libs: -L${libdir} -lutf8proc
-Cflags: -I${includedir} -DUTF8PROC_EXPORTS
+Cflags: -I${includedir} @UTF8PROC_COMPILE_DEF@
