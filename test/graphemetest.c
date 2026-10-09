@@ -141,14 +141,33 @@ int main(int argc, char **argv)
 
     /* UTF8PROC_STRIPCC must not strip the 0xff markers of UTF8PROC_CHARBOUND */
     {
-        utf8proc_uint8_t input[] = {0x61,0x0a,0x62,0x01,0x63,0x00}; /* "a\nb\x01c" */
-        utf8proc_uint8_t output[] = {0xff,0x61,0xff,0x20,0xff,0x62,0xff,0x63,0x00};
-        utf8proc_ssize_t glen;
-        utf8proc_uint8_t *g;
-        glen = utf8proc_map(input, 0, &g, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | UTF8PROC_STRIPCC);
-        check(glen == 8, "CHARBOUND|STRIPCC returned length %zd, expected 8", glen);
-        check(!strcmp((char*)g, (char*)output), "CHARBOUND|STRIPCC dropped grapheme markers");
-        utf8proc_free(g);
+        /* 2026-10-10: Cover tabs, C1 controls, and a control before the first printable character. */
+        utf8proc_uint8_t input[][8] = {
+            {0x61,0x0a,0x62,0x01,0x63,0x00},
+            {0x61,0x09,0x62,0x00},
+            {0x61,0xc2,0x90,0x62,0x00},
+            {0x01,0x61,0x00}
+        };
+        utf8proc_uint8_t output[][9] = {
+            {0xff,0x61,0xff,0x20,0xff,0x62,0xff,0x63,0x00},
+            {0xff,0x61,0xff,0x20,0xff,0x62,0x00},
+            {0xff,0x61,0xff,0x62,0x00},
+            {0xff,0x61,0x00}
+        };
+        const char *plain[] = {"a bc", "a b", "ab", "a"};
+        size_t i;
+        for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {
+            utf8proc_ssize_t glen;
+            utf8proc_uint8_t *g;
+            glen = utf8proc_map(input[i], 0, &g, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | UTF8PROC_STRIPCC);
+            check(glen == (utf8proc_ssize_t)strlen((char*)output[i]), "CHARBOUND|STRIPCC returned wrong length in case %zu", i);
+            check(!strcmp((char*)g, (char*)output[i]), "CHARBOUND|STRIPCC dropped grapheme markers in case %zu", i);
+            utf8proc_free(g);
+            glen = utf8proc_map(input[i], 0, &g, UTF8PROC_NULLTERM | UTF8PROC_STRIPCC);
+            check(glen == (utf8proc_ssize_t)strlen(plain[i]), "STRIPCC returned wrong length in case %zu", i);
+            check(!strcmp((char*)g, plain[i]), "STRIPCC changed output in case %zu", i);
+            utf8proc_free(g);
+        }
     };
 
     /* https://github.com/JuliaLang/julia/issues/37680 */
