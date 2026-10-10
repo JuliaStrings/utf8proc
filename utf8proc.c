@@ -645,7 +645,7 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_normalize_utf32(utf8proc_int32_t *b
         if (uc == 0x0009) buffer[wpos++] = 0x0020;
         /* a removed control character is a grapheme of its own, so also
            drop the boundary sentinel that UTF8PROC_CHARBOUND put before it */
-        else if ((options & UTF8PROC_CHARBOUND) && wpos > 0 && buffer[wpos-1] == -1) wpos--; /* 2026-10-10 */
+        else if ((options & UTF8PROC_CHARBOUND) && wpos > 0 && buffer[wpos-1] == -1) wpos--;
       } else {
         buffer[wpos++] = uc;
       }

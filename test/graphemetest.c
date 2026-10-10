@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 
     /* UTF8PROC_STRIPCC must not strip the 0xff markers of UTF8PROC_CHARBOUND */
     {
-        /* 2026-10-10: Cover tabs, C1 controls, and a control before the first printable character. */
+        /* Cover tabs, C1 controls, and a control before the first printable character. */
         utf8proc_uint8_t input[][8] = {
             {0x61,0x0a,0x62,0x01,0x63,0x00},
             {0x61,0x09,0x62,0x00},
