@@ -166,6 +166,17 @@ int main(int argc, char **argv)
             glen = utf8proc_map(input[i], 0, &g, UTF8PROC_NULLTERM | UTF8PROC_STRIPCC);
             check(glen == (utf8proc_ssize_t)strlen(plain[i]), "STRIPCC returned wrong length in case %zu", i);
             check(!strcmp((char*)g, plain[i]), "STRIPCC changed output in case %zu", i);
+            {
+                utf8proc_uint8_t *separate, *combined;
+                utf8proc_ssize_t separate_len, combined_len;
+                separate_len = utf8proc_map(g, 0, &separate, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND);
+                combined_len = utf8proc_map(input[i], 0, &combined, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | UTF8PROC_STRIPCC);
+                check(separate_len >= 0 && combined_len >= 0, "two-step mapping failed in case %zu", i);
+                check(separate_len == combined_len, "two-step mapping returned different length in case %zu", i);
+                check(!memcmp(separate, combined, (size_t)combined_len + 1), "two-step mapping differs from combined flags in case %zu", i);
+                utf8proc_free(separate);
+                utf8proc_free(combined);
+            }
             utf8proc_free(g);
         }
     };
