@@ -47,17 +47,20 @@ set_target_properties (utf8proc PROPERTIES
 
 if (UTF8PROC_INSTALL)
   include(GNUInstallDirs)
-  install(FILES utf8proc.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+  install(FILES utf8proc.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" COMPONENT Development)
   install(TARGETS utf8proc
     EXPORT utf8proc-targets
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT Development
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" NAMELINK_SKIP COMPONENT Runtime
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT Runtime
+  )
+  install(TARGETS utf8proc
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" NAMELINK_ONLY COMPONENT Development
   )
   configure_file(libutf8proc.pc.cmakein libutf8proc.pc @ONLY)
-  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libutf8proc.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libutf8proc.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig" COMPONENT Development)
   # Install CMake targets file.
-  install(EXPORT utf8proc-targets FILE utf8proc-targets.cmake DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc" NAMESPACE utf8proc::)
+  install(EXPORT utf8proc-targets FILE utf8proc-targets.cmake DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc" COMPONENT Development NAMESPACE utf8proc::)
   include(CMakePackageConfigHelpers)
   configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/utf8proc-config.cmake.in"
@@ -73,6 +76,7 @@ if (UTF8PROC_INSTALL)
     "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/utf8proc-config-version.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/utf8proc"
+    COMPONENT Development
   )
 endif()
 
