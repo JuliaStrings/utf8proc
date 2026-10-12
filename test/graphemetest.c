@@ -139,6 +139,48 @@ int main(int argc, char **argv)
         }
     };
 
+    /* UTF8PROC_STRIPCC must not strip the 0xff markers of UTF8PROC_CHARBOUND */
+    {
+        /* Cover tabs, C1 controls, and a control before the first printable character. */
+        utf8proc_uint8_t input[][8] = {
+            {0x61,0x0a,0x62,0x01,0x63,0x00},
+            {0x61,0x09,0x62,0x00},
+            {0x61,0xc2,0x90,0x62,0x00},
+            {0x01,0x61,0x00}
+        };
+        utf8proc_uint8_t output[][9] = {
+            {0xff,0x61,0xff,0x20,0xff,0x62,0xff,0x63,0x00},
+            {0xff,0x61,0xff,0x20,0xff,0x62,0x00},
+            {0xff,0x61,0xff,0x62,0x00},
+            {0xff,0x61,0x00}
+        };
+        const char *plain[] = {"a bc", "a b", "ab", "a"};
+        size_t i;
+        for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {
+            utf8proc_ssize_t glen;
+            utf8proc_uint8_t *g;
+            glen = utf8proc_map(input[i], 0, &g, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | UTF8PROC_STRIPCC);
+            check(glen == (utf8proc_ssize_t)strlen((char*)output[i]), "CHARBOUND|STRIPCC returned wrong length in case %zu", i);
+            check(!strcmp((char*)g, (char*)output[i]), "CHARBOUND|STRIPCC dropped grapheme markers in case %zu", i);
+            utf8proc_free(g);
+            glen = utf8proc_map(input[i], 0, &g, UTF8PROC_NULLTERM | UTF8PROC_STRIPCC);
+            check(glen == (utf8proc_ssize_t)strlen(plain[i]), "STRIPCC returned wrong length in case %zu", i);
+            check(!strcmp((char*)g, plain[i]), "STRIPCC changed output in case %zu", i);
+            {
+                utf8proc_uint8_t *separate, *combined;
+                utf8proc_ssize_t separate_len, combined_len;
+                separate_len = utf8proc_map(g, 0, &separate, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND);
+                combined_len = utf8proc_map(input[i], 0, &combined, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | UTF8PROC_STRIPCC);
+                check(separate_len >= 0 && combined_len >= 0, "two-step mapping failed in case %zu", i);
+                check(separate_len == combined_len, "two-step mapping returned different length in case %zu", i);
+                check(!memcmp(separate, combined, (size_t)combined_len + 1), "two-step mapping differs from combined flags in case %zu", i);
+                utf8proc_free(separate);
+                utf8proc_free(combined);
+            }
+            utf8proc_free(g);
+        }
+    };
+
     /* https://github.com/JuliaLang/julia/issues/37680 */
     checkline("/ 1f1f8 1f1ea / 1f1f8 1f1ea /", true); /* Two swedish flags after each other */
     checkline("/ 1f926 1f3fc 200d 2642 fe0f /", true); /* facepalm + pale skin + zwj + male sign + FE0F */
