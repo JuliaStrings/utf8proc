@@ -32,6 +32,7 @@ if (BUILD_SHARED_LIBS)
 else()
   # Building static library
   target_compile_definitions(utf8proc PUBLIC "UTF8PROC_STATIC")
+  list(APPEND UTF8PROC_COMPILE_DEFS "-DUTF8PROC_STATIC")
   if (MSVC)
     set_target_properties(utf8proc PROPERTIES OUTPUT_NAME "utf8proc_static")
   endif()
@@ -54,6 +55,7 @@ if (UTF8PROC_INSTALL)
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
   )
+  string(REPLACE ";" " " UTF8PROC_COMPILE_DEF "${UTF8PROC_COMPILE_DEFS}")
   configure_file(libutf8proc.pc.cmakein libutf8proc.pc @ONLY)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libutf8proc.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
   # Install CMake targets file.
