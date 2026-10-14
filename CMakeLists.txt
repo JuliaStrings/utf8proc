@@ -18,6 +18,8 @@ option(UTF8PROC_INSTALL "Enable installation of utf8proc" On)
 option(UTF8PROC_ENABLE_TESTING "Enable testing of utf8proc" Off)
 option(LIB_FUZZING_ENGINE "Fuzzing engine to link against" Off)
 
+include(GNUInstallDirs)
+
 add_library (utf8proc
   utf8proc.c
   utf8proc.h
@@ -25,7 +27,7 @@ add_library (utf8proc
 add_library (utf8proc::utf8proc ALIAS utf8proc)
 
 # expose header path, for when this is part of a larger cmake project
-target_include_directories(utf8proc PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
+target_include_directories(utf8proc PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 if (BUILD_SHARED_LIBS)
   # Building shared library
@@ -46,7 +48,6 @@ set_target_properties (utf8proc PROPERTIES
 )
 
 if (UTF8PROC_INSTALL)
-  include(GNUInstallDirs)
   install(FILES utf8proc.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" COMPONENT Development)
   install(TARGETS utf8proc
     EXPORT utf8proc-targets
