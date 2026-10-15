@@ -139,6 +139,79 @@ int main(int argc, char **argv)
         }
     };
 
+    /* Hangul normalization without CHARBOUND must preserve the usual UTF-8 output. */
+    {
+        /* LV and LVT syllables, alone and followed by U+0301. */
+        utf8proc_uint8_t input[][6] = {
+            {0xea,0xb0,0x80,0x00},
+            {0xea,0xb0,0x81,0x00},
+            {0xea,0xb0,0x80,0xcc,0x81,0x00},
+            {0xea,0xb0,0x81,0xcc,0x81,0x00}
+        };
+        utf8proc_uint8_t nfd[][12] = {
+            {0xe1,0x84,0x80,0xe1,0x85,0xa1,0x00},
+            {0xe1,0x84,0x80,0xe1,0x85,0xa1,0xe1,0x86,0xa8,0x00},
+            {0xe1,0x84,0x80,0xe1,0x85,0xa1,0xcc,0x81,0x00},
+            {0xe1,0x84,0x80,0xe1,0x85,0xa1,0xe1,0x86,0xa8,0xcc,0x81,0x00}
+        };
+        unsigned int norm[] = {UTF8PROC_COMPOSE, UTF8PROC_DECOMPOSE};
+        size_t i, j;
+        for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {
+            for (j = 0; j < sizeof(norm) / sizeof(norm[0]); j++) {
+                utf8proc_uint8_t *g, *expected = j ? nfd[i] : input[i];
+                utf8proc_ssize_t glen = utf8proc_map(input[i], 0, &g, UTF8PROC_NULLTERM | UTF8PROC_STABLE | norm[j]);
+                check(glen == (utf8proc_ssize_t)strlen((char*)expected), "Hangul normalization returned wrong length in case %zu/%zu", i, j);
+                check(!memcmp(g, expected, (size_t)glen + 1), "Hangul normalization changed output in case %zu/%zu", i, j);
+                utf8proc_free(g);
+            }
+        }
+    };
+
+    /* issue 373: same for Hangul syllables, which take a separate decomposition path */
+    {
+        /* U+AC00 (LV), U+AC01 (LVT), two syllables, a syllable followed by a T or V
+           Jamo, syllables between Latin letters or before combining marks,
+           and mixed Hangul/Jamo/ASCII */
+        utf8proc_uint8_t input[][13] = {
+            {0xea,0xb0,0x80,0x00},
+            {0xea,0xb0,0x81,0x00},
+            {0xea,0xb0,0x80,0xea,0xb0,0x80,0x00},
+            {0xea,0xb0,0x80,0xe1,0x86,0xa8,0x00},
+            {0xea,0xb0,0x80,0xe1,0x85,0xa1,0x00},
+            {0x61,0xea,0xb0,0x80,0x62,0x00},
+            {0xea,0xb0,0x80,0xcc,0x81,0x00},
+            {0xea,0xb0,0x81,0xcc,0x81,0x00},
+            {0x61,0xe1,0x84,0x80,0xea,0xb0,0x80,0xe1,0x86,0xa8,0x62,0x00}
+        };
+        utf8proc_uint8_t nfc[] = {0xff,0xea,0xb0,0x80,0x00};
+        utf8proc_uint8_t nfd[] = {0xff,0xe1,0x84,0x80,0xe1,0x85,0xa1,0x00};
+        unsigned int norm[] = {UTF8PROC_COMPOSE, UTF8PROC_DECOMPOSE};
+        utf8proc_ssize_t glen;
+        utf8proc_uint8_t *g;
+        size_t i, j;
+        glen = utf8proc_map(input[0], 0, &g, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | UTF8PROC_COMPOSE);
+        check(glen == 4 && !strcmp((char*)g, (char*)nfc), "CHARBOUND|COMPOSE dropped Hangul grapheme marker");
+        utf8proc_free(g);
+        glen = utf8proc_map(input[0], 0, &g, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | UTF8PROC_DECOMPOSE);
+        check(glen == 7 && !strcmp((char*)g, (char*)nfd), "CHARBOUND|DECOMPOSE dropped Hangul grapheme marker");
+        utf8proc_free(g);
+        for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {
+            for (j = 0; j < sizeof(norm) / sizeof(norm[0]); j++) {
+                utf8proc_uint8_t *separate, *combined;
+                utf8proc_ssize_t separate_len, combined_len;
+                glen = utf8proc_map(input[i], 0, &g, UTF8PROC_NULLTERM | norm[j]);
+                separate_len = utf8proc_map(g, 0, &separate, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND);
+                combined_len = utf8proc_map(input[i], 0, &combined, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND | norm[j]);
+                check(glen >= 0 && separate_len >= 0 && combined_len >= 0, "Hangul two-step mapping failed in case %zu/%zu", i, j);
+                check(separate_len == combined_len, "Hangul two-step mapping returned different length in case %zu/%zu", i, j);
+                check(!memcmp(separate, combined, (size_t)combined_len + 1), "Hangul two-step mapping differs from combined flags in case %zu/%zu", i, j);
+                utf8proc_free(separate);
+                utf8proc_free(combined);
+                utf8proc_free(g);
+            }
+        }
+    };
+
     /* UTF8PROC_STRIPCC must not strip the 0xff markers of UTF8PROC_CHARBOUND */
     {
         /* Cover tabs, C1 controls, and a control before the first printable character. */
