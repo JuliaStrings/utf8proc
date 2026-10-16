@@ -454,20 +454,15 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
     if (hangul_sindex >= 0 && hangul_sindex < UTF8PROC_HANGUL_SCOUNT) {
       utf8proc_int32_t hangul_tindex;
       if (options & UTF8PROC_CHARBOUND) {
+        /* decompose into Jamo, then pass each one through the
+           grapheme-boundary handling below */
         utf8proc_int32_t jamo[3];
         utf8proc_ssize_t i, written = 0;
-        hangul_tindex = hangul_sindex % UTF8PROC_HANGUL_TCOUNT;
-        jamo[0] = UTF8PROC_HANGUL_LBASE + hangul_sindex / UTF8PROC_HANGUL_NCOUNT;
-        jamo[1] = UTF8PROC_HANGUL_VBASE +
-          (hangul_sindex % UTF8PROC_HANGUL_NCOUNT) / UTF8PROC_HANGUL_TCOUNT;
-        jamo[2] = UTF8PROC_HANGUL_TBASE + hangul_tindex;
-        /* Like table-based decompositions, process each Jamo through the
-           normal path so grapheme boundaries and their state are updated. */
-        for (i = 0; i < (hangul_tindex ? 3 : 2); i++) {
-          utf8proc_ssize_t decomp_result = utf8proc_decompose_char(jamo[i], dst ? dst+written : dst,
+        utf8proc_ssize_t n = utf8proc_decompose_char(uc, jamo, 3,
+          options & ~(unsigned int)UTF8PROC_CHARBOUND, NULL);
+        for (i = 0; i < n; i++) {
+          written += utf8proc_decompose_char(jamo[i], dst ? dst+written : dst,
             (bufsize > written) ? (bufsize - written) : 0, options, last_boundclass);
-          if (decomp_result < 0) return decomp_result;
-          written += decomp_result;
         }
         return written;
       }
