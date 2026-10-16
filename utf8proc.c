@@ -453,6 +453,19 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
   if (options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) {
     if (hangul_sindex >= 0 && hangul_sindex < UTF8PROC_HANGUL_SCOUNT) {
       utf8proc_int32_t hangul_tindex;
+      if (options & UTF8PROC_CHARBOUND) {
+        /* decompose into Jamo, then pass each one through the
+           grapheme-boundary handling below */
+        utf8proc_int32_t jamo[3];
+        utf8proc_ssize_t i, written = 0;
+        utf8proc_ssize_t n = utf8proc_decompose_char(uc, jamo, 3,
+          options & ~(unsigned int)UTF8PROC_CHARBOUND, NULL);
+        for (i = 0; i < n; i++) {
+          written += utf8proc_decompose_char(jamo[i], dst ? dst+written : dst,
+            (bufsize > written) ? (bufsize - written) : 0, options, last_boundclass);
+        }
+        return written;
+      }
       if (bufsize >= 1) {
         dst[0] = UTF8PROC_HANGUL_LBASE +
           hangul_sindex / UTF8PROC_HANGUL_NCOUNT;
