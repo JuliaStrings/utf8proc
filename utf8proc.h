@@ -521,15 +521,24 @@ UTF8PROC_DLLEXPORT const utf8proc_property_t *utf8proc_get_property(utf8proc_int
  * @param dst the destination buffer.
  * @param bufsize the size of the destination buffer.
  * @param options one or more of the following flags:
+ * - @ref UTF8PROC_DECOMPOSE - apply canonical decomposition
+ * - @ref UTF8PROC_COMPOSE   - also apply canonical decomposition at this stage;
+ *                             composition is performed by utf8proc_normalize_utf32()
  * - @ref UTF8PROC_REJECTNA  - return an error if `codepoint` is unassigned
  * - @ref UTF8PROC_IGNORE    - strip "default ignorable" codepoints
  * - @ref UTF8PROC_CASEFOLD  - apply Unicode casefolding
  * - @ref UTF8PROC_COMPAT    - replace certain codepoints with their
- *                             compatibility decomposition
+ *                             compatibility decomposition (requires
+ *                             @ref UTF8PROC_DECOMPOSE or @ref UTF8PROC_COMPOSE)
  * - @ref UTF8PROC_CHARBOUND - insert 0xFF bytes before each grapheme cluster
  * - @ref UTF8PROC_LUMP      - lump certain different codepoints together
  * - @ref UTF8PROC_STRIPMARK - remove all character marks
  * - @ref UTF8PROC_STRIPNA   - remove unassigned codepoints
+ *
+ * Without @ref UTF8PROC_DECOMPOSE or @ref UTF8PROC_COMPOSE, canonical and
+ * compatibility decomposition are not performed; other requested transformations
+ * (such as @ref UTF8PROC_CASEFOLD) still apply.
+ *
  * @param last_boundclass
  * Pointer to an integer variable containing
  * the previous codepoint's (boundclass + (indic_conjunct_break << 8)) if the @ref UTF8PROC_CHARBOUND
