@@ -87,12 +87,54 @@ static void issue288(void) /* #288 */
     printf("PASSED: utf8proc_normalize_utf32 preserves uninterpretable codepoints\n");
 }
 
+/* canonical ordering of a run of n combining marks: the output must be the
+   stable sort by combining class for any run length (long runs take a
+   different code path than short ones), and must not take quadratic time */
+static void check_canonical_order(utf8proc_ssize_t n)
+{
+    /* three classes, three marks each, so stability within a class is checked */
+    static const utf8proc_int32_t marks[3][3] = {
+        {0x0300, 0x0301, 0x0302}, /* combining class 230 */
+        {0x0323, 0x0324, 0x0325}, /* combining class 220 */
+        {0x0334, 0x0335, 0x0336}  /* combining class 1 */
+    };
+    utf8proc_uint8_t *input = (utf8proc_uint8_t *) malloc((size_t) (2*n + 2));
+    utf8proc_uint8_t *expected = (utf8proc_uint8_t *) malloc((size_t) (2*n + 2));
+    utf8proc_uint8_t *output;
+    utf8proc_ssize_t i, cls, len, explen, result;
+
+    check(input && expected, "canonical order: out of memory");
+    /* input: 'a' followed by the three classes in descending order */
+    len = utf8proc_encode_char(0x61, input);
+    for (i = 0; i < n; ++i)
+        len += utf8proc_encode_char(marks[i*3/n][i%3], input + len);
+    input[len] = 0;
+    /* expected: 'a' followed by the same marks in ascending class order,
+       the order within each class unchanged */
+    explen = utf8proc_encode_char(0x61, expected);
+    for (cls = 2; cls >= 0; --cls)
+        for (i = 0; i < n; ++i)
+            if (i*3/n == cls)
+                explen += utf8proc_encode_char(marks[cls][i%3], expected + explen);
+    expected[explen] = 0;
+
+    result = utf8proc_map(input, len, &output, UTF8PROC_STABLE | UTF8PROC_DECOMPOSE);
+    check(result == explen, "canonical order (n=%zd): NFD returned %zd, expected %zd", n, result, explen);
+    check(!memcmp(output, expected, (size_t) explen), "canonical order (n=%zd): NFD output is not the stable sort by combining class", n);
+    utf8proc_free(output);
+    free(input);
+    free(expected);
+    printf("PASSED: canonical ordering of %zd combining marks\n", n);
+}
+
 int main(void)
 {
     issue128();
     issue102();
     issue317();
     issue288();
+    check_canonical_order(9);     /* sorted in place */
+    check_canonical_order(1<<16); /* sorted through a scratch buffer */
 #ifdef UNICODE_VERSION
     printf("Unicode version: Makefile has %s, has API %s\n", UNICODE_VERSION, utf8proc_unicode_version());
     check(!strcmp(UNICODE_VERSION, utf8proc_unicode_version()), "utf8proc_unicode_version mismatch");

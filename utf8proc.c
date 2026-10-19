@@ -537,6 +537,40 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
     return utf8proc_decompose_custom(str, strlen, buffer, bufsize, options, NULL, NULL);
 }
 
+/* Stable sort of a run of `len` non-starters by combining class (canonical
+   ordering, UAX #15 section 3.11).  The in-place insertion sort is quadratic
+   in the run length, so for long runs the sort is done as a counting sort
+   through a scratch copy instead: a long run of marks in descending class
+   order then costs O(len) rather than O(len^2) swaps.  If the scratch buffer
+   cannot be allocated, the insertion sort is used; it yields the same result. */
+#define UTF8PROC_INSERTION_SORT_MAX 32
+static void canonical_order(utf8proc_int32_t *run, utf8proc_ssize_t len) {
+  utf8proc_ssize_t i, j;
+  if (len > UTF8PROC_INSERTION_SORT_MAX) {
+    utf8proc_int32_t *tmp = (utf8proc_int32_t *) malloc((utf8proc_size_t)len * sizeof(utf8proc_int32_t));
+    if (tmp) {
+      utf8proc_ssize_t count[256] = {0}; /* combining classes are 0..254 */
+      for (i = 0; i < len; i++) count[unsafe_get_property(run[i])->combining_class]++;
+      for (i = 0, j = 0; i < 256; i++) {
+        utf8proc_ssize_t n = count[i];
+        count[i] = j;
+        j += n;
+      }
+      for (i = 0; i < len; i++) tmp[count[unsafe_get_property(run[i])->combining_class]++] = run[i];
+      for (i = 0; i < len; i++) run[i] = tmp[i];
+      free(tmp);
+      return;
+    }
+  }
+  for (i = 1; i < len; i++) {
+    utf8proc_int32_t uc = run[i];
+    utf8proc_propval_t cc = unsafe_get_property(uc)->combining_class;
+    for (j = i; j > 0 && unsafe_get_property(run[j-1])->combining_class > cc; j--)
+      run[j] = run[j-1];
+    run[j] = uc;
+  }
+}
+
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
   const utf8proc_uint8_t *str, utf8proc_ssize_t strlen,
   utf8proc_int32_t *buffer, utf8proc_ssize_t bufsize, unsigned int options,
@@ -583,32 +617,16 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
     }
   }
   if ((options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) && bufsize >= wpos) {
+    /* canonical ordering: sort each run of non-starters by combining class.
+       starters and grapheme-break sentinels (uc < 0) delimit the runs. */
     utf8proc_ssize_t pos = 0;
-    while (pos < wpos-1) {
-      utf8proc_int32_t uc1, uc2;
-      const utf8proc_property_t *property1, *property2;
-      uc1 = buffer[pos];
-      if (uc1 < 0) {
-        /* skip grapheme break */
-        pos++;
-        continue;
-      }
-      uc2 = buffer[pos+1];
-      if (uc2 < 0) {
-        /* cannot recombine; skip grapheme break */
-        pos+=2;
-        continue;
-      }
-      property1 = unsafe_get_property(uc1);
-      property2 = unsafe_get_property(uc2);
-      if (property1->combining_class > property2->combining_class &&
-          property2->combining_class > 0) {
-        buffer[pos] = uc2;
-        buffer[pos+1] = uc1;
-        if (pos > 0) pos--; else pos++;
-      } else {
-        pos++;
-      }
+    while (pos < wpos) {
+      utf8proc_ssize_t end = pos;
+      while (end < wpos && buffer[end] >= 0 &&
+             unsafe_get_property(buffer[end])->combining_class > 0)
+        end++;
+      if (end - pos > 1) canonical_order(buffer + pos, end - pos);
+      pos = end + 1;
     }
   }
   return wpos;
