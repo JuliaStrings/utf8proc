@@ -87,12 +87,31 @@ static void issue288(void) /* #288 */
     printf("PASSED: utf8proc_normalize_utf32 preserves uninterpretable codepoints\n");
 }
 
+/* UTF8PROC_CHARBOUND must still mark grapheme breaks around Hangul
+   syllables that are decomposed by UTF8PROC_COMPOSE or UTF8PROC_DECOMPOSE */
+static void hangul_charbound(void)
+{
+    utf8proc_uint8_t input[] = {0x0d, 0xea, 0xb0, 0x80, 0xea, 0xb0, 0x81, 0x0a, 0x00}; /* "\r가각\n" */
+    utf8proc_uint8_t charbound[] = {0xff, 0x0d, 0xff, 0xea, 0xb0, 0x80, 0xff, 0xea, 0xb0, 0x81, 0xff, 0x0a, 0x00};
+    utf8proc_uint8_t nfd[] = {0xff, 0x0d, 0xff, 0xe1, 0x84, 0x80, 0xe1, 0x85, 0xa1,
+                              0xff, 0xe1, 0x84, 0x80, 0xe1, 0x85, 0xa1, 0xe1, 0x86, 0xa8, 0xff, 0x0a, 0x00};
+    utf8proc_uint8_t *output;
+
+    utf8proc_map(input, 0, &output, UTF8PROC_NULLTERM | UTF8PROC_CHARBOUND);
+    check_compare("CHARBOUND", input, charbound, output, 1);
+    utf8proc_map(input, 0, &output, UTF8PROC_NULLTERM | UTF8PROC_STABLE | UTF8PROC_COMPOSE | UTF8PROC_CHARBOUND);
+    check_compare("NFC+CHARBOUND", input, charbound, output, 1);
+    utf8proc_map(input, 0, &output, UTF8PROC_NULLTERM | UTF8PROC_STABLE | UTF8PROC_DECOMPOSE | UTF8PROC_CHARBOUND);
+    check_compare("NFD+CHARBOUND", input, nfd, output, 1);
+}
+
 int main(void)
 {
     issue128();
     issue102();
     issue317();
     issue288();
+    hangul_charbound();
 #ifdef UNICODE_VERSION
     printf("Unicode version: Makefile has %s, has API %s\n", UNICODE_VERSION, utf8proc_unicode_version());
     check(!strcmp(UNICODE_VERSION, utf8proc_unicode_version()), "utf8proc_unicode_version mismatch");
