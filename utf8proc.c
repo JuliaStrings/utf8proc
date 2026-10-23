@@ -453,6 +453,16 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
   if (options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) {
     if (hangul_sindex >= 0 && hangul_sindex < UTF8PROC_HANGUL_SCOUNT) {
       utf8proc_int32_t hangul_tindex;
+      /* the jamo never break among themselves (GB6-GB8), and the syllable's
+         LV/LVT boundclass breaks and updates the state just like they do */
+      if ((options & UTF8PROC_CHARBOUND) &&
+          grapheme_break_extended(0, property->boundclass, 0, property->indic_conjunct_break,
+                                  last_boundclass)) {
+        if (bufsize >= 1) dst[0] = -1; /* sentinel value for grapheme break */
+        return 1 + utf8proc_decompose_char(uc, (bufsize >= 1) ? dst+1 : dst,
+          (bufsize >= 1) ? bufsize-1 : 0, options & ~(unsigned int)UTF8PROC_CHARBOUND,
+          last_boundclass);
+      }
       if (bufsize >= 1) {
         dst[0] = UTF8PROC_HANGUL_LBASE +
           hangul_sindex / UTF8PROC_HANGUL_NCOUNT;
