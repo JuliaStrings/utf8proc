@@ -2,6 +2,34 @@
 
 #include "tests.h"
 
+static void issue3(void) /* #3 */
+{
+    /* U+0345 has combining class 240 but case-folds to U+03B9, a starter, so it
+       must only be folded once the marks next to it are in canonical order;
+       these four strings are canonically equivalent */
+    utf8proc_uint8_t input[][8] = {
+        {0xcf, 0x89, 0xcd, 0x85, 0xcd, 0x82, 0x00}, /* "\u03c9\u0345\u0342" */
+        {0xcf, 0x89, 0xcd, 0x82, 0xcd, 0x85, 0x00}, /* "\u03c9\u0342\u0345" */
+        {0xe1, 0xbf, 0xb7, 0x00},                   /* "\u1ff7" */
+        {0xe1, 0xbf, 0xb3, 0xcd, 0x82, 0x00}        /* "\u1ff3\u0342" */
+    };
+    utf8proc_uint8_t nfkc_casefold[] = {0xe1, 0xbf, 0xb6, 0xce, 0xb9, 0x00}; /* "\u1ff6\u03b9" */
+    utf8proc_uint8_t nfd_casefold[] = {0xcf, 0x89, 0xcd, 0x82, 0xce, 0xb9, 0x00}; /* "\u03c9\u0342\u03b9" */
+    /* NFKC_Casefold drops a default ignorable only after the canonical
+       decomposition, so it still keeps the U+0345 from moving past the U+0301 */
+    utf8proc_uint8_t ignorable[] = {0xe1, 0xbe, 0xb3, 0xef, 0xb8, 0x8f, 0xcc, 0x81, 0x00}; /* "\u1fb3\ufe0f\u0301" */
+    utf8proc_uint8_t ignorable_casefold[] = {0xce, 0xb1, 0xce, 0xaf, 0x00}; /* "\u03b1\u03af" */
+    utf8proc_uint8_t *output;
+    size_t i;
+
+    for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {
+        check_compare("NFKC_Casefold", input[i], nfkc_casefold, utf8proc_NFKC_Casefold(input[i]), 1);
+        utf8proc_map(input[i], 0, &output, UTF8PROC_NULLTERM | UTF8PROC_STABLE | UTF8PROC_DECOMPOSE | UTF8PROC_CASEFOLD);
+        check_compare("NFD+casefold", input[i], nfd_casefold, output, 1);
+    }
+    check_compare("NFKC_Casefold", ignorable, ignorable_casefold, utf8proc_NFKC_Casefold(ignorable), 1);
+}
+
 static void issue128(void) /* #128 */
 {
     utf8proc_uint8_t input[] = {0x72, 0xcc, 0x87, 0xcc, 0xa3, 0x00}; /* "r\u0307\u0323" */
@@ -89,6 +117,7 @@ static void issue288(void) /* #288 */
 
 int main(void)
 {
+    issue3();
     issue128();
     issue102();
     issue317();

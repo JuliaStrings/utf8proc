@@ -442,7 +442,28 @@ UTF8PROC_DLLEXPORT const char *utf8proc_category_string(utf8proc_int32_t c) {
   return utf8proc_decompose_char((replacement_uc), dst, bufsize, \
                                  options & ~(unsigned int)UTF8PROC_LUMP, last_boundclass)
 
-UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, unsigned int options, utf8proc_int32_t *last_boundclass) {
+/* return the first codepoint of a canonical decomposition that ends in U+0345,
+   or -1 */
+static utf8proc_int32_t ypogegrammeni_base(const utf8proc_property_t *property) {
+  const utf8proc_uint16_t *entry;
+  utf8proc_int32_t base;
+  /* canonical decompositions are one or two codepoints long */
+  if (property->decomp_seqindex == UINT16_MAX || property->decomp_type ||
+      (property->decomp_seqindex >> 14) != 1) return -1;
+  entry = &utf8proc_sequences[property->decomp_seqindex & 0x3FFF];
+  base = seqindex_decode_entry(&entry);
+  entry++;
+  return seqindex_decode_entry(&entry) == 0x0345 ? base : -1;
+}
+
+/* U+0345 COMBINING GREEK YPOGEGRAMMENI has combining class 240, but it
+   case-folds to U+03B9, which is a starter.  Folding it before the canonical
+   ordering would put the marks that follow it on the iota instead of the base
+   letter, so canonically equivalent strings would fold differently (#3).
+   With unfold_0345, U+0345 is left unfolded, also where it ends the canonical
+   decomposition of a precomposed letter, and utf8proc_decompose_custom folds
+   it with fold_0345_run once its run of marks has ended. */
+static utf8proc_ssize_t decompose_char(utf8proc_int32_t uc, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, unsigned int options, utf8proc_int32_t *last_boundclass, utf8proc_bool unfold_0345) {
   const utf8proc_property_t *property;
   utf8proc_propval_t category;
   utf8proc_int32_t hangul_sindex;
@@ -501,12 +522,25 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
     }
   }
   if (options & UTF8PROC_STRIPMARK) {
-    if (category == UTF8PROC_CATEGORY_MN ||
+    /* an unfolded U+0345 stands in for U+03B9, so it is kept */
+    if ((category == UTF8PROC_CATEGORY_MN ||
       category == UTF8PROC_CATEGORY_MC ||
-      category == UTF8PROC_CATEGORY_ME) return 0;
+      category == UTF8PROC_CATEGORY_ME) && !(unfold_0345 && uc == 0x0345)) return 0;
   }
   if (options & UTF8PROC_CASEFOLD) {
     if (property->casefold_seqindex != UINT16_MAX) {
+      if (unfold_0345) {
+        utf8proc_int32_t base = ypogegrammeni_base(property);
+        utf8proc_ssize_t written = 0;
+        if (base >= 0) {
+          written = utf8proc_decompose_char(base, dst, bufsize, options, last_boundclass);
+          if (written < 0) return written;
+        }
+        if (base >= 0 || uc == 0x0345) {
+          if (bufsize > written) dst[written] = 0x0345;
+          return written + 1;
+        }
+      }
       return seqindex_write_char_decomposed(property->casefold_seqindex, dst, bufsize, options, last_boundclass);
     }
   }
@@ -528,6 +562,19 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc,
   }
   if (bufsize >= 1) *dst = uc;
   return 1;
+}
+
+UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_char(utf8proc_int32_t uc, utf8proc_int32_t *dst, utf8proc_ssize_t bufsize, unsigned int options, utf8proc_int32_t *last_boundclass) {
+  return decompose_char(uc, dst, bufsize, options, last_boundclass, 0);
+}
+
+/* fold the U+0345 in a run of marks to U+03B9, after moving them behind the
+   other marks, which is where canonical ordering puts combining class 240 */
+static void fold_0345_run(utf8proc_int32_t *run, utf8proc_ssize_t len) {
+  utf8proc_ssize_t rpos, wpos = 0;
+  for (rpos = 0; rpos < len; rpos++)
+    if (run[rpos] != 0x0345) run[wpos++] = run[rpos];
+  while (wpos < len) run[wpos++] = 0x03B9;
 }
 
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose(
@@ -554,6 +601,11 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
     utf8proc_ssize_t rpos = 0;
     utf8proc_ssize_t decomp_result;
     utf8proc_int32_t boundclass = UTF8PROC_BOUNDCLASS_START;
+    /* see decompose_char; the CHARBOUND sentinels would keep U+0345 from being
+       reordered, so that case is left as it was */
+    utf8proc_bool unfold_0345 = (options & UTF8PROC_CASEFOLD) &&
+      (options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) && !(options & UTF8PROC_CHARBOUND);
+    utf8proc_ssize_t run_0345 = -1; /* start of a run of marks with an unfolded U+0345 */
     while (1) {
       if (options & UTF8PROC_NULLTERM) {
         utf8proc_ssize_t nread = utf8proc_iterate(str + rpos, -1, &uc);
@@ -571,16 +623,39 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
       if (custom_func != NULL) {
         uc = custom_func(uc, custom_data);   /* user-specified custom mapping */
       }
-      decomp_result = utf8proc_decompose_char(
+      decomp_result = decompose_char(
         uc, buffer ? buffer+wpos : buffer, (bufsize > wpos) ? (bufsize - wpos) : 0, options,
-        &boundclass
+        &boundclass, unfold_0345
       );
       if (decomp_result < 0) return decomp_result;
       /* prohibiting integer overflows due to too long strings: */
       if (decomp_result > (utf8proc_ssize_t)(SSIZE_MAX/sizeof(utf8proc_int32_t)/2) - wpos)
         return UTF8PROC_ERROR_OVERFLOW;
       wpos += decomp_result;
+      if (unfold_0345 && buffer && bufsize >= wpos) {
+        if (run_0345 >= 0) {
+          /* the run ends at a starter of the canonical decomposition, also
+             one that was dropped (e.g. a default ignorable with
+             UTF8PROC_IGNORE) or mapped to a mark (e.g. U+FF9E with
+             UTF8PROC_COMPAT) */
+          const utf8proc_property_t *property = unsafe_get_property(uc);
+          utf8proc_ssize_t end = wpos - decomp_result;
+          if (property->combining_class ||
+              (property->decomp_seqindex != UINT16_MAX && !property->decomp_type)) {
+            while (end < wpos && unsafe_get_property(buffer[end])->combining_class) end++;
+            if (end == wpos) end = -1;
+          }
+          if (end >= 0) {
+            fold_0345_run(buffer + run_0345, end - run_0345);
+            run_0345 = -1;
+          }
+        }
+        if (run_0345 < 0 && decomp_result && buffer[wpos-1] == 0x0345)
+          run_0345 = wpos - 1;
+      }
     }
+    if (run_0345 >= 0 && bufsize >= wpos)
+      fold_0345_run(buffer + run_0345, wpos - run_0345);
   }
   if ((options & (UTF8PROC_COMPOSE|UTF8PROC_DECOMPOSE)) && bufsize >= wpos) {
     utf8proc_ssize_t pos = 0;
