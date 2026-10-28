@@ -25,6 +25,21 @@ static void issue102(void) /* #102 */
     check_compare("NFKC_Casefold", input, correct, utf8proc_NFKC_Casefold(input), 1);
 }
 
+static void stripcc_between_marks(void)
+{
+    /* STRIPCC removes the control character, so the marks on both sides
+       have to be put in canonical order (and composed) together */
+    utf8proc_uint8_t input[] = {0x6f, 0xcc, 0x85, 0x01, 0xcc, 0xa8, 0x00}; /* "o\u0305\x01\u0328" */
+    utf8proc_uint8_t nfc[] = {0xc7, 0xab, 0xcc, 0x85, 0x00}; /* "\u01eb\u0305" */
+    utf8proc_uint8_t nfd[] = {0x6f, 0xcc, 0xa8, 0xcc, 0x85, 0x00}; /* "o\u0328\u0305" */
+    utf8proc_uint8_t *output;
+
+    utf8proc_map(input, 0, &output, UTF8PROC_NULLTERM | UTF8PROC_STABLE | UTF8PROC_COMPOSE | UTF8PROC_STRIPCC);
+    check_compare("NFC+stripcc", input, nfc, output, 1);
+    utf8proc_map(input, 0, &output, UTF8PROC_NULLTERM | UTF8PROC_STABLE | UTF8PROC_DECOMPOSE | UTF8PROC_STRIPCC);
+    check_compare("NFD+stripcc", input, nfd, output, 1);
+}
+
 static void issue317(void) /* #317 */
 {
     utf8proc_uint8_t input[] = {0xec, 0xa3, 0xa0, 0xe1, 0x86, 0xa7, 0x00}; /* "\uc8e0\u11a7" */
@@ -91,6 +106,7 @@ int main(void)
 {
     issue128();
     issue102();
+    stripcc_between_marks();
     issue317();
     issue288();
 #ifdef UNICODE_VERSION

@@ -571,6 +571,13 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_decompose_custom(
       if (custom_func != NULL) {
         uc = custom_func(uc, custom_data);   /* user-specified custom mapping */
       }
+      /* drop the control characters that STRIPCC removes (all but HT, LF, VT,
+         FF, CR and NEL, which utf8proc_normalize_utf32 converts) here already,
+         so that the canonical ordering and grapheme breaks below see the
+         combining marks around them as adjacent */
+      if ((options & UTF8PROC_STRIPCC) && uc >= 0 &&
+          ((uc < 0x20 && (uc < 0x09 || uc > 0x0D)) || (uc >= 0x7F && uc < 0xA0 && uc != 0x85)))
+        continue;
       decomp_result = utf8proc_decompose_char(
         uc, buffer ? buffer+wpos : buffer, (bufsize > wpos) ? (bufsize - wpos) : 0, options,
         &boundclass

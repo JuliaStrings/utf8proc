@@ -141,20 +141,23 @@ int main(int argc, char **argv)
 
     /* UTF8PROC_STRIPCC must not strip the 0xff markers of UTF8PROC_CHARBOUND */
     {
-        /* Cover tabs, C1 controls, and a control before the first printable character. */
+        /* Cover tabs, C1 controls, a control before the first printable character,
+           and a control before a combining mark. */
         utf8proc_uint8_t input[][8] = {
             {0x61,0x0a,0x62,0x01,0x63,0x00},
             {0x61,0x09,0x62,0x00},
             {0x61,0xc2,0x90,0x62,0x00},
-            {0x01,0x61,0x00}
+            {0x01,0x61,0x00},
+            {0x61,0x01,0xcc,0x81,0x00}
         };
         utf8proc_uint8_t output[][9] = {
             {0xff,0x61,0xff,0x20,0xff,0x62,0xff,0x63,0x00},
             {0xff,0x61,0xff,0x20,0xff,0x62,0x00},
             {0xff,0x61,0xff,0x62,0x00},
-            {0xff,0x61,0x00}
+            {0xff,0x61,0x00},
+            {0xff,0x61,0xcc,0x81,0x00}
         };
-        const char *plain[] = {"a bc", "a b", "ab", "a"};
+        const char *plain[] = {"a bc", "a b", "ab", "a", "a\xcc\x81"};
         size_t i;
         for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {
             utf8proc_ssize_t glen;
