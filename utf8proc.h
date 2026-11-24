@@ -765,6 +765,12 @@ UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map(
  * that is called on each codepoint in `str` before any other transformations
  * (along with a `custom_data` pointer that is passed through to `custom_func`).
  * The `custom_func` argument is ignored if it is `NULL`.
+ *
+ * @note `custom_func` may be called more than once for each input codepoint.
+ * It must return the same replacement for a given codepoint, independently of
+ * the number or order of calls. Caching results in `custom_data` is allowed if
+ * it does not change the mapping. Context-dependent transformations should be
+ * applied to the input before calling this function.
  */
 UTF8PROC_DLLEXPORT utf8proc_ssize_t utf8proc_map_custom(
   const utf8proc_uint8_t *str, utf8proc_ssize_t strlen, utf8proc_uint8_t **dstptr, unsigned int options,
